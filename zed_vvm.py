@@ -176,7 +176,7 @@ class HelloLtc(SoCZynq, AutoCSR):
         # ----------------------------
         VVM_DSP.add_sources(self.platform)
         self.submodules.vvm = VVM_DSP(self.lvds.sample_outs)
-        self.vvm.add_csrs()
+        self.vvm.add_csrs(f_sys)
 
 
 if __name__ == '__main__':

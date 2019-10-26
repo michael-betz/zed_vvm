@@ -8,8 +8,9 @@ try:
 from sys import argv
 from migen import *
 from migen.genlib.misc import timeline
-from litex.soc.interconnect.csr import AutoCSR, CSRStorage, CSRStatus
 from migen.genlib.cdc import BlindTransfer
+from litex.soc.interconnect.csr import AutoCSR, CSRStorage, CSRStatus
+from litex.soc.cores.freqmeter import FreqMeter
 from os.path import join, dirname, abspath
 from dsp.dds import DDS
 from dsp.tiny_iir import TinyIIR
@@ -186,7 +187,7 @@ class VVM_DSP(Module, AutoCSR):
             ]
             self.submodules += iir
 
-    def add_csrs(self):
+    def add_csrs(self, f_sys):
         ''' Wire up the config-registers to litex CSRs '''
         # sys clock domain
         n_ch = len(self.adcs)
@@ -228,6 +229,10 @@ class VVM_DSP(Module, AutoCSR):
             csr = CSRStatus(32, name=n)
             setattr(self, n, csr)
             self.comb += csr.status.eq(sig)
+
+        # ADC zero crossing frequency counter
+        self.submodules.f_ref = FreqMeter(f_sys)  # 1 s count integration time
+        self.comb += self.f_ref.clk.eq(self.adcs[0] > 0)
 
 
 def main():
