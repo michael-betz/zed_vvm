@@ -140,7 +140,7 @@ This Xilinx IP file contains the PS7 block describing the connectivity between P
 
 ## Peripherals connected to PS
 
-These are accessible from linux when configured in step 7 above (most are already configured by default) and once the right driver has been loaded, which requires an entry into the linux device tree.
+These are accessible from linux when configured in step 6 above (most are already configured by default) and once the right driver has been loaded, which requires an entry into the linux device tree.
 
 | Net      | Peripheral I/O pin (PS_MIO<x>) |
 | -------- | ------------------------------ |
