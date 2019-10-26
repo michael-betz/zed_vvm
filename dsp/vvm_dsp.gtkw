@@ -1,0 +1,94 @@
+[*]
+[*] GTKWave Analyzer v3.3.94 (w)1999-2018 BSI
+[*] Fri Oct 25 00:53:45 2019
+[*]
+[dumpfile] "/home/michael/fpga_wsp/litex_test_project/zedboard/dsp/vvm_dsp.vcd"
+[dumpfile_mtime] "Fri Oct 25 00:47:35 2019"
+[dumpfile_size] 223346614
+[optimize_vcd]
+[savefile] "/home/michael/fpga_wsp/litex_test_project/zedboard/dsp/vvm_dsp.gtkw"
+[timestart] 0
+[size] 1916 508
+[pos] -1 -1
+*-15.000000 41888 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] vvm_dsp_tb.
+[treeopen] vvm_dsp_tb.dsp_inst.ddc.i_cic_multichannel_i.
+[sst_width] 318
+[signals_width] 276
+[sst_expanded] 1
+[sst_vpaned_height] 105
+@28
+vvm_dsp_tb.clk_adc
+@c00200
+-testbench
+@8420
+[color] 3
+vvm_dsp_tb.adc_ref[13:0]
+@20000
+-
+@8420
+vvm_dsp_tb.adc_a[13:0]
+@20000
+-
+@8420
+vvm_dsp_tb.adc_b[13:0]
+@20000
+-
+@8420
+vvm_dsp_tb.adc_c[13:0]
+@20000
+-
+@1401200
+-testbench
+@c00200
+-dds
+@20000
+-
+-
+@22
+vvm_dsp_tb.dsp_inst.ftw[31:0]
+@1401200
+-dds
+@800200
+-DDC
+@22
+vvm_dsp_tb.dsp_inst.result_iq[20:0]
+@28
+vvm_dsp_tb.dsp_inst.result_strobe
+@8420
+vvm_dsp_tb.adc_ref_dc_i[20:0]
+@20000
+-
+@8420
+vvm_dsp_tb.adc_ref_dc_q[20:0]
+@20000
+-
+@1000200
+-DDC
+@800200
+-phase_calc
+@22
+vvm_dsp_tb.dsp_inst.mag_out[20:0]
+vvm_dsp_tb.dsp_inst.phase_out[21:0]
+@200
+-
+@22
+vvm_dsp_tb.dsp_inst.iir_shift[5:0]
+@28
+vvm_dsp_tb.dsp_inst.strobe_
+@22
+vvm_dsp_tb.dsp_inst.mag[20:0]
+vvm_dsp_tb.dsp_inst.mag_1[20:0]
+vvm_dsp_tb.dsp_inst.mag_2[20:0]
+vvm_dsp_tb.dsp_inst.mag_3[20:0]
+@200
+-
+@22
+vvm_dsp_tb.dsp_inst.phase[21:0]
+vvm_dsp_tb.dsp_inst.phase_1[21:0]
+vvm_dsp_tb.dsp_inst.phase_2[21:0]
+vvm_dsp_tb.dsp_inst.phase_3[21:0]
+@1000200
+-phase_calc
+[pattern_trace] 1
+[pattern_trace] 0

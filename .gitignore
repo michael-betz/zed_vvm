@@ -1,0 +1,7 @@
+__pycache__
+build
+*.ipynb_checkpoints
+*.vcd
+*_tb
+*.pcap
+mem*.init
