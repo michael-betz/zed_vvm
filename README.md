@@ -34,14 +34,14 @@ Made from a Digilent Zedboard running Debian with a DC1525A FMC daughter board o
 # Installing litex
 ... on debian
 ```bash
-    $ sudo apt install libevent-dev libjson-c-dev
-    $ sudo pip3 install virtualenvwrapper
-    $ mkvirtualenv litex
-    $ git clone git@github.com:yetifrisstlama/litex.git --recursive
-    $ cd litex
-    $ python litex_setup.py init
-    $ python litex_setup.py install
-    $ python setup.py develop
+$ sudo apt install libevent-dev libjson-c-dev
+$ sudo pip3 install virtualenvwrapper
+$ mkvirtualenv litex
+$ git clone git@github.com:yetifrisstlama/litex.git --recursive
+$ cd litex
+$ python litex_setup.py init
+$ python litex_setup.py install
+$ python setup.py develop
 ```
 
 # Building the .bit file
@@ -57,26 +57,26 @@ Note that the Zedboard PS will freeze if the FPGA is not loaded / in the process
 AXI memory access through litex_server. So make sure to close the python apps before doing `make upload`.
 
 ```bash
-    $ git clone https://github.com/yetifrisstlama/zed_vvm.git
-    $ git clone https://github.com/BerkeleyLab/Bedrock.git
-    $ cd zed_vvm
-    $ workon litex
-    $ make
-    # remote FPGA configuration
-    $ make upload
-    # start litex_server on zedboard for remote access to FPGA registers
-    $ make server
-    # Keep this terminal open and start a new one
+$ git clone https://github.com/yetifrisstlama/zed_vvm.git
+$ git clone https://github.com/BerkeleyLab/Bedrock.git
+$ cd zed_vvm
+$ workon litex
+$ make
+# remote FPGA configuration
+$ make upload
+# start litex_server on zedboard for remote access to FPGA registers
+$ make server
+# Keep this terminal open and start a new one
 ```
 
 ### Demonstration apps
 ```bash
-    $ cd util
-    # displays raw ADC samples in time and frequency domain
-    $ python3 scope_app.py
-    # displays RF magnitude and phase over time
-    $ python3 vvm_app.py
-    # try -h to list supported command line arguments
+$ cd util
+# displays raw ADC samples in time and frequency domain
+$ python3 scope_app.py
+# displays RF magnitude and phase over time
+$ python3 vvm_app.py
+# try -h to list supported command line arguments
 ```
 
 # Steps to get debian running on zedboard
