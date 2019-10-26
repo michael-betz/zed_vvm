@@ -1,26 +1,29 @@
 # zed_vvm
-A RF vector volt-meter intended as an instrument to troubleshoot legacy
-accelerator RF systems and general purpose usage.
+A digital RF vector volt-meter (VVM).
+Measures amplitude and phase of a sinusoidal signal under test against a reference signal of same frequency.
+Intended as an instrument to monitor and troubleshoot legacy accelerator RF systems.
 
-Made from a Digilent Zedboard running Debian with a DC1525A FMC daughter board on top.
+Based on a Digilent Zedboard running Debian with a DC1525A FMC daughter board on top.
 
   * 4 channel, 14 bit, 125 MSps, 800 MHz bandwidth (3 dB) analog to digital converter with LVDS interface: __LTC2175-14__
   * Sampling clock provided by a `Si5xx-PROG_EVB` evaluation board running [custom firmware](https://github.com/yetifrisstlama/Si5xx-5x7-EVV_autoloader)
-  * 4 x 4096 sample buffer with trigger for adc waveform storage for debugging (`scope_app.py` makes use of that)
+  * 4 x 4096 sample buffer with oscilloscope-like trigger for raw ADC waveform storage (`scope_app.py` makes use of that)
   * FPGA implements
     * digital down-conversion and decimation to get a complex baseband (IQ) signal
     * rectangular (IQ) to polar conversion (magnitude, phase)
     * first order IIR filter to smooth the measurement result
-    * uses litex CSRs, the wishbone2axi bridge and litex_server to make the measurements available to linux running on the CPU
+    * makes good use of litex Control/Status Registers (CSRs), the wishbone2axi bridge and litex_server to make the measurements available to linux running on the CPU
 
-# Specs
-  * Must support 125 MHz & 500 MHz signals
-  * Same phase reading after power cycle (clock divider states!)
+# Minimum design goals
+  * support 125 MHz & 500 MHz signals
+  * Same phase reading after power cycle (manage clock divider states)
   * 360 degree unique measurement range
-  * Phase accuracy (drift error) at the input ports over typical ALS temp range (20 - 30 degC) of at least 1 deg (0.2 %)
-  * Amplitude measurement (2 % error is okay)
-  * At least 2 input channels + 500 MHz phase ref channel (MO)
-  * As simple, cheap and easy to use as possible, such that it can be easily installed in many places
+  * Phase accuracy over a temperature range of 20 - 30 degC of better than 1 deg (0.2 %)
+  * Less than 2 % amplitude error
+  * At least 2 input channels + one phase reference channel
+  * Self-contained instrument (only power is needed)
+  * Easy to use
+  * Not too expensive, such that it can be installed in multiple places across the facility
   * Epics support
 
 # Hardware modifications
@@ -29,7 +32,11 @@ Made from a Digilent Zedboard running Debian with a DC1525A FMC daughter board o
 
 ## DC1525A
   * Setup the board for differential sample clock input
-  * Remove low-pass filter on all 4 analog input channels
+    * Move R101 to R64 (0 Ohm jumper)
+  * Remove low-pass filter on the analog input channels
+    * Remove: R37, R38, R53, R54, R80, R81, R90, R91
+    * Remove: R35, R52, R79, R89
+    * Replace by 0 Ohm jumper: L4, L5, L6, L12
 
 # Installing litex
 ... on debian
@@ -207,7 +214,7 @@ ff02::2     ip6-allrouters
 # and there should be a login prompt on the UART
 ```
 
-# Partitioning the SD card
+## Partitioning the SD card
 What we need
 
   * FAT16 partition of size 32 MB
@@ -272,13 +279,41 @@ copy the resulting `<bitfile>.bit.bin` on the zedboard, then
 `make upload` automates all these steps.
 
 # how to get `ip/processing_system7_0.xci`
-This Xilinx IP file contains the PS7 block describing the connectivity between PS and PL and is required by the Litex `SoCZynq()` class. If the PS7 block is not included in the PL design, the CPU will freeze as soon as the the resulting bitfile is loaded on the zedboard. However, except for the CPU freezing issue, the PL part of the design seems to work fine.
+This Xilinx IP file contains the PS7 block describing the connectivity between PS and PL and is required by the Litex `SoCZynq()` class. If the PS7 block is not included in the PL design, the CPU will freeze as soon as the the resulting bitfile is loaded on the zedboard. The PL part of the design will work as intended, even without the PS7 block.
 
-  1. open vivado, new RTL project, `zedboard` hardware platform, don't add source files, next, next next ..
-  2. open IP manager, add Zynq Processing system 7 IP
-  3. configure it in GUI, Bank0 / 1 voltage = 2.5 V, clock0 100 MHz. By default, clock0 is connected to litex `sysclk`.
-  4. Save and close
-  5. `zed/zed.srcs/sources_1/ip/processing_system7_0/processing_system7_0.xci`
+  1. open Vivado, new RTL project, `zedboard` hardware platform, don't add source files, next, next next ..
+  2. IP Integrator --> Create Block Design
+  3. Add `ZYNQ7 Processing system` IP
+  4. Run vivado design automation to get default values for Zedboard
+  5. Configure the PS7 block in GUI
+       * Bank0 / 1 voltage = 2.5 V
+       * Clock Configuration, PL Fabric Clocks: clock0 100 MHz. The litex `sysclk` domain is driven by clock0
+  6. Peripheral I/O Pins
+       * The PS_MIOX pins are connected to the PS and can be configured here for special function operation (like CAN, I2C, SPI, UART, GPIO)
+       * PMOD JE1 is exclusively connected to MIOs (see table below). This might be useful to drive a small graphical LCD from linux trough an SPI interface
+  7. Save and close, this generates the file `<name>.srcs/sources_1/ip/processing_system7_0/processing_system7_0.xci` in the project directory, which needs to be copied to `./ip`
+
+## Peripherals connected to PS
+
+These are accessible from linux when configured in step 7 above (most are already configured by default) and once the right driver has been loaded, which requires an entry into the linux device tree.
+
+| -------- | ------------------------------ |
+| Net      | Peripheral I/O pin (PS_MIO<x>) |
+| -------- | ------------------------------ |
+| __PMOD__ |                                |
+|  JE1     | 13                             |
+|  JE2     | 10                             |
+|  JE3     | 11                             |
+|  JE4     | 12                             |
+| JE10     | 15                             |
+|  JE9     | 14                             |
+|  JE8     |  9                             |
+|  JE7     |  0                             |
+|__Button__|                                |
+|  PB1     | 50                             |
+|  PB2     | 51                             |
+| __LED__  |                                |
+|  LD9     |  7 (also USB reset!)           |
 
 # remote litex_server
 `./litex_server` contains a minimal version of which can run on the zedboard. It only requires python3 installed. It needs sudo to open `/dev/mem`, so it is dangerous! It then connects to the general purpose AXI master (gp0) at address 0x43c00000. On the PL side, this is connected to an AXI to Wishbone converter to read and write the CSRs.
