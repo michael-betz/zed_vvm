@@ -5,14 +5,15 @@ Intended as an instrument to monitor and troubleshoot legacy accelerator RF syst
 
 Based on a Digilent Zedboard running Debian with a DC1525A FMC daughter board on top.
 
-  * 4 channel, 14 bit, 125 MSps, 800 MHz bandwidth (3 dB) analog to digital converter with LVDS interface: __LTC2175-14__
+  * 4 channel, 14 bit, 125 MSps, 800 MHz bandwidth (3 dB) analog to digital converter with LVDS interface: [__LTC2175-14__](https://www.analog.com/en/products/ltc2175-14.html)
   * Sampling clock provided by a `Si5xx-PROG_EVB` evaluation board running [custom firmware](https://github.com/yetifrisstlama/Si5xx-5x7-EVV_autoloader)
   * 4 x 4096 sample buffer with oscilloscope-like trigger for raw ADC waveform storage (`scope_app.py` makes use of that)
   * FPGA implements
     * digital down-conversion and decimation to get a complex baseband (IQ) signal
     * rectangular (IQ) to polar conversion (magnitude, phase)
     * first order IIR filter to smooth the measurement result
-    * makes good use of litex Control/Status Registers (CSRs), the wishbone2axi bridge and litex_server to make the measurements available to linux running on the CPU
+    * uses [Bedrock](https://github.com/BerkeleyLab/Bedrock) DSP blocks
+    * makes good use of [litex](https://github.com/enjoy-digital/litex) Control/Status Registers (CSRs), the wishbone2axi bridge and litex_server to make the measurements available to linux running on the CPU
 
 The main reason to choose embedded linux is the convenience for application development:
   * python3 support with numpy / scipy or even jupyter notebook
@@ -96,6 +97,9 @@ $ python3 scope_app.py
 $ python3 vvm_app.py
 # try -h to list supported command line arguments
 ```
+
+# Setting up linux
+[ZED_DEBIAN.md](https://github.com/yetifrisstlama/zed_vvm/blob/master/ZED_DEBIAN.md)
 
 # Load bitfile in linux
 Bitfiles are loaded trough the [Linux FPGA Manager](https://www.kernel.org/doc/html/v4.18/driver-api/fpga/fpga-mgr.html).
