@@ -5,3 +5,6 @@ build
 *_tb
 *.pcap
 mem*.init
+*.bak
+fp-info-cache
+*-bak
