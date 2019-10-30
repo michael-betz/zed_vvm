@@ -85,29 +85,9 @@ F 3 "http://www.newhavendisplay.com/specs/NHD-2.8-25664UCB2.pdf" H 3900 3250 50 
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	2200 2700 3500 2700
-Wire Wire Line
-	3500 2700 3500 2850
-Wire Wire Line
 	3500 2850 3800 2850
 Wire Wire Line
-	2200 2600 3550 2600
-Wire Wire Line
-	3550 2600 3550 2650
-Wire Wire Line
-	3550 2650 3800 2650
-Wire Wire Line
-	2200 2500 3550 2500
-Wire Wire Line
-	2200 2400 3500 2400
-Wire Wire Line
-	3500 2400 3500 2250
-Wire Wire Line
 	3500 2250 3800 2250
-Wire Wire Line
-	3800 2450 3550 2450
-Wire Wire Line
-	3550 2450 3550 2500
 $Comp
 L power:GND #PWR0109
 U 1 1 5DB9C984
@@ -423,9 +403,9 @@ F 3 "" H 3400 4450 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	2800 4900 3200 4900
-Text Label 2900 4900 0    50   ~ 0
-JA1
 Text Label 2900 5050 0    50   ~ 0
+JA1
+Text Label 2900 5200 0    50   ~ 0
 JA2
 $Comp
 L power:GND #PWR0126
@@ -476,7 +456,7 @@ Wire Wire Line
 	3400 4500 3600 4500
 Wire Wire Line
 	3600 4500 3600 4550
-Text Label 2900 5200 0    50   ~ 0
+Text Label 2900 4900 0    50   ~ 0
 JA3
 Text Label 2300 2500 0    50   ~ 0
 JA8
@@ -529,8 +509,6 @@ F 3 "~" H 1900 2600 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	1700 2600 1400 2600
-Text Label 2300 2700 0    50   ~ 0
-JA10
 $Comp
 L power:+3V3 #PWR0104
 U 1 1 5DB8A115
@@ -590,10 +568,10 @@ Connection ~ 1100 2900
 Wire Wire Line
 	1100 2900 1700 2900
 $Comp
-L Device:C C?
+L Device:C C2
 U 1 1 5DB8DE37
 P 4300 4350
-F 0 "C?" H 4415 4396 50  0000 L CNN
+F 0 "C2" H 4415 4396 50  0000 L CNN
 F 1 "10u" H 4415 4305 50  0000 L CNN
 F 2 "Capacitor_SMD:C_1206_3216Metric" H 4338 4200 50  0001 C CNN
 F 3 "~" H 4300 4350 50  0001 C CNN
@@ -601,10 +579,10 @@ F 3 "~" H 4300 4350 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L power:+3V3 #PWR?
+L power:+3V3 #PWR0127
 U 1 1 5DB8DE48
 P 4150 4350
-F 0 "#PWR?" H 4150 4200 50  0001 C CNN
+F 0 "#PWR0127" H 4150 4200 50  0001 C CNN
 F 1 "+3V3" H 4165 4523 50  0000 C CNN
 F 2 "" H 4150 4350 50  0001 C CNN
 F 3 "" H 4150 4350 50  0001 C CNN
@@ -612,14 +590,36 @@ F 3 "" H 4150 4350 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L power:GND #PWR?
+L power:GND #PWR0128
 U 1 1 5DB8DE56
 P 4450 4350
-F 0 "#PWR?" H 4450 4100 50  0001 C CNN
+F 0 "#PWR0128" H 4450 4100 50  0001 C CNN
 F 1 "GND" H 4455 4177 50  0000 C CNN
 F 2 "" H 4450 4350 50  0001 C CNN
 F 3 "" H 4450 4350 50  0001 C CNN
 	1    4450 4350
 	0    -1   -1   0   
 $EndComp
+Text Label 2300 2700 0    50   ~ 0
+JA10
+Wire Wire Line
+	2200 2400 2500 2400
+Wire Wire Line
+	2200 2500 2500 2500
+Wire Wire Line
+	2200 2600 2500 2600
+Wire Wire Line
+	2200 2700 2500 2700
+Wire Wire Line
+	3500 2450 3800 2450
+Wire Wire Line
+	3500 2650 3800 2650
+Text Label 3600 2850 0    50   ~ 0
+JA7
+Text Label 3600 2450 0    50   ~ 0
+JA9
+Text Label 3600 2650 0    50   ~ 0
+JA10
+Text Label 3600 2250 0    50   ~ 0
+JA8
 $EndSCHEMATC

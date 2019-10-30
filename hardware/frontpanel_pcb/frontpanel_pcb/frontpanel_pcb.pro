@@ -1,4 +1,4 @@
-update=Tue 29 Oct 2019 05:00:57 PM PDT
+update=Tue Oct 29 18:37:53 2019
 version=1
 last_client=kicad
 [general]
@@ -12,6 +12,22 @@ NetIExt=net
 version=1
 LibDir=
 [eeschema/libraries]
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=pdf
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceAjustPassiveValues=0
+LabSize=50
+ERC_WriteFile=0
+ERC_TestSimilarLabels=1
+ERC_CheckUniqueGlobalLabels=1
+ERC_CheckBusDriverConflicts=1
+ERC_CheckBusEntryConflicts=1
+ERC_CheckBusToBusConflicts=1
+ERC_CheckBusToNetConflicts=1
 [pcbnew]
 version=1
 PageLayoutDescrFile=
@@ -38,8 +54,8 @@ TrackWidth1=0.3
 TrackWidth2=2
 ViaDiameter1=1.2
 ViaDrill1=0.6
-dPairWidth1=0.3
-dPairGap1=0.3
+dPairWidth1=0.4
+dPairGap1=0.4
 dPairViaGap1=0.25
 SilkLineWidth=0.12
 SilkTextSizeV=1
@@ -234,12 +250,12 @@ Enabled=0
 [pcbnew/Netclasses]
 [pcbnew/Netclasses/Default]
 Name=Default
-Clearance=0.3
+Clearance=0.4
 TrackWidth=0.3
 ViaDiameter=1.2
 ViaDrill=0.6
 uViaDiameter=0.3
 uViaDrill=0.1
-dPairWidth=0.3
-dPairGap=0.3
+dPairWidth=0.4
+dPairGap=0.4
 dPairViaGap=0.25
