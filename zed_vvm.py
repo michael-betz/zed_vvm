@@ -178,6 +178,16 @@ class HelloLtc(SoCZynq, AutoCSR):
         self.submodules.vvm = VVM_DSP(self.lvds.sample_outs)
         self.vvm.add_csrs(f_sys)
 
+        # Test forwarding the SPI1 from PS through EMIO to PMODA:0 (Y11)
+        emio_pads = [
+            ("EMIO_SPI1", 0,
+                Subsignal("clk",  Pins("pmoda:0")),
+                IOStandard("LVCMOS25")
+            )
+        ]
+        self.platform.add_extension(emio_pads)
+        self.add_emio_spi(self.platform.request("EMIO_SPI1").clk)
+
 
 if __name__ == '__main__':
     soc = HelloLtc(

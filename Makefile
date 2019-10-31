@@ -14,8 +14,9 @@ all: $(TARGET).bit.bin
 %.vcd: %_tb
 	vvp -N $< +vcd
 
+
 # litex synthesize
-build/gateware/%.bit: %.py
+build/gateware/%.bit: %.py ip/processing_system7_0.xci
 	make -C dsp cordicg_b22.v
 	python3 $< synth
 
@@ -23,6 +24,11 @@ build/gateware/%.bit: %.py
 %.bit.bin: build/gateware/%.bit
 	python3 util/bitstream_fix.py $<
 	mv $<.bin .
+
+ip/processing_system7_0.xci:
+	(cd ip && \
+	vivado -mode batch -source gen_ip.tcl &&\
+	ln -s zed_ps7.srcs/sources_1/ip/processing_system7_0/processing_system7_0.xci processing_system7_0.xci)
 
 # Upload to the zedboard via scp and program the PL
 upload:
@@ -38,6 +44,6 @@ clean:
 	rm -f mem.init
 	rm -f mem_?.init
 	# in ./ip, delete EVERYTHING except processing_system7_0.xci (a bit harsh, I know ...)
-	mv ip/processing_system7_0.xci .
-	rm -rf ip/*
-	mv processing_system7_0.xci ip
+	mv ip/gen_ip.tcl .
+	rm -rf ip/* ip/.Xil
+	mv gen_ip.tcl ip
