@@ -106,6 +106,7 @@ class HelloLtc(SoCZynq, AutoCSR):
             add_reset=False,
             **kwargs
         )
+        p = self.platform
         for c in HelloLtc.csr_peripherals:
             self.add_csr(c)
 
@@ -120,7 +121,7 @@ class HelloLtc(SoCZynq, AutoCSR):
         # FPGA clock and reset generation
         # ----------------------------
         self.submodules.crg = _CRG(
-            self.platform,
+            p,
             f_sys,
             ~self.fclk_reset0_n
         )
@@ -128,11 +129,11 @@ class HelloLtc(SoCZynq, AutoCSR):
         # ----------------------------
         #  LTC LVDS driver on FMC-LPC
         # ----------------------------
-        self.platform.add_extension(ltc_pads)
+        p.add_extension(ltc_pads)
         # LTCPhy will recover ADC clock and drive `sample` clock domain
-        self.submodules.lvds = LTCPhy(self.platform, f_sys, f_sample)
+        self.submodules.lvds = LTCPhy(p, f_sys, f_sample)
         # tell vivado that sys_clk and sampl_clk are asynchronous
-        self.platform.add_false_path_constraints(
+        p.add_false_path_constraints(
             self.crg.cd_sys.clk,
             self.lvds.pads_dco
         )
@@ -140,7 +141,7 @@ class HelloLtc(SoCZynq, AutoCSR):
         # ----------------------------
         #  SPI bit-bang master
         # ----------------------------
-        spi_pads = self.platform.request("LTC_SPI")
+        spi_pads = p.request("LTC_SPI")
         self.submodules.spi = spi_old.SPIMaster(spi_pads)
 
         # ----------------------------
@@ -168,46 +169,39 @@ class HelloLtc(SoCZynq, AutoCSR):
             N_BITS=14
         )
         self.specials += MultiReg(
-            self.platform.request("user_btn_c"), self.acq.trigger
+            p.request("user_btn_c"), self.acq.trigger
         )
 
         # ----------------------------
         #  Vector volt-meter
         # ----------------------------
-        VVM_DSP.add_sources(self.platform)
+        VVM_DSP.add_sources(p)
         self.submodules.vvm = VVM_DSP(self.lvds.sample_outs)
         self.vvm.add_csrs(f_sys)
 
-        # Test forwarding the SPI1 from PS through EMIO to PMODA:0 (Y11)
-        emio_pads = [
-            ("EMIO_SPI1", 0,
-                Subsignal("clk",  Pins("pmoda:0")),
+        # -------------------------------------------------------
+        #  Forward some PS EMIO to actual pads in the real world
+        # -------------------------------------------------------
+        p.add_extension([
+            (
+                "PMODA_SPI",
+                0,
+                Subsignal("cs_n", Pins("pmoda:0")),
+                Subsignal("miso", Pins("pmoda:1"), Misc("PULLUP TRUE")),
+                Subsignal("mosi", Pins("pmoda:2")),
+                Subsignal("clk", Pins("pmoda:3")),
+                IOStandard("LVCMOS25")
+            ), (
+                "PMODA_GPIO",
+                0,
+                Subsignal("gpio", Pins("pmoda:4 pmoda:5 pmoda:6 pmoda:7")),
                 IOStandard("LVCMOS25")
             )
-        ]
-        self.platform.add_extension(emio_pads)
-        clk_pad = self.platform.request("EMIO_SPI1").clk
-        self.ps7_params.update(
-            o_SPI0_SCLK_O=clk_pad,
-            i_SPI0_SCLK_I=0,
-
-            # o_SPI0_MOSI_O=
-            i_SPI0_MOSI_I=0,
-
-            i_SPI0_MISO_I=0,
-
-            # o_SPI0_SS_O=
-            # o_SPI0_SS1_O=
-            # o_SPI0_SS2_O=
-            i_SPI0_SS_I=1
-
-            # o_SPI0_SCLK_T=
-            # o_SPI0_MOSI_T=
-            # o_SPI0_SS_T=
-        )
-        # self.add_emio_spi()
-
-
+        ])
+        # SPI0 from PS through EMIO to PMODA
+        self.add_emio_spi(p.request("PMODA_SPI"), n=0)
+        # GPIO
+        self.add_emio_gpio(p.request("PMODA_GPIO").gpio)
 
 
 if __name__ == '__main__':
