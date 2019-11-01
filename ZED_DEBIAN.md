@@ -5,7 +5,7 @@ This guide is mostly based on these two:
   * https://github.com/PyHDI/zynq-linux
   * https://blog.n621.de/2016/05/running-linux-on-a-zynq-without-vivado-madness/
 
-## Bootloaders
+## Bootloader
 ```bash
 # Cross compiler
     sudo apt install libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses-dev
@@ -33,24 +33,63 @@ This guide is mostly based on these two:
     cp u-boot-xlnx/u-boot.img /media/sdcard
 
 # Now try it on the Zedboard, you should see u-boot starting on the UART
-
+```
+## Linux kernel
+```bash
 # compile Kernel
     git clone https://github.com/Xilinx/linux-xlnx.git --recursive
     cd linux-xlnx/
     make xilinx_zynq_defconfig
     make menuconfig
+```
+We need SPI support to use the OLED from within linux.
+
+Enable `Device Drivers --> SPI support --> User mode SPI device driver support`
+
+Then add the following to the device tree at
+`arch/arm/boot/dts/zynq-zed.dts`
+
+```
+&spi0 {
+  is-decoded-cs = <0>;
+  num-cs = <1>;
+  status = "okay";
+  spidev@0x00 {
+    compatible = "spidev";
+    spi-max-frequency = <5000000>;
+    reg = <0>;
+  };
+};
+
+&spi1 {
+  is-decoded-cs = <0>;
+  num-cs = <1>;
+  status = "okay";
+  spidev@0x01 {
+    compatible = "spidev";
+    spi-max-frequency = <5000000>;
+    reg = <0>;
+  };
+};
+```
+
+Then build the kernel ...
+
+```bash
     make -j4 uImage LOADADDR=0x00008000
     make zynq-zed.dtb
+```
 
-# Copy kernel image and device-tree to SD card
+copy kernel image and device-tree to SD card
+```bash
     cp arch/arm/boot/uImage /media/sdcard/
     cp arch/arm/boot/dts/zynq-zed.dtb /media/sdcard
-
-# to configure u-boot, create a uEnv.txt as shown below and copy it to SD card
-
-# Try it on Zedboard, the linux kernel should boot and panic
-# because of the missing root filesystem
 ```
+to configure u-boot, create a `uEnv.txt` as shown below and copy it to SD card.
+
+Now is a good time to give it a test-run on the Zedboard,
+the linux kernel should boot and panic because of the missing root filesystem
+
 
 ## Debian `rootfs`
 setup your initial bare-bones debian environment using chroot on the host.
