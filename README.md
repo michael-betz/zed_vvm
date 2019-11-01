@@ -142,22 +142,37 @@ This Xilinx IP file contains the PS7 block describing the connectivity between P
 
 These are accessible from linux when configured in step 6 above (most are already configured by default) and once the right driver has been loaded, which requires an entry into the linux device tree.
 
-| Net      | Peripheral I/O pin (PS_MIO<x>) | Front-panel PCB |
-| -------- | ------------------------------ | --------------- |
-| __PMOD__ |                                |                 |
-|  JE1     | 13                             | OLED: /CS       |
-|  JE2     | 10                             | OLED: MOSI      |
-|  JE3     | 11                             | NC: MISO        |
-|  JE4     | 12                             | OLED: SCLK      |
-| JE10     | 15                             | ENCODER: SW     |
-|  JE9     | 14                             | ENCODER: B      |
-|  JE8     |  9                             | ENCODER: A      |
-|  JE7     |  0                             | OLED: D/C       |
-|__Button__|                                |                 |
-|  PB1     | 50                             |                 |
-|  PB2     | 51                             |                 |
-| __LED__  |                                |                 |
-|  LD9     |  7 (also USB reset!)           |                 |
+| Net      | PS_MIO<x> | FP PCB       | gpio<x> |
+| -------- | --------- | ------------ | ------- |
+|__PMOD-A__|           |              |         |
+|  JA1     | EMIO      | ENCODER: B   | 960     |
+|  JA2     | EMIO      | ENCODER: SW  | 961     |
+|  JA3     | EMIO      | ENCODER: A   | 962     |
+|  JA4     | EMIO      | STATUS_LED   | 963     |
+| JA10     | EMIO      | OLED: MOSI   |         |
+|  JA9     | EMIO      | OLED: SCLK   |         |
+|  JA8     | EMIO      | OLED: /CS    |         |
+|  JA7     | EMIO      | OLED: D/C    | 964     |
+
+### PMODE is dedicated to the PS-wired MIO pins
+Not used anymore with prototype 1 front panel PCB
+
+| Net      | PS_MIO<x> |
+| -------- | --------- |
+|__PMOD-E__|           |
+|  JE1     | 13        |
+|  JE2     | 10        |
+|  JE3     | 11        |
+|  JE4     | 12        |
+| JE10     | 15        |
+|  JE9     | 14        |
+|  JE8     | 9         |
+|  JE7     | 0         |
+|__Button__|           |
+|  PB1     | 50        |
+|  PB2     | 51        |
+| __LED__  |           |
+|  LD9     |7 (USB rst)|
 
 # remote litex_server
 `./litex_server` contains a minimal version of which can run on the zedboard. It only requires python3 installed. It needs sudo to open `/dev/mem`, so it is dangerous! It then connects to the general purpose AXI master (gp0) at address 0x43c00000. On the PL side, this is connected to an AXI to Wishbone converter to read and write the CSRs.
