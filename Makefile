@@ -43,7 +43,7 @@ clean:
 	rm -rf build
 	rm -f mem.init
 	rm -f mem_?.init
-	# in ./ip, delete EVERYTHING except processing_system7_0.xci (a bit harsh, I know ...)
+	# in ./ip, delete EVERYTHING except gen_ip.tcl (a bit harsh, I know ...)
 	mv ip/gen_ip.tcl .
 	rm -rf ip/* ip/.Xil
 	mv gen_ip.tcl ip

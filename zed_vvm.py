@@ -186,7 +186,28 @@ class HelloLtc(SoCZynq, AutoCSR):
             )
         ]
         self.platform.add_extension(emio_pads)
-        self.add_emio_spi(self.platform.request("EMIO_SPI1").clk)
+        clk_pad = self.platform.request("EMIO_SPI1").clk
+        self.ps7_params.update(
+            o_SPI0_SCLK_O=clk_pad,
+            i_SPI0_SCLK_I=0,
+
+            # o_SPI0_MOSI_O=
+            i_SPI0_MOSI_I=0,
+
+            i_SPI0_MISO_I=0,
+
+            # o_SPI0_SS_O=
+            # o_SPI0_SS1_O=
+            # o_SPI0_SS2_O=
+            i_SPI0_SS_I=1
+
+            # o_SPI0_SCLK_T=
+            # o_SPI0_MOSI_T=
+            # o_SPI0_SS_T=
+        )
+        # self.add_emio_spi()
+
+
 
 
 if __name__ == '__main__':

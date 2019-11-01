@@ -18,6 +18,9 @@ This guide is mostly based on these two:
     cd u-boot-xlnx/
     make zynq_zed_defconfig
     make menuconfig
+    # under ARM architecture --> Zynq/ZynqMP PS init file(s) location
+    # enter: <path to zed_vvm>/ip/ps7_init_gpl.c
+    # This will apply the customized Zynq PS configuration on startup
     make
     export PATH=$PATH:/<..>/u-boot-xlnx/tools/
 
@@ -141,7 +144,7 @@ U-Boot startup script to boot and optionally load a bitfile. Make sure `ethaddr`
 ```bash
 # fpga_addr=0x10000000
 # fpga_load=load mmc 0 ${fpga_addr} zed_wrapper.bit
-# fpga_boot=fpga loadb 0 ${fpga_addr} $filesize
+# fpga_boot=fpga load 0 ${fpga_addr} $filesize
 
 kernel_addr=0x8000
 kernel_load=load mmc 0 ${kernel_addr} uImage
