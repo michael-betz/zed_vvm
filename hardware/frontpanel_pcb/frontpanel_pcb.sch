@@ -276,7 +276,7 @@ F 3 "~" H 7250 5050 50  0001 C CNN
 	1    7250 5050
 	1    0    0    -1  
 $EndComp
-Text Label 3600 2450 0    50   ~ 0
+Text Label 7250 4800 1    50   ~ 0
 JA4
 $Comp
 L power:+3V3 #PWR0121
@@ -403,9 +403,9 @@ F 3 "" H 3400 4450 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	2800 4900 3200 4900
-Text Label 3600 2250 0    50   ~ 0
+Text Label 2900 5050 0    50   ~ 0
 JA1
-Text Label 3600 2650 0    50   ~ 0
+Text Label 2900 5200 0    50   ~ 0
 JA2
 $Comp
 L power:GND #PWR0126
@@ -456,6 +456,8 @@ Wire Wire Line
 	3400 4500 3600 4500
 Wire Wire Line
 	3600 4500 3600 4550
+Text Label 2900 4900 0    50   ~ 0
+JA3
 Text Label 2300 2500 0    50   ~ 0
 JA8
 Wire Wire Line
@@ -614,12 +616,10 @@ Wire Wire Line
 	3500 2650 3800 2650
 Text Label 3600 2850 0    50   ~ 0
 JA7
-Text Label 2900 5050 0    50   ~ 0
+Text Label 3600 2450 0    50   ~ 0
 JA9
-Text Label 2900 5200 0    50   ~ 0
+Text Label 3600 2650 0    50   ~ 0
 JA10
-Text Label 2900 4900 0    50   ~ 0
+Text Label 3600 2250 0    50   ~ 0
 JA8
-NoConn ~ 7250 4650
-NoConn ~ 1400 2600
 $EndSCHEMATC
