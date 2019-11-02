@@ -105,7 +105,7 @@ setup your initial bare-bones debian environment using chroot on the host.
     distro=buster
     export LANG=C
     debootstrap/debootstrap --second-stage
-    vim /etc/apt/sources.list
+    nano /etc/apt/sources.list
 
 deb http://deb.debian.org/debian buster main
 deb http://deb.debian.org/debian-security/ buster/updates main
@@ -113,47 +113,103 @@ deb http://deb.debian.org/debian buster-updates main
 
     apt update
     apt upgrade
-    apt install openssh-server ntp sudo
+    apt install locales sudo ntp openssh-server python3
+
+    # Enable `en_US.UTF-8` and set it as default locale
+    dpkg-reconfigure locales
+
+    # Set root password
     passwd
+
+    # Add a user with sudo permissions
     adduser <user_name>
     visudo
 
 root        ALL=(ALL:ALL) ALL
-<user_name> ALL=(ALL:ALL) ALL
+<user_name> ALL=(ALL:ALL) NOPASSWD: ALL
+# Note: the `NOPASSWD: ` flag means sudo will not ask for a password.
+# convenient for development but dangerous. Don't do this in production!
 
-    vim /etc/network/interfaces
+    # Enable DHCP
+    nano /etc/network/interfaces
 
 allow-hotplug eth0
 iface eth0 inet dhcp
 
-    vim /etc/hostname
+    # Set hostname
+    nano /etc/hostname
 
 <hostname>
 
-    vim /etc/hosts
+    nano /etc/hosts
 
 127.0.0.1   localhost <hostname>
 ::1     localhost ip6-localhost ip6-loopback
 ff02::1     ip6-allnodes
 ff02::2     ip6-allrouters
 
-# Mount fat16 boot partition for kernel updates / uboot config
+# Mount the fat16 boot partition
+# This is useful for remote updates of
+#   * first stage boot-loader (boot.bin)
+#   * u-boot.img
+#   * device tree (.dts)
+#   * kernel image (uImage)
+#   * u-boot config (uEnv.txt)
     mkdir /boot  # only if it does not exist already
-    vim /etc/fstab
+    nano /etc/fstab
 
 /dev/mmcblk0p1 /boot auto defaults 0 0
 
-# Optional Hack to get cross-compiled binaries to run
-    sudo ln -s /lib/arm-linux-gnueabihf/ld-2.24.so /lib/ld-linux.so.3
+# Optional Hacks
+# get cross-compiled binaries to run
+# otherwise I get `bash: ./hw: No such file or directory`
+    sudo ln -s /lib/arm-linux-gnueabihf/ld-2.28.so /lib/ld-linux.so.3
 
-# Exit the chroot shell
+# to prevent sshd taking forever to start after reboot and
+# `random: 7 urandom warning(s) missed due to ratelimiting`
+    sudo apt install haveged
 
-# Create a large ext4 partition on the SD card (see below)
-# in this example it is mounted as /media/rootfs
-    sudo cp -rp rootfs/* /media/rootfs
+# ------------------------
+#  Exit the chroot shell
+# ------------------------
 
-# The zedboard should boot into linux
-# and there should be a login prompt on the UART
+# Archive rootfs in a .tar.gz file
+    cd rootfs
+    sudo tar -cpzvf ../rootfs_buster_clean.tar.gz .
+```
+
+### Installing the rootfs
+Copy all files onto a large ext4 partition on the SD card.
+See below how to partition and format the SD card.
+In this example, the ext4 partition of the SD-card
+is mounted as `/media/rootfs`.
+
+```bash
+    cd /media/rootfs
+    sudo tar -xpzvf <..>/rootfs_buster_clean.tar.gz
+    cd ..
+    sync
+    sudo umount rootfs
+```
+
+Put the SD-card in the zedboard, connect to its UART and
+watch it booting into debian. There should be a login prompt on the UART.
+
+__If you've downloaded `rootfs_buster_clean.tar.gz` change the passwords!!!__
+```bash
+    #user: root, default pw: root
+    sudo passwd root
+
+    #user: zed, default pw: zed
+    passwd
+
+Also remote login over ssh should work now if the network is up.
+
+The last step (if ssh works) is to copy the litex_server directory
+form the host machine onto the zedboard:
+
+```bash
+    scp -r util/litex_server <user_name>@<hostname>:~
 ```
 
 ## Partitioning the SD card
@@ -164,19 +220,19 @@ What we need
 
 Using `fdisk` on a 2 GB SD card, it should look like this:
 ```
-Device     Boot Start     End Sectors  Size Id Type
-/dev/sdd1        2048   67583   65536   32M  e W95 FAT16
-/dev/sdd2       67584 3842047 3774464  1.8G 83 Linux
+Device         Boot Start     End Sectors  Size Id Type
+/dev/mmcblk0p1       2048   67583   65536   32M  e W95 FAT16
+/dev/mmcblk0p2      67584 3842047 3774464  1.8G 83 Linux
 ```
 
 then format the partitions as FAT16 and ext4:
 
 ```bash
-sudo mkfs.vfat -F16 -v /dev/sdd1 -n boot
-sudo mkfs.ext4 -v /dev/sdd2 -L rootfs
+sudo mkfs.vfat -F16 -v /dev/mmcblk0p1 -n boot
+sudo mkfs.ext4 -v /dev/mmcblk0p2 -L rootfs
 ```
 
-__make sure to replace `sdd1` and `sdd2` with the actual partition names__
+__make sure to replace `mmcblk0p1` and `mmcblk0p2` with the actual partition names__
 
 # uEnv.txt
 U-Boot startup script to boot and optionally load a bitfile. Make sure `ethaddr` is unique on network.
@@ -196,4 +252,16 @@ kernel_boot=setenv bootargs console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwai
 # to load bitfile before boot, uncomment the above 3 lies
 # and add this to beginning: run fpga_load; run fpga_boot;
 bootcmd=run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:01:87; run kernel_boot
+```
+
+# Shortcut: install pre-made rootfs
+This assumes `/dev/mmcblk0p2` is the large ext4 partition on the SD card/.
+```bash
+    wget <...>rootfs_buster_clean.tar.gz
+    sudo mkfs.ext4 -v /dev/mmcblk0p2 -L rootfs
+    # Mount the partition (easiest in gui file manger)
+    cd /media/<..>/rootfs
+    sudo tar -xzvf ~/<..>/rootfs_buster_clean.tar.gz
+
+
 ```
