@@ -187,8 +187,8 @@ class HelloLtc(SoCZynq, AutoCSR):
                 "PMODA_SPI",
                 0,
                 Subsignal("cs_n", Pins("pmoda:5")),
-                Subsignal("mosi", Pins("pmoda:7")),
                 Subsignal("clk", Pins("pmoda:6")),
+                Subsignal("mosi", Pins("pmoda:7")),
                 # OLED does not have a MISO pin :(
                 IOStandard("LVCMOS25")
             ), (

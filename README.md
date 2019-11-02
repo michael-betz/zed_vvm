@@ -142,17 +142,17 @@ This Xilinx IP file contains the PS7 block describing the connectivity between P
 
 These are accessible from linux when configured in step 6 above (most are already configured by default) and once the right driver has been loaded, which requires an entry into the linux device tree.
 
-| Net      | PS_MIO<x> | FP PCB       | gpio<x> |
-| -------- | --------- | ------------ | ------- |
-|__PMOD-A__|           |              |         |
-|  JA1     | EMIO      | ENCODER: B   | 960     |
-|  JA2     | EMIO      | ENCODER: SW  | 961     |
-|  JA3     | EMIO      | ENCODER: A   | 962     |
-|  JA4     | EMIO      | STATUS_LED   | 963     |
-| JA10     | EMIO      | OLED: MOSI   |         |
-|  JA9     | EMIO      | OLED: SCLK   |         |
-|  JA8     | EMIO      | OLED: /CS    |         |
-|  JA7     | EMIO      | OLED: D/C    | 964     |
+| Net      |PS_EMIO<x> | FP PCB       |
+| -------- | --------- | ------------ |
+|__PMOD-A__|           |              |
+|  JA1     | 54        | ENCODER: B   |
+|  JA2     | 55        | ENCODER: SW  |
+|  JA3     | 56        | ENCODER: A   |
+|  JA4     | 57        | STATUS_LED   |
+| JA10     |           | OLED: MOSI   |
+|  JA9     |           | OLED: SCLK   |
+|  JA8     |           | OLED: /CS    |
+|  JA7     | 58        | OLED: D/C    |
 
 ### PMODE is dedicated to the PS-wired MIO pins
 Not used anymore with prototype 1 front panel PCB
@@ -173,6 +173,10 @@ Not used anymore with prototype 1 front panel PCB
 |  PB2     | 51        |
 | __LED__  |           |
 |  LD9     |7 (USB rst)|
+
+Note on PS7:
+  * MIO0 - MIO53
+  * EMIO54 - EMIO117
 
 # remote litex_server
 `./litex_server` contains a minimal version of which can run on the zedboard. It only requires python3 installed. It needs sudo to open `/dev/mem`, so it is dangerous! It then connects to the general purpose AXI master (gp0) at address 0x43c00000. On the PL side, this is connected to an AXI to Wishbone converter to read and write the CSRs.

@@ -97,19 +97,19 @@ setup your initial bare-bones debian environment using chroot on the host.
 # debian rootfs (on host)
     sudo apt install debootstrap qemu-user-static
     mkdir rootfs
-    sudo debootstrap --arch=armhf --foreign stretch rootfs
+    sudo debootstrap --arch=armhf --foreign buster rootfs
     sudo cp /usr/bin/qemu-arm-static rootfs/usr/bin/
     sudo chroot rootfs/
 
 # debian rootfs (chroot)
-    distro=stretch
+    distro=buster
     export LANG=C
     debootstrap/debootstrap --second-stage
     vim /etc/apt/sources.list
 
-deb http://deb.debian.org/debian stretch main
-deb http://deb.debian.org/debian-security/ stretch/updates main
-deb http://deb.debian.org/debian stretch-updates main
+deb http://deb.debian.org/debian buster main
+deb http://deb.debian.org/debian-security/ buster/updates main
+deb http://deb.debian.org/debian buster-updates main
 
     apt update
     apt upgrade
