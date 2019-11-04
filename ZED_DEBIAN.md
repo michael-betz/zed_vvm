@@ -91,8 +91,41 @@ Now is a good time to give it a test-run on the Zedboard,
 the linux kernel should boot and panic because of the missing root filesystem
 
 
-## Debian `rootfs`
-setup your initial bare-bones debian environment using chroot on the host.
+## Debian buster rootfs
+
+### Shortcut: install pre-made rootfs
+This assumes `/dev/mmcblk0p2` is the large ext4 partition on the SD card/.
+```bash
+    wget https://github.com/yetifrisstlama/zed_vvm/releases/download/v0.1/rootfs_buster_clean.tar.gz
+    sudo mkfs.ext4 -v /dev/mmcblk0p2 -L rootfs
+    # Mount the partition (easiest in gui file manger)
+    cd /media/<..>/rootfs
+    sudo tar -xzvf ~/<..>/rootfs_buster_clean.tar.gz
+```
+
+Put the SD-card in the zedboard, connect to its UART and
+watch it booting into debian. There should be a login prompt on the UART.
+
+__If you've downloaded `rootfs_buster_clean.tar.gz` change the passwords!!!__
+```bash
+    #user: root, default pw: root
+    sudo passwd root
+
+    #user: zed, default pw: zed
+    passwd
+
+Also remote login over ssh should work now if the network is up.
+
+The last step (if ssh works) is to copy the litex_server directory
+form the host machine onto the zedboard:
+
+```bash
+    scp -r util/litex_server <user_name>@<hostname>:~
+```
+
+### Taking the scenic route ...
+setup your initial bare-bones debian environment using chroot on a debian based linux host PC.
+
 ```bash
 # debian rootfs (on host)
     sudo apt install debootstrap qemu-user-static
@@ -195,26 +228,6 @@ is mounted as `/media/rootfs`.
     sudo umount rootfs
 ```
 
-Put the SD-card in the zedboard, connect to its UART and
-watch it booting into debian. There should be a login prompt on the UART.
-
-__If you've downloaded `rootfs_buster_clean.tar.gz` change the passwords!!!__
-```bash
-    #user: root, default pw: root
-    sudo passwd root
-
-    #user: zed, default pw: zed
-    passwd
-
-Also remote login over ssh should work now if the network is up.
-
-The last step (if ssh works) is to copy the litex_server directory
-form the host machine onto the zedboard:
-
-```bash
-    scp -r util/litex_server <user_name>@<hostname>:~
-```
-
 ## Partitioning the SD card
 What we need
 
@@ -256,16 +269,4 @@ kernel_boot=setenv bootargs console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwai
 
 # to load bitfile before boot, uncomment the above 4 lines
 bootcmd=${bootcmd} run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:01:87; run kernel_boot
-```
-
-# Shortcut: install pre-made rootfs
-This assumes `/dev/mmcblk0p2` is the large ext4 partition on the SD card/.
-```bash
-    wget <...>rootfs_buster_clean.tar.gz
-    sudo mkfs.ext4 -v /dev/mmcblk0p2 -L rootfs
-    # Mount the partition (easiest in gui file manger)
-    cd /media/<..>/rootfs
-    sudo tar -xzvf ~/<..>/rootfs_buster_clean.tar.gz
-
-
 ```
