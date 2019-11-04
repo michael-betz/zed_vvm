@@ -106,13 +106,13 @@ This assumes `/dev/mmcblk0p2` is the large ext4 partition on the SD card/.
 Put the SD-card in the zedboard, connect to its UART and
 watch it booting into debian. There should be a login prompt on the UART.
 
-__If you've downloaded `rootfs_buster_clean.tar.gz` change the passwords!!!__
+__If you've downloaded `rootfs_buster_clean.tar.gz` change the passwords !!!__
+login as each of the two users below and run the `passwd` command.
+
 ```bash
     #user: root, default pw: root
-    sudo passwd root
-
     #user: zed, default pw: zed
-    passwd
+```
 
 Also remote login over ssh should work now if the network is up.
 
