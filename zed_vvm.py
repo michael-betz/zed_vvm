@@ -31,7 +31,7 @@ from dsp.vvm_dsp import VVM_DSP
 
 
 class _CRG(Module):
-    def __init__(self, platform, sys_clk_freq, add_rst=None):
+    def __init__(self, platform, f_sys, f_sample, add_rst=None):
         '''
         The `cursor UP` button resets the sys clock domain!
 
@@ -62,11 +62,11 @@ class _CRG(Module):
         self.specials += AsyncResetSynchronizer(self.cd_sys, rst_sum)
 
         # !!! sys_clk is provided by FCLK_CLK0 from PS7 !!!
-        # pll.create_clkout(self.cd_sys, sys_clk_freq)
+        # pll.create_clkout(self.cd_sys, f_sys)
 
         # Flashy Led blinker for sample_clk
         bl = LedBlinker(
-            125e6 / 8,
+            f_sample / 8,
             Cat([platform.request('user_led', i) for i in range(8)])
         )
         self.submodules.sample_blink = ClockDomainsRenamer("sample")(bl)
@@ -123,6 +123,7 @@ class HelloLtc(SoCZynq, AutoCSR):
         self.submodules.crg = _CRG(
             p,
             f_sys,
+            f_sample,
             ~self.fclk_reset0_n
         )
 
@@ -180,8 +181,9 @@ class HelloLtc(SoCZynq, AutoCSR):
         self.vvm.add_csrs(f_sys)
 
         # -------------------------------------------------------
-        #  Forward some PS EMIO to actual pads in the real world
+        #  OLED display / PS GPIOs
         # -------------------------------------------------------
+        # Forward the internal PS EMIO to actual pads in the real world
         p.add_extension([
             (
                 "PMODA_SPI",
@@ -190,18 +192,47 @@ class HelloLtc(SoCZynq, AutoCSR):
                 Subsignal("clk", Pins("pmoda:6")),
                 Subsignal("mosi", Pins("pmoda:7")),
                 # OLED does not have a MISO pin :(
-                IOStandard("LVCMOS25")
+                IOStandard("LVCMOS33")
             ), (
                 "PMODA_GPIO",
                 0,
                 Subsignal("gpio", Pins("pmoda:0 pmoda:1 pmoda:2 pmoda:3 pmoda:4")),
-                IOStandard("LVCMOS25")
+                IOStandard("LVCMOS33")
             )
         ])
-        # SPI0 from PS through EMIO to PMODA
+
+        # SPI0, SS0 from PS through EMIO to PMODA
         self.add_emio_spi(p.request("PMODA_SPI"), n=0)
-        # GPIO
+
+        # GPIOs to PMODA
         self.add_emio_gpio(p.request("PMODA_GPIO").gpio)
+
+        # Connect internal OLED to SPI0, SS1
+        oled = p.request("zed_oled")
+        oled_cs = Signal()
+        self.ps7_params["o_SPI0_SS1_O"] = oled_cs
+        oled_clk = Signal()
+        oled_mosi = Signal()
+        self.comb += [
+            # OLED power always on
+            oled.vbat_n.eq(0),
+            oled.vdd_n.eq(0),
+            # Fake the missing OLED chip select by gating MOSI and SCLK
+            If(oled_cs,
+                oled_clk.eq(0),
+                oled_mosi.eq(0)
+            ).Else(
+                oled_clk.eq(self.ps7_params["o_SPI0_SCLK_O"]),
+                oled_mosi.eq(self.ps7_params["o_SPI0_MOSI_O"]),
+            ),
+            # Share SPI0 SCLK and MOSI
+            oled.clk.eq(oled_clk),
+            oled.mosi.eq(oled_mosi),
+            # D/C = EMIO62
+            oled.dc.eq(self.ps7_params["o_GPIO_O"][8]),
+            # RESET_N = EMIO63
+            oled.reset_n.eq(self.ps7_params["o_GPIO_O"][9])
+        ]
 
 
 if __name__ == '__main__':
