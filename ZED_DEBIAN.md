@@ -160,6 +160,9 @@ ff02::2     ip6-allrouters
 
 /dev/mmcblk0p1 /boot auto defaults 0 0
 
+# For remote fpga loading
+    mkdir /lib/firmware
+
 # Optional Hacks
 # get cross-compiled binaries to run
 # otherwise I get `bash: ./hw: No such file or directory`
