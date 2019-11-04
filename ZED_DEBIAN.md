@@ -222,13 +222,14 @@ What we need
   * Linux (ext4) over the remaining available space
 
 Using `fdisk` on a 2 GB SD card, it should look like this:
+
 ```
 Device         Boot Start     End Sectors  Size Id Type
 /dev/mmcblk0p1       2048   67583   65536   32M  e W95 FAT16
 /dev/mmcblk0p2      67584 3842047 3774464  1.8G 83 Linux
 ```
 
-then format the partitions as FAT16 and ext4:
+then format the partitions as FAT16 and ext4
 
 ```bash
 sudo mkfs.vfat -F16 -v /dev/mmcblk0p1 -n boot
@@ -243,6 +244,7 @@ U-Boot startup script to boot and optionally load a bitfile. Make sure `ethaddr`
 # fpga_addr=0x10000000
 # fpga_load=load mmc 0 ${fpga_addr} zed_wrapper.bit
 # fpga_boot=fpga load 0 ${fpga_addr} $filesize
+# bootcmd=run fpga_load; run fpga_boot;
 
 kernel_addr=0x8000
 kernel_load=load mmc 0 ${kernel_addr} uImage
@@ -252,9 +254,8 @@ dtr_load=load mmc 0 ${dtr_addr} zynq-zed.dtb
 
 kernel_boot=setenv bootargs console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait; bootm ${kernel_addr} - ${dtr_addr}
 
-# to load bitfile before boot, uncomment the above 3 lies
-# and add this to beginning: run fpga_load; run fpga_boot;
-bootcmd=run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:01:87; run kernel_boot
+# to load bitfile before boot, uncomment the above 4 lines
+bootcmd=${bootcmd} run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:01:87; run kernel_boot
 ```
 
 # Shortcut: install pre-made rootfs
