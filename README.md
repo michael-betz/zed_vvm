@@ -154,25 +154,25 @@ These are accessible from linux when configured in step 6 above (most are alread
 |  JA8     |           | OLED: /CS    |
 |  JA7     | 58        | OLED: D/C    |
 
-### PMODE is dedicated to the PS-wired MIO pins
-Not used anymore with prototype 1 front panel PCB
+### PMOD-E is dedicated to the PS-wired MIO pins
+Will be used with the front panel PCB for the user interface.
 
-| Net      | PS_MIO<x> |
-| -------- | --------- |
-|__PMOD-E__|           |
-|  JE1     | 13        |
-|  JE2     | 10        |
-|  JE3     | 11        |
-|  JE4     | 12        |
-| JE10     | 15        |
-|  JE9     | 14        |
-|  JE8     | 9         |
-|  JE7     | 0         |
-|__Button__|           |
-|  PB1     | 50        |
-|  PB2     | 51        |
-| __LED__  |           |
-|  LD9     |7 (USB rst)|
+| Net      | PS_MIO<x> | PS7, SPI1  |
+| -------- | --------- | ---------- |
+|__PMOD-E__|           |            |
+|  JE1     | 13        | SS[0]      |
+|  JE2     | 10        | MOSI       |
+|  JE3     | 11        | MISO       |
+|  JE4     | 12        | SCLK       |
+| JE10     | 15        | SS[2]      |
+|  JE9     | 14        | SS[1]      |
+|  JE8     | 9         |            |
+|  JE7     | 0         |            |
+|__Button__|           |            |
+|  PB1     | 50        |            |
+|  PB2     | 51        |            |
+| __LED__  |           |            |
+|  LD9     |7 (USB rst)|            |
 
 Note on PS7:
   * MIO0 - MIO53

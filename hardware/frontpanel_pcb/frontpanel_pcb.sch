@@ -276,8 +276,6 @@ F 3 "~" H 7250 5050 50  0001 C CNN
 	1    7250 5050
 	1    0    0    -1  
 $EndComp
-Text Label 7250 4800 1    50   ~ 0
-JA4
 $Comp
 L power:+3V3 #PWR0121
 U 1 1 5DBD5780
@@ -403,10 +401,6 @@ F 3 "" H 3400 4450 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	2800 4900 3200 4900
-Text Label 2900 5050 0    50   ~ 0
-JA1
-Text Label 2900 5200 0    50   ~ 0
-JA2
 $Comp
 L power:GND #PWR0126
 U 1 1 5DBED888
@@ -456,117 +450,104 @@ Wire Wire Line
 	3400 4500 3600 4500
 Wire Wire Line
 	3600 4500 3600 4550
-Text Label 2900 4900 0    50   ~ 0
-JA3
-Text Label 2300 2500 0    50   ~ 0
+Text Label 1000 1950 2    50   ~ 0
 JA8
 Wire Wire Line
-	1700 2500 1400 2500
+	1600 1950 1900 1950
 Wire Wire Line
-	1700 2700 1400 2700
-Text Label 2300 2400 0    50   ~ 0
+	1600 2150 1900 2150
+Text Label 1000 1850 2    50   ~ 0
 JA7
-Text Label 1500 2400 0    50   ~ 0
+Text Label 1800 1850 2    50   ~ 0
 JA1
-Text Label 1500 2500 0    50   ~ 0
+Text Label 1800 1950 2    50   ~ 0
 JA2
-Text Label 2300 2600 0    50   ~ 0
+Text Label 1000 2050 2    50   ~ 0
 JA9
 $Comp
 L power:GND #PWR0101
 U 1 1 5DB87CBC
-P 2200 2900
-F 0 "#PWR0101" H 2200 2650 50  0001 C CNN
-F 1 "GND" V 2205 2772 50  0000 R CNN
-F 2 "" H 2200 2900 50  0001 C CNN
-F 3 "" H 2200 2900 50  0001 C CNN
-	1    2200 2900
-	0    -1   -1   0   
+P 1100 2250
+F 0 "#PWR0101" H 1100 2000 50  0001 C CNN
+F 1 "GND" V 1105 2122 50  0000 R CNN
+F 2 "" H 1100 2250 50  0001 C CNN
+F 3 "" H 1100 2250 50  0001 C CNN
+	1    1100 2250
+	0    1    -1   0   
 $EndComp
 $Comp
 L power:GND #PWR0102
 U 1 1 5DB8833E
-P 1050 2900
-F 0 "#PWR0102" H 1050 2650 50  0001 C CNN
-F 1 "GND" V 1055 2772 50  0000 R CNN
-F 2 "" H 1050 2900 50  0001 C CNN
-F 3 "" H 1050 2900 50  0001 C CNN
-	1    1050 2900
-	0    1    1    0   
+P 2250 2250
+F 0 "#PWR0102" H 2250 2000 50  0001 C CNN
+F 1 "GND" V 2255 2122 50  0000 R CNN
+F 2 "" H 2250 2250 50  0001 C CNN
+F 3 "" H 2250 2250 50  0001 C CNN
+	1    2250 2250
+	0    -1   1    0   
 $EndComp
-Text Label 1500 2700 0    50   ~ 0
+Text Label 1800 2150 2    50   ~ 0
 JA4
 $Comp
 L Connector_Generic:Conn_02x06_Top_Bottom J1
 U 1 1 5DB867E7
-P 1900 2600
-F 0 "J1" H 1950 3017 50  0000 C CNN
-F 1 "Conn_02x06_Top_Bottom" H 1950 2926 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x06_P2.54mm_Horizontal" H 1900 2600 50  0001 C CNN
-F 3 "~" H 1900 2600 50  0001 C CNN
-	1    1900 2600
-	1    0    0    -1  
+P 1400 2050
+F 0 "J1" H 1450 2467 50  0000 C CNN
+F 1 "Conn_02x06_Top_Bottom" H 1450 2376 50  0000 C CNN
+F 2 "pmod-conn_6x2:pmod_pin_array_6x2" H 1400 2050 50  0001 C CNN
+F 3 "~" H 1400 2050 50  0001 C CNN
+	1    1400 2050
+	-1   0    0    -1  
 $EndComp
 Wire Wire Line
-	1700 2600 1400 2600
+	1600 2050 1900 2050
 $Comp
 L power:+3V3 #PWR0104
 U 1 1 5DB8A115
-P 2200 2800
-F 0 "#PWR0104" H 2200 2650 50  0001 C CNN
-F 1 "+3V3" V 2215 2928 50  0000 L CNN
-F 2 "" H 2200 2800 50  0001 C CNN
-F 3 "" H 2200 2800 50  0001 C CNN
-	1    2200 2800
-	0    1    1    0   
+P 1100 2350
+F 0 "#PWR0104" H 1100 2200 50  0001 C CNN
+F 1 "+3V3" V 1115 2478 50  0000 L CNN
+F 2 "" H 1100 2350 50  0001 C CNN
+F 3 "" H 1100 2350 50  0001 C CNN
+	1    1100 2350
+	0    -1   1    0   
 $EndComp
-$Comp
-L power:+3V3 #PWR0103
-U 1 1 5DB89814
-P 1050 2800
-F 0 "#PWR0103" H 1050 2650 50  0001 C CNN
-F 1 "+3V3" V 1065 2928 50  0000 L CNN
-F 2 "" H 1050 2800 50  0001 C CNN
-F 3 "" H 1050 2800 50  0001 C CNN
-	1    1050 2800
-	0    -1   -1   0   
-$EndComp
-Text Label 1500 2600 0    50   ~ 0
+Text Label 1800 2050 2    50   ~ 0
 JA3
 Wire Wire Line
-	1700 2400 1400 2400
+	1600 1850 1900 1850
 Wire Wire Line
-	1050 2800 1100 2800
+	2250 2250 2200 2250
 Wire Wire Line
-	1050 2900 1100 2900
+	2250 2350 2200 2350
 $Comp
 L power:PWR_FLAG #FLG0101
 U 1 1 5DC1EEBC
-P 1100 2800
-F 0 "#FLG0101" H 1100 2875 50  0001 C CNN
-F 1 "PWR_FLAG" H 1100 2973 50  0000 C CNN
-F 2 "" H 1100 2800 50  0001 C CNN
-F 3 "~" H 1100 2800 50  0001 C CNN
-	1    1100 2800
-	1    0    0    -1  
+P 2200 2250
+F 0 "#FLG0101" H 2200 2325 50  0001 C CNN
+F 1 "PWR_FLAG" H 2200 2423 50  0000 C CNN
+F 2 "" H 2200 2250 50  0001 C CNN
+F 3 "~" H 2200 2250 50  0001 C CNN
+	1    2200 2250
+	-1   0    0    -1  
 $EndComp
 $Comp
 L power:PWR_FLAG #FLG0102
 U 1 1 5DC1F507
-P 1100 2900
-F 0 "#FLG0102" H 1100 2975 50  0001 C CNN
-F 1 "PWR_FLAG" H 1100 3073 50  0000 C CNN
-F 2 "" H 1100 2900 50  0001 C CNN
-F 3 "~" H 1100 2900 50  0001 C CNN
-	1    1100 2900
-	-1   0    0    1   
+P 2200 2350
+F 0 "#FLG0102" H 2200 2425 50  0001 C CNN
+F 1 "PWR_FLAG" H 2200 2523 50  0000 C CNN
+F 2 "" H 2200 2350 50  0001 C CNN
+F 3 "~" H 2200 2350 50  0001 C CNN
+	1    2200 2350
+	1    0    0    1   
 $EndComp
-Connection ~ 1100 2800
+Connection ~ 2200 2250
 Wire Wire Line
-	1100 2800 1700 2800
-Connection ~ 1100 2900
+	2200 2250 1600 2250
+Connection ~ 2200 2350
 Wire Wire Line
-	1100 2900 1700 2900
+	2200 2350 1600 2350
 $Comp
 L Device:C C2
 U 1 1 5DB8DE37
@@ -600,28 +581,47 @@ F 3 "" H 4450 4350 50  0001 C CNN
 	1    4450 4350
 	0    -1   -1   0   
 $EndComp
-Text Label 2300 2700 0    50   ~ 0
+Text Label 1000 2150 2    50   ~ 0
 JA10
 Wire Wire Line
-	2200 2400 2500 2400
+	1100 1850 800  1850
 Wire Wire Line
-	2200 2500 2500 2500
+	1100 1950 800  1950
 Wire Wire Line
-	2200 2600 2500 2600
+	1100 2050 800  2050
 Wire Wire Line
-	2200 2700 2500 2700
+	1100 2150 800  2150
 Wire Wire Line
 	3500 2450 3800 2450
 Wire Wire Line
 	3500 2650 3800 2650
-Text Label 3600 2850 0    50   ~ 0
-JA7
-Text Label 3600 2450 0    50   ~ 0
-JA9
-Text Label 3600 2650 0    50   ~ 0
-JA10
+$Comp
+L power:+3V3 #PWR0103
+U 1 1 5DB89814
+P 2250 2350
+F 0 "#PWR0103" H 2250 2200 50  0001 C CNN
+F 1 "+3V3" V 2265 2478 50  0000 L CNN
+F 2 "" H 2250 2350 50  0001 C CNN
+F 3 "" H 2250 2350 50  0001 C CNN
+	1    2250 2350
+	0    1    -1   0   
+$EndComp
 Text Label 3600 2250 0    50   ~ 0
+JA1
+Text Label 3600 2650 0    50   ~ 0
+JA2
+Text Label 2850 5200 0    50   ~ 0
+JA3
+Text Label 3600 2450 0    50   ~ 0
+JA4
+Text Label 3750 2850 2    50   ~ 0
+JA10
+Text Label 7250 4700 3    50   ~ 0
+JA9
+Text Label 2850 5050 0    50   ~ 0
 JA8
-Text Notes 7600 6850 0    50   ~ 0
-FIXME\n  * PMOD Power pins are swapped!!!\n  * Pins don't match PMOD SPI standard
+Text Label 2850 4900 0    50   ~ 0
+JA7
+Text Notes 9400 6250 0    50   ~ 0
+Zedboard MIOs:\n\n| Net      | PS_MIO<x> | PS7, SPI1  |\n\n|__PMOD-E__|           |            |\n|  JE1     | 13        | SS[0]      |\n|  JE2     | 10        | MOSI       |\n|  JE3     | 11        | MISO       |\n|  JE4     | 12        | SCLK       |\n| JE10     | 15        | SS[2]      |\n|  JE9     | 14        | SS[1]      |\n|  JE8     | 9         |            |\n|  JE7     | 0         |            |\n|__Button__|           |            |\n|  PB1     | 50        |            |\n|  PB2     | 51        |            |\n| __LED__  |           |            |\n|  LD9     |7 (USB rst)|            |
 $EndSCHEMATC
