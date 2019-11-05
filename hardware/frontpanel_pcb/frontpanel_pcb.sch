@@ -622,4 +622,6 @@ Text Label 3600 2650 0    50   ~ 0
 JA10
 Text Label 3600 2250 0    50   ~ 0
 JA8
+Text Notes 7600 6850 0    50   ~ 0
+FIXME\n  * PMOD Power pins are swapped!!!\n  * Pins don't match PMOD SPI standard
 $EndSCHEMATC
