@@ -349,8 +349,6 @@ F 3 "~" H 6150 3400 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	5850 3400 6000 3400
-Wire Wire Line
-	6300 3400 6500 3400
 $Comp
 L Device:C C3
 U 1 1 5DC148F5
@@ -364,8 +362,6 @@ F 3 "~" H 6150 3900 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	5850 3900 6000 3900
-Wire Wire Line
-	6300 3900 6500 3900
 $Comp
 L Device:R R2
 U 1 1 5DC16014
@@ -431,4 +427,66 @@ Wire Wire Line
 	4450 3850 4450 3950
 Wire Wire Line
 	4450 3950 4400 3950
+$Comp
+L Connector:Conn_Coaxial J4
+U 1 1 5DC1D44D
+P 6700 2950
+F 0 "J4" H 6800 2925 50  0000 L CNN
+F 1 "Conn_Coaxial" H 6800 2834 50  0000 L CNN
+F 2 "Connector_Coaxial:SMA_Amphenol_132134-11_Vertical" H 6700 2950 50  0001 C CNN
+F 3 " ~" H 6700 2950 50  0001 C CNN
+	1    6700 2950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_Coaxial J5
+U 1 1 5DC1DFEE
+P 6700 4400
+F 0 "J5" H 6800 4375 50  0000 L CNN
+F 1 "Conn_Coaxial" H 6800 4284 50  0000 L CNN
+F 2 "Connector_Coaxial:SMA_Amphenol_132134-11_Vertical" H 6700 4400 50  0001 C CNN
+F 3 " ~" H 6700 4400 50  0001 C CNN
+	1    6700 4400
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR011
+U 1 1 5DC1E881
+P 6700 4600
+F 0 "#PWR011" H 6700 4350 50  0001 C CNN
+F 1 "GND" H 6850 4550 50  0000 C CNN
+F 2 "" H 6700 4600 50  0001 C CNN
+F 3 "" H 6700 4600 50  0001 C CNN
+	1    6700 4600
+	-1   0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR010
+U 1 1 5DC1EF1D
+P 6700 3150
+F 0 "#PWR010" H 6700 2900 50  0001 C CNN
+F 1 "GND" H 6850 3100 50  0000 C CNN
+F 2 "" H 6700 3150 50  0001 C CNN
+F 3 "" H 6700 3150 50  0001 C CNN
+	1    6700 3150
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	6300 3900 6400 3900
+Wire Wire Line
+	6300 3400 6400 3400
+Wire Wire Line
+	6400 3900 6400 4400
+Connection ~ 6400 3900
+Wire Wire Line
+	6400 3900 6500 3900
+Wire Wire Line
+	6400 4400 6500 4400
+Wire Wire Line
+	6400 2950 6400 3400
+Wire Wire Line
+	6400 2950 6500 2950
+Connection ~ 6400 3400
+Wire Wire Line
+	6400 3400 6500 3400
 $EndSCHEMATC

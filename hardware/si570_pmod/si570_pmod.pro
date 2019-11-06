@@ -1,4 +1,4 @@
-update=Mon 04 Nov 2019 09:43:27 PM PST
+update=Tue 05 Nov 2019 11:57:39 AM PST
 version=1
 last_client=kicad
 [general]
@@ -12,6 +12,22 @@ NetIExt=net
 version=1
 LibDir=
 [eeschema/libraries]
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=pdf
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceAjustPassiveValues=0
+LabSize=50
+ERC_WriteFile=0
+ERC_TestSimilarLabels=1
+ERC_CheckUniqueGlobalLabels=1
+ERC_CheckBusDriverConflicts=1
+ERC_CheckBusEntryConflicts=1
+ERC_CheckBusToBusConflicts=1
+ERC_CheckBusToNetConflicts=1
 [pcbnew]
 version=1
 PageLayoutDescrFile=
@@ -35,7 +51,8 @@ MinMicroViaDrill=0.09999999999999999
 MinHoleToHole=0.3
 CopperEdgeClearance=0.01
 TrackWidth1=0.4
-TrackWidth2=1
+TrackWidth2=0.4
+TrackWidth3=1
 ViaDiameter1=1.2
 ViaDrill1=0.6
 dPairWidth1=0.4
@@ -254,19 +271,3 @@ uViaDrill=0.1
 dPairWidth=0.4
 dPairGap=0.4
 dPairViaGap=0.25
-[schematic_editor]
-version=1
-PageLayoutDescrFile=
-PlotDirectoryName=pdf
-SubpartIdSeparator=0
-SubpartFirstId=65
-NetFmtName=
-SpiceAjustPassiveValues=0
-LabSize=50
-ERC_WriteFile=0
-ERC_TestSimilarLabels=1
-ERC_CheckUniqueGlobalLabels=1
-ERC_CheckBusDriverConflicts=1
-ERC_CheckBusEntryConflicts=1
-ERC_CheckBusToBusConflicts=1
-ERC_CheckBusToNetConflicts=1
