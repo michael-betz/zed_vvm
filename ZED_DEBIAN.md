@@ -16,7 +16,10 @@ This guide is mostly based on these two:
 # compile U-Boot
     git clone https://github.com/Xilinx/u-boot-xlnx.git --recursive
     cd u-boot-xlnx/
+# for zedboard
     make zynq_zed_defconfig
+# for microzed
+    make zynq_microzed_defconfig
     make menuconfig
 
 # for `bootcmd value` enther this:
