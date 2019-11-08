@@ -18,9 +18,14 @@ This guide is mostly based on these two:
     cd u-boot-xlnx/
     make zynq_zed_defconfig
     make menuconfig
-    # under ARM architecture --> Zynq/ZynqMP PS init file(s) location
-    # enter: <path to zed_vvm>/ip/ps7_init_gpl.c
-    # This will apply the customized Zynq PS configuration on startup
+
+# for `bootcmd value` enther this:
+# fatload mmc 0 0x10000 uEnv.txt;env import -t 0x10000 $filesize;boot
+
+# under ARM architecture --> Zynq/ZynqMP PS init file(s) location
+# enter: <path to zed_vvm>/ip/ps7_init_gpl.c
+# This will apply the customized Zynq PS configuration on startup
+
     make
     export PATH=$PATH:/<..>/u-boot-xlnx/tools/
 
@@ -41,36 +46,6 @@ This guide is mostly based on these two:
     cd linux-xlnx/
     make xilinx_zynq_defconfig
     make menuconfig
-```
-We need SPI support to use the OLED from within linux.
-
-Enable `Device Drivers --> SPI support --> User mode SPI device driver support`
-
-Then add the following to the device tree at
-`arch/arm/boot/dts/zynq-zed.dts`
-
-```
-&spi0 {
-  is-decoded-cs = <0>;
-  num-cs = <1>;
-  status = "okay";
-  spidev@0x00 {
-    compatible = "spidev";
-    spi-max-frequency = <5000000>;
-    reg = <0>;
-  };
-};
-
-&spi1 {
-  is-decoded-cs = <0>;
-  num-cs = <1>;
-  status = "okay";
-  spidev@0x01 {
-    compatible = "spidev";
-    spi-max-frequency = <5000000>;
-    reg = <0>;
-  };
-};
 ```
 
 Then build the kernel ...
@@ -254,6 +229,7 @@ __make sure to replace `mmcblk0p1` and `mmcblk0p2` with the actual partition nam
 # uEnv.txt
 U-Boot startup script to boot and optionally load a bitfile. Make sure `ethaddr` is unique on network.
 ```bash
+bootcmd=
 # fpga_addr=0x10000000
 # fpga_load=load mmc 0 ${fpga_addr} zed_wrapper.bit
 # fpga_boot=fpga load 0 ${fpga_addr} $filesize
@@ -268,5 +244,6 @@ dtr_load=load mmc 0 ${dtr_addr} zynq-zed.dtb
 kernel_boot=setenv bootargs console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait; bootm ${kernel_addr} - ${dtr_addr}
 
 # to load bitfile before boot, uncomment the above 4 lines
+# make sure to change ethaddr to a random value
 bootcmd=${bootcmd} run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:01:87; run kernel_boot
 ```
