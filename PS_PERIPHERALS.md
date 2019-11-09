@@ -1,8 +1,8 @@
 
 # PS7 peripherals configuration
-The Zynq Processing System (PS) is the CPU part of the FPGA. It has several peripherals like SPI, CAN, I2C, UART, GPIO, etc. These are connected to dedicated IO pins on the chip (MIO) or to the FPGA Programmable Logic (PL) fabric (EMIO). Configuration happens in Vivado through the `ZYNQ7 Processing system` IP block.
+The Zynq Processing System (PS) is the CPU part of the FPGA. It has several peripherals like SPI, CAN, I2C, UART, GPIO, etc. These are connected to dedicated IO pins on the chip (MIO) or to the FPGA Programmable Logic (EMIO), from where they can be routed to any other IO pin of the chip through the FPGA fabric. Configuration happens in Vivado through the `ZYNQ7 Processing system` IP block.
 
-If the PS7 block is not included in the PL design, the CPU will freeze as soon as the the resulting bitfile is loaded on the zedboard. The PL part of the design will work as intended, even without the PS7 block.
+If the PS7 block is not included in the PL design, the CPU will freeze as soon as the the resulting bitfile is loaded. The PL part of the design will work as intended, even without the PS7 block.
 
 Configuration of the PS7 block is stored in the Xilinx IP file `ip/processing_system7_0.xci`, which is required by the Litex `SoCZynq()` class.
 
@@ -20,8 +20,9 @@ To manually generate this file, follow these steps:
        * PMOD JE1 is exclusively connected to MIOs (see table below). This might be useful to drive a small graphical LCD from linux trough an SPI interface
   7. Save and close, this generates the file `<name>.srcs/sources_1/ip/processing_system7_0/processing_system7_0.xci` in the project directory, which needs to be copied to `./ip`
 
-  __All these steps have now been automated by `ip/gen_ip.tcl`.__
-  If you want to change the PS configuration, change only this file.
+__All these steps have now been automated by `ip/gen_ip.tcl`.__
+
+This .tcl script is automatically run by the Makefile. If you want to change the PS configuration, change only this file.
 
 ## Peripherals connected to PS
 
