@@ -6,6 +6,7 @@ This guide is mostly based on these two:
   * https://blog.n621.de/2016/05/running-linux-on-a-zynq-without-vivado-madness/
 
 ## Bootloader
+The stock version of U-Boot works perfectly fine for Zynq7000. No need for the Xilinx version.
 ```bash
 # Cross compiler
     sudo apt install libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses-dev
@@ -14,14 +15,15 @@ This guide is mostly based on these two:
     export ARCH=arm
 
 # compile U-Boot
-    git clone https://github.com/Xilinx/u-boot-xlnx.git --recursive
-    cd u-boot-xlnx/
+    git clone https://github.com/u-boot/u-boot.git
+    cd u-boot/
     make zynq_zed_defconfig         # for zedboard
-    make zynq_microzed_defconfig    # for microzed
+    # make zynq_microzed_defconfig  # for microzed
 
     make menuconfig
 
-# for `bootcmd value` enther this:
+# We want u-boot to read uEnv.txt from SD-card to setup its environment.
+# ... for `bootcmd value` enter the line below:
 # fatload mmc 0 0x10000 uEnv.txt;env import -t 0x10000 $filesize;boot
 
 # Optional, apply a customized Zynq PS configuration on startup:
@@ -37,12 +39,14 @@ This guide is mostly based on these two:
 # in this example it's mounted as /media/sdcard
 
 # Copy first stage bootloader and u-boot image to SD card
-    cp u-boot-xlnx/spl/boot.bin /media/sdcard
-    cp u-boot-xlnx/u-boot.img /media/sdcard
+    cp u-boot/spl/boot.bin /media/sdcard
+    cp u-boot/u-boot.img /media/sdcard
 
 # Now try it on the Zedboard, you should see u-boot starting on the UART
 ```
 ## Linux kernel
+The stock kernel seems to work fine except for one thing: `/sys/class/fpga_manager/fpga0` does not seem to show up for some reason. This is needed to configure the FPGA-PL. So for now, use the xilinx version.
+
 ```bash
 # compile Kernel
     git clone https://github.com/Xilinx/linux-xlnx.git --recursive
@@ -59,6 +63,7 @@ Then build the kernel ...
 ```
 
 copy kernel image and device-tree to SD card
+
 ```bash
     cp arch/arm/boot/uImage /media/sdcard/
 # for zedboard
@@ -66,6 +71,7 @@ copy kernel image and device-tree to SD card
 # for microzed
     cp arch/arm/boot/dts/zynq-microzed.dtb /media/sdcard
 ```
+
 to configure u-boot, create a `uEnv.txt` as shown below and copy it to SD card.
 
 Now is a good time to give it a test-run on the Zedboard,
