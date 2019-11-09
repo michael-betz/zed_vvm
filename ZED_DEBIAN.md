@@ -62,9 +62,9 @@ copy kernel image and device-tree to SD card
 ```bash
     cp arch/arm/boot/uImage /media/sdcard/
 # for zedboard
-    cp arch/arm/dts/zynq-zed.dtb /media/sdcard
+    cp arch/arm/boot/dts/zynq-zed.dtb /media/sdcard
 # for microzed
-    cp arch/arm/dts/zynq-microzed.dtb /media/sdcard
+    cp arch/arm/boot/dts/zynq-microzed.dtb /media/sdcard
 ```
 to configure u-boot, create a `uEnv.txt` as shown below and copy it to SD card.
 
