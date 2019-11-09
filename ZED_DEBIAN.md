@@ -195,19 +195,7 @@ ff02::2     ip6-allrouters
     sudo tar -cpzvf ../rootfs_buster_clean.tar.gz .
 ```
 
-### Installing the rootfs
-Copy all files onto a large ext4 partition on the SD card.
-See below how to partition and format the SD card.
-In this example, the ext4 partition of the SD-card
-is mounted as `/media/rootfs`.
-
-```bash
-    cd /media/rootfs
-    sudo tar -xpzvf <..>/rootfs_buster_clean.tar.gz
-    cd ..
-    sync
-    sudo umount rootfs
-```
+Un-tar the rootfs onto a large ext4 partition on the SD card as shown [here](https://github.com/yetifrisstlama/zed_vvm/blob/master/ZED_DEBIAN.md#shortcut-install-pre-made-rootfs).
 
 ## Partitioning the SD card
 What we need
