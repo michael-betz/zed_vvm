@@ -9,6 +9,7 @@ from sys import argv
 from migen import *
 from migen.genlib.misc import timeline
 from migen.genlib.cdc import BlindTransfer
+from litex.soc.cores.bitbang import I2CMaster
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage, CSRStatus
 from litex.soc.cores.freqmeter import FreqMeter
 from os.path import join, dirname, abspath
@@ -187,7 +188,7 @@ class VVM_DSP(Module, AutoCSR):
             ]
             self.submodules += iir
 
-    def add_csrs(self, f_sys):
+    def add_csrs(self, f_sys, p):
         ''' Wire up the config-registers to litex CSRs '''
         # sys clock domain
         n_ch = len(self.adcs)
@@ -205,12 +206,19 @@ class VVM_DSP(Module, AutoCSR):
             n_ch * (self.W_MAG + self.W_PHASE)
         )
 
+        # DDC and IIR controls
         self.ddc_ftw = CSRStorage(len(self.dds.ftw), reset=0x40059350)
         self.ddc_deci = CSRStorage(len(self.cic_period), reset=48)
         self.ddc_shift = CSRStorage(len(self.cic_shift), reset=0)
         self.iir = CSRStorage(len(self.iir_shift))
 
+        # Connect Si570 (sample clk) to I2C bitbanger
+        si570_pads = p.request("SI570_I2C")
+        self.submodules.si570_i2c = I2CMaster(si570_pads)
+        self.si570_oe = CSRStorage(1, reset=1)
+
         self.comb += [
+            si570_pads.oe.eq(self.si570_oe.storage),
             self.dds.ftw.eq(self.ddc_ftw.storage),
             self.cic_period.eq(self.ddc_deci.storage),
             self.cic_shift.eq(self.ddc_shift.storage),

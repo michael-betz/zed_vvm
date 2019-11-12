@@ -106,9 +106,33 @@ class HelloLtc(SoCZynq, AutoCSR):
             add_reset=False,
             **kwargs
         )
-        p = self.platform
         for c in HelloLtc.csr_peripherals:
             self.add_csr(c)
+
+        p = self.platform
+        p.add_extension([
+            (
+                "PMODA_SPI",
+                0,
+                Subsignal("cs_n", Pins("pmoda:5")),
+                Subsignal("clk", Pins("pmoda:6")),
+                Subsignal("mosi", Pins("pmoda:7")),
+                # OLED does not have a MISO pin :(
+                IOStandard("LVCMOS33")
+            ), (
+                "PMODA_GPIO",
+                0,
+                Subsignal("gpio", Pins("pmoda:0 pmoda:1 pmoda:2 pmoda:3 pmoda:4")),
+                IOStandard("LVCMOS33")
+            ), (
+                "SI570_I2C",
+                0,
+                Subsignal("oe", Pins("pmodb:5")),
+                Subsignal("scl", Pins("pmodb:6")),
+                Subsignal("sda", Pins("pmodb:7")),
+                IOStandard("LVCMOS33")
+            )
+        ])
 
         # FPGA identification
         self.submodules.dna = dna.DNA()
@@ -178,29 +202,12 @@ class HelloLtc(SoCZynq, AutoCSR):
         # ----------------------------
         VVM_DSP.add_sources(p)
         self.submodules.vvm = VVM_DSP(self.lvds.sample_outs)
-        self.vvm.add_csrs(f_sys)
+        self.vvm.add_csrs(f_sys, p)
 
         # -------------------------------------------------------
         #  OLED display / PS GPIOs
         # -------------------------------------------------------
         # Forward the internal PS EMIO to actual pads in the real world
-        p.add_extension([
-            (
-                "PMODA_SPI",
-                0,
-                Subsignal("cs_n", Pins("pmoda:5")),
-                Subsignal("clk", Pins("pmoda:6")),
-                Subsignal("mosi", Pins("pmoda:7")),
-                # OLED does not have a MISO pin :(
-                IOStandard("LVCMOS33")
-            ), (
-                "PMODA_GPIO",
-                0,
-                Subsignal("gpio", Pins("pmoda:0 pmoda:1 pmoda:2 pmoda:3 pmoda:4")),
-                IOStandard("LVCMOS33")
-            )
-        ])
-
         # SPI0, SS0 from PS through EMIO to PMODA
         self.add_emio_spi(p.request("PMODA_SPI"), n=0)
 

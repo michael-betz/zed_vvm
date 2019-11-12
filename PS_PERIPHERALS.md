@@ -28,9 +28,9 @@ This .tcl script is automatically run by the Makefile. If you want to change the
 
 These are accessible from linux when configured in step 6 above (most are already configured by default) and once the right driver has been loaded, which requires an entry into the linux device tree.
 
-| Net      |PS_EMIO<x> | FP PCB       |
+| Net      |PS_EMIO<x> |              |
 | -------- | --------- | ------------ |
-|__PMOD-A__|           |              |
+|__PMOD-A__|           | __FP PCB__   |
 |  JA1     | 54        | ENCODER: B   |
 |  JA2     | 55        | ENCODER: SW  |
 |  JA3     | 56        | ENCODER: A   |
@@ -39,6 +39,15 @@ These are accessible from linux when configured in step 6 above (most are alread
 |  JA9     |           | OLED: SCLK   |
 |  JA8     |           | OLED: /CS    |
 |  JA7     | 58        | OLED: D/C    |
+|__PMOD-B__|           |__Si570 PCB__ |
+|  JB1     |           |              |
+|  JB2     |           |              |
+|  JB3     |           |              |
+|  JB4     |           |              |
+| JB10     |           | SDA          |
+|  JB9     |           | SCL          |
+|  JB8     |           | OE           |
+|  JB7     |           | NC           |
 
 ### PMOD-E is dedicated to the PS-wired MIO pins
 Will be used with the front panel PCB for the user interface.
