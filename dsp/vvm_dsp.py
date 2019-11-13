@@ -9,7 +9,8 @@ from sys import argv
 from migen import *
 from migen.genlib.misc import timeline
 from migen.genlib.cdc import BlindTransfer
-from litex.soc.cores.bitbang import I2CMaster
+# from litex.soc.cores.bitbang import I2CMaster
+from litex.soc.cores.i2c import I2CMaster
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage, CSRStatus
 from litex.soc.cores.freqmeter import FreqMeter
 from os.path import join, dirname, abspath
@@ -212,9 +213,13 @@ class VVM_DSP(Module, AutoCSR):
         self.ddc_shift = CSRStorage(len(self.cic_shift), reset=0)
         self.iir = CSRStorage(len(self.iir_shift))
 
-        # Connect Si570 (sample clk) to I2C bitbanger
+        # Connect Si570 (sample clk) to I2C master
         si570_pads = p.request("SI570_I2C")
-        self.submodules.si570_i2c = I2CMaster(si570_pads)
+        # self.submodules.si570_i2c = I2CMaster(si570_pads)
+        self.submodules.si570_i2c = I2CMaster(f_sys)
+        self.si570_i2c.add_pads(si570_pads)
+        self.si570_i2c.add_csr()
+
         self.si570_oe = CSRStorage(1, reset=1)
 
         self.comb += [
