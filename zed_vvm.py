@@ -21,6 +21,7 @@ from litex.soc.integration.builder import *
 from migen.genlib.cdc import MultiReg
 from migen.genlib.resetsync import AsyncResetSynchronizer
 from litex.soc.cores import dna, spi_old
+from litex.soc.cores.bitbang import I2CMaster
 from litex.boards.platforms import zedboard
 from litex.soc.cores.clock import S7MMCM, S7IDELAYCTRL
 from litex.soc.interconnect import wishbone
@@ -72,8 +73,31 @@ class _CRG(Module):
         self.submodules.sample_blink = ClockDomainsRenamer("sample")(bl)
 
 
+class Si570(Module, AutoCSR):
+    def __init__(self, p, soc):
+        # -------------------------------------------------------
+        #  Si570 Pmod
+        # -------------------------------------------------------
+        # Connect Si570 (sample clk) to I2C master
+        p.add_extension([(
+            "SI570_I2C",
+            0,
+            Subsignal("oe", Pins("pmodb:5")),
+            Subsignal("scl", Pins("pmodb:6")),
+            Subsignal("sda", Pins("pmodb:7")),
+            IOStandard("LVCMOS33")
+        )])
+        si570_pads = p.request("SI570_I2C")
+
+        # soc.add_emio_i2c(si570_pads, 0)  # PS I2C0
+        self.submodules.i2c = I2CMaster(si570_pads)  # Litex bit-bang
+
+        self.si570_oe = CSRStorage(1, reset=1, name="si570_oe")
+        self.comb += si570_pads.oe.eq(self.si570_oe.storage)
+
+
 # create our soc (no soft-cpu, wishbone <--> AXI <--> Zynq PS)
-class HelloLtc(SoCZynq, AutoCSR):
+class ZedVvm(SoCZynq):
     csr_peripherals = [
         "dna",
         "spi",
@@ -81,7 +105,8 @@ class HelloLtc(SoCZynq, AutoCSR):
         "acq",
         "analyzer",
         "f_clk100",
-        "vvm"
+        "vvm",
+        "si570"
     ]
 
     def __init__(self, f_sys, f_sample, **kwargs):
@@ -106,7 +131,7 @@ class HelloLtc(SoCZynq, AutoCSR):
             add_reset=False,
             **kwargs
         )
-        for c in HelloLtc.csr_peripherals:
+        for c in ZedVvm.csr_peripherals:
             self.add_csr(c)
 
         p = self.platform
@@ -122,14 +147,10 @@ class HelloLtc(SoCZynq, AutoCSR):
             ), (
                 "PMODA_GPIO",
                 0,
-                Subsignal("gpio", Pins("pmoda:0 pmoda:1 pmoda:2 pmoda:3 pmoda:4")),
-                IOStandard("LVCMOS33")
-            ), (
-                "SI570_I2C",
-                0,
-                Subsignal("oe", Pins("pmodb:5")),
-                Subsignal("scl", Pins("pmodb:6")),
-                Subsignal("sda", Pins("pmodb:7")),
+                Subsignal(
+                    "gpio",
+                    Pins("pmoda:0 pmoda:1 pmoda:2 pmoda:3 pmoda:4")
+                ),
                 IOStandard("LVCMOS33")
             )
         ])
@@ -142,7 +163,7 @@ class HelloLtc(SoCZynq, AutoCSR):
         self.add_axi_to_wishbone(self.axi_gp0, base_address=0x40000000)
 
         # ----------------------------
-        # FPGA clock and reset generation
+        #  FPGA clock and reset generation
         # ----------------------------
         self.submodules.crg = _CRG(
             p,
@@ -205,7 +226,7 @@ class HelloLtc(SoCZynq, AutoCSR):
         self.vvm.add_csrs(f_sys, p)
 
         # -------------------------------------------------------
-        #  OLED display / PS GPIOs
+        #  OLED display / PS GPIOs / Si570
         # -------------------------------------------------------
         # Forward the internal PS EMIO to actual pads in the real world
         # SPI0, SS0 from PS through EMIO to PMODA
@@ -214,36 +235,15 @@ class HelloLtc(SoCZynq, AutoCSR):
         # GPIOs to PMODA
         self.add_emio_gpio(p.request("PMODA_GPIO").gpio)
 
-        # Connect internal OLED to SPI0, SS1
-        oled = p.request("zed_oled")
-        oled_cs = Signal()
-        self.ps7_params["o_SPI0_SS1_O"] = oled_cs
-        oled_clk = Signal()
-        oled_mosi = Signal()
-        self.comb += [
-            # OLED power always on
-            oled.vbat_n.eq(0),
-            oled.vdd_n.eq(0),
-            # Fake the missing OLED chip select by gating MOSI and SCLK
-            If(oled_cs,
-                oled_clk.eq(0),
-                oled_mosi.eq(0)
-            ).Else(
-                oled_clk.eq(self.ps7_params["o_SPI0_SCLK_O"]),
-                oled_mosi.eq(self.ps7_params["o_SPI0_MOSI_O"]),
-            ),
-            # Share SPI0 SCLK and MOSI
-            oled.clk.eq(oled_clk),
-            oled.mosi.eq(oled_mosi),
-            # D/C = EMIO62
-            oled.dc.eq(self.ps7_params["o_GPIO_O"][8]),
-            # RESET_N = EMIO63
-            oled.reset_n.eq(self.ps7_params["o_GPIO_O"][9])
-        ]
+        # On board tiny OLED display
+        p.add_oled(self, SPI_N=0, SS_N=1, DC_GPIO=8, RST_GPIO=9)
+
+        # Si570 I2C module
+        self.submodules.si570 = Si570(p, self)
 
 
 if __name__ == '__main__':
-    soc = HelloLtc(
+    soc = ZedVvm(
         platform=zedboard.Platform(),
         # Needs to match Vivado IP,
         # Clock Configuration --> PL Fabric Clocks --> FCLK_CLK0
