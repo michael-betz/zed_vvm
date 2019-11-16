@@ -107,8 +107,11 @@ The last step (if ssh works) is to copy the litex_server directory
 form the host machine onto the zedboard:
 
 ```bash
-    scp -r util/litex_server <user_name>@<hostname>:~
+    scp -r util/linux/litex_server <user_name>@<hostname>:~
 ```
+
+Alternatively, just install my litex-fork on the zedboard, which includes
+litex_server with mmap access support.
 
 ### Taking the scenic route ...
 setup your initial bare-bones debian environment using chroot on a debian based linux host PC.

@@ -129,7 +129,7 @@ copy the resulting `<bitfile>.bit.bin` on the zedboard, then
 `make upload` automates all these steps.
 
 # remote litex_server
-`./litex_server` contains a minimal version of which can run on the zedboard. It only requires python3 installed. It needs sudo to open `/dev/mem`, so it is dangerous! It then connects to the general purpose AXI master (gp0) at address 0x43c00000. On the PL side, this is connected to an AXI to Wishbone converter to read and write the CSRs.
+`./util/linux/litex_server` contains a minimal version of which can run on the zedboard. It only requires python3 installed. It needs sudo to open `/dev/mem`, so it is dangerous! It then connects to the general purpose AXI master (gp0) at address 0x43c00000. On the PL side, this is connected to an AXI to Wishbone converter to read and write the CSRs.
 
 ## GP0 address range
 The Zynq general purpose AXI master interfaces are mapped to these addresses in memory
