@@ -52,26 +52,32 @@ These are accessible from linux when configured in step 6 above (most are alread
 ### PMOD-E is dedicated to the PS-wired MIO pins
 Will be used with the front panel PCB for the user interface.
 
-| Net      | PS_MIO<x> | PS7, SPI1  |
-| -------- | --------- | ---------- |
-|__PMOD-E__|           |            |
-|  JE1     | 13        | SS[0]      |
-|  JE2     | 10        | MOSI       |
-|  JE3     | 11        | MISO       |
-|  JE4     | 12        | SCLK       |
-| JE10     | 15        | SS[2]      |
-|  JE9     | 14        | SS[1]      |
-|  JE8     | 9         |            |
-|  JE7     | 0         |            |
-|__Button__|           |            |
-|  PB1     | 50        |            |
-|  PB2     | 51        |            |
-| __LED__  |           |            |
-|  LD9     |7 (USB rst)|            |
+| Net      | PS_MIO<x> | PS7, SPI1  |              |
+| -------- | --------- | ---------- | ------------ |
+|__PMOD-E__|           |            | __FP PCB__   |
+|  JE1     | 13        | SS[0]      | OLED: /CS    |
+|  JE2     | 10        | MOSI       | OLED: MOSI   |
+|  JE3     | 11        | MISO       | ENCODER: SW  |
+|  JE4     | 12        | SCLK       | OLED: SCLK   |
+| JE10     | 15        | SS[2]      | OLED: D/C    |
+|  JE9     | 14        | SS[1]      | STATUS_LED   |
+|  JE8     | 9         |            | ENCODER: B   |
+|  JE7     | 0         |            | ENCODER: A   |
+|__Button__|           |            |              |
+|  PB1     | 50        |            |              |
+|  PB2     | 51        |            |              |
+| __LED__  |           |            |              |
+|  LD9     |7 (USB rst)|            |              |
 
 Note on PS7:
   * MIO0 - MIO53
   * EMIO54 - EMIO117
+
+Change MIO11 from MISO to GPIO with pullup in ps7_init_gpl.c
+```
+    from: EMIT_MASKWRITE(0XF800072C, 0x00003FFFU ,0x000007A0U),
+    to:   EMIT_MASKWRITE(0XF800072C, 0x00003FFFU ,0x00001600U)
+```
 
 # SPI interface
 We need SPI support to use the OLED from within linux.

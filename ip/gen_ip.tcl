@@ -21,6 +21,11 @@ set_property -dict [list \
 	CONFIG.PCW_SPI1_SPI1_IO {MIO 10 .. 15} \
 	CONFIG.PCW_GPIO_EMIO_GPIO_ENABLE {1} \
 	CONFIG.PCW_GPIO_EMIO_GPIO_IO {32} \
+    CONFIG.PCW_MIO_10_SLEW {fast} \
+    CONFIG.PCW_MIO_11_SLEW {fast} \
+    CONFIG.PCW_MIO_12_SLEW {fast} \
+    CONFIG.PCW_MIO_13_PULLUP {enabled} \
+    CONFIG.PCW_MIO_13_SLEW {fast} \
 ] [get_ips processing_system7_0]
 
 quit
