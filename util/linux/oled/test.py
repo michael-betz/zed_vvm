@@ -2,10 +2,11 @@
 from os import putenv
 from socket import gethostname
 from datetime import datetime
-from random import randint
+from random import randint, choice
 import pygame as pg
 from pygame.draw import ellipse, rect
-from evdev import InputDevice
+from font import PyGameHieroFont
+
 
 W = (0xFF, 0xFF, 0xFF)
 B = (0, 0, 0)
@@ -90,41 +91,27 @@ def rCol():
 
 def getTxt(txt, H=None):
     ''' return a surface with some text on it '''
-    if H is None:
-        H = randint(16, 60)
-    return pg.font.Font(None, H).render(txt, False, rCol())
+    # if H is None:
+    #     f = fnt_body
+    # else:
+    f = choice(fnts)
+    return f.render(txt, rCol())
 
 
 def getEncoderDelta():
     ''' returns encoder steps and button pushes '''
     rot = 0
     btn = False
-    try:
-        for evt in dev_rot.read():
-            if evt.type == 2:
-                rot += evt.value
-    except BlockingIOError:
-        pass
-    try:
-        for evt in dev_push.read():
-            btn = evt.value
-    except BlockingIOError:
-        pass
     return rot, btn
 
 
-putenv('SDL_NOMOUSE', '')
-putenv('SDL_FBDEV', '/dev/fb1')
-putenv('SDL_FBACCEL', '0')
-putenv('SDL_VIDEODRIVER', 'fbcon')
-
-dev_rot = InputDevice('/dev/input/event0')
-dev_push = InputDevice('/dev/input/event1')
+fntNames = ("CabinSketch", "Ranchers", "Engagement", "Electrolize")
+fnts = [PyGameHieroFont("fonts/{}/{}.fnt".format(s, s)) for s in fntNames]
 
 pg.display.init()
 pg.font.init()
 pg.mouse.set_visible(False)
-d = pg.display.set_mode()  # returns the display surface
+d = pg.display.set_mode((256, 64))  # returns the display surface
 
 draw = Draw(d)
 
