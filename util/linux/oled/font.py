@@ -69,7 +69,7 @@ class PyGameHieroFont(HieroFont):
             True
         )
 
-    def render(self, text, color=(255, 255, 255), background=None):
+    def render(self, text, antialias=True, color=(255, 255, 255), background=None):
         if not text:
             return None
 

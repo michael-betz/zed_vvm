@@ -92,10 +92,10 @@ def rCol():
 def getTxt(txt, H=None):
     ''' return a surface with some text on it '''
     # if H is None:
-    #     f = fnt_body
-    # else:
+    #     H = randint(16, 60)
+    # return pg.font.Font(None, H).render(txt, True, rCol())
     f = choice(fnts)
-    return f.render(txt, rCol())
+    return f.render(txt, True, rCol())
 
 
 def getEncoderDelta():
