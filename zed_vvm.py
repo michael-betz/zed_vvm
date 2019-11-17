@@ -20,8 +20,8 @@ from litex.soc.integration.soc_zynq import *
 from litex.soc.integration.builder import *
 from migen.genlib.cdc import MultiReg
 from migen.genlib.resetsync import AsyncResetSynchronizer
-from litex.soc.cores import dna, spi_old
-from litex.soc.cores.bitbang import I2CMaster
+from litex.soc.cores import dna
+from litex.soc.cores.bitbang import I2CMaster, SPIMaster
 from litex.boards.platforms import zedboard
 from litex.soc.cores.clock import S7MMCM, S7IDELAYCTRL
 from litex.soc.interconnect import wishbone
@@ -188,7 +188,7 @@ class ZedVvm(SoCZynq):
         #  SPI bit-bang master
         # ----------------------------
         spi_pads = p.request("LTC_SPI")
-        self.submodules.spi = spi_old.SPIMaster(spi_pads)
+        self.submodules.spi = SPIMaster(spi_pads)
 
         # ----------------------------
         #  4 x Acquisition memory for ADC data

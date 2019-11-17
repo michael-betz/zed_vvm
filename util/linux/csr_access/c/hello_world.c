@@ -54,6 +54,11 @@ int main(int argc, char *argv[])
 
 	// i2c_dump(0x55, 0, 32);
 
+	for (int i=0; i<32; i++) {
+		i2c_dump(0x55, 0x0D, 6);
+		printf("\n");
+	}
+
 	cleanup();
 	printf("Done!\n");
 	return 0;
