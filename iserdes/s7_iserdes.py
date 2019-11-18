@@ -119,6 +119,9 @@ class S7_iserdes(Module):
         # -------------------------------------------------
         #  Reset sequence
         # -------------------------------------------------
+        # Sample clock domain will reset on sys clock reset.
+        # ... which will also trigger the init sequence below
+        #
         # synchronize BUFR dividers on sys_clk reset
         # a symptom of screwing this up is:
         #   * different number of bitslips are required

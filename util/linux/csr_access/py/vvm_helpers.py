@@ -101,6 +101,7 @@ def autoIdelay(c):
 def initLTC(c, check_align=False):
     print("Resetting LTC")
     ltc_spi = LTC_SPI(c, "spi_r", "spi_w")
+    # XXX This seems to glitch the DCO clock!
     ltc_spi.set_ltc_reg(0, 0x80)   # reset the chip
     ltc_spi.setTp(1)
     autoBitslip(c)
@@ -113,8 +114,8 @@ def initLTC(c, check_align=False):
             ltc_spi.setTp(tp)
             tp_read = c.read_reg('lvds_data_peek0')
             print("{:014b} {:014b}".format(tp, tp_read))
-            # if tp != tp_read:
-                # raise RuntimeError("LVDS alignment error")
+            if tp != tp_read:
+                raise RuntimeError("LVDS alignment error")
 
     ltc_spi.set_ltc_reg(3, 0)  # Test pattern off
     ltc_spi.set_ltc_reg(1, (1 << 5))  # Randomizer off, twos complement output

@@ -130,7 +130,7 @@ class I2C:
 class SPI:
     def __init__(self, csr_lib, r_name, w_name):
         '''
-        I2C driver for use with litex
+        SPI driver for use with litex
         bitbang.SPIMaster
 
         csr_lib: reference to CsrLib object for CSR read / write
@@ -157,11 +157,9 @@ class SPI:
         rx_val = 0
         self._pin(cs=1, oe=1)
         for i in range(nBits):
-            self._pin(clk=0)
-            self._pin(mosi=(tx_val >> (nBits - i - 1)) & 1)
+            self._pin(clk=0, mosi=(tx_val >> (nBits - i - 1)) & 1)
             self._pin(clk=1)
-            rx_val |= self.c.read_reg(self.r) & 1
             rx_val <<= 1
-        self._pin(cs=0)
-        self._pin(clk=0, oe=0)
+            rx_val |= self.c.read_reg(self.r) & 1
+        self._pin(cs=0, oe=0, clk=0)
         return rx_val

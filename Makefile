@@ -14,20 +14,26 @@ all: $(TARGET).bit.bin
 %.vcd: %_tb
 	vvp -N $< +vcd
 
-
 # litex synthesize
 build/gateware/%.bit: %.py ip/processing_system7_0.xci
 	make -C dsp cordicg_b22.v
 	python3 $< synth
 
 # Convert .bit to .bit.bin which can be loaded from zedboard linux
+# Also:
+# Patch the PS register init .c file to make MOSI a normal GPIO
+# (used by the encoder switch)
 %.bit.bin: build/gateware/%.bit
 	python3 util/bitstream_fix.py $<
-	mv $<.bin .
+	cp $<.bin .
+	(cd ip && \
+	sed -i -e 's/EMIT_MASKWRITE(0XF800072C, 0x00003FFFU ,0x000007A0U),/EMIT_MASKWRITE(0XF800072C, 0x00003FFFU ,0x00001600U),/g' ps7_init.c && \
+	sed -i -e 's/EMIT_MASKWRITE(0XF800072C, 0x00003FFFU ,0x000007A0U),/EMIT_MASKWRITE(0XF800072C, 0x00003FFFU ,0x00001600U),/g' ps7_init_gpl.c)
 
+# Generate the viado IP file with zedboard config
 ip/processing_system7_0.xci:
 	(cd ip && \
-	vivado -mode batch -source gen_ip.tcl &&\
+	vivado -mode batch -source gen_ip.tcl && \
 	ln -s zed_ps7.srcs/sources_1/ip/processing_system7_0/processing_system7_0.xci processing_system7_0.xci)
 
 # Upload to the zedboard via scp and program the PL

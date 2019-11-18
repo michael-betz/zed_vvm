@@ -73,11 +73,15 @@ Note on PS7:
   * MIO0 - MIO53
   * EMIO54 - EMIO117
 
-Change MIO11 from MISO to GPIO with pullup in ps7_init_gpl.c
+Change MIO11 from MISO to GPIO with pullup in `ps7_init_gpl.c`.
+The Vivado GUI does not allow this configuration, that's why we have
+to hack it.
+
 ```
     from: EMIT_MASKWRITE(0XF800072C, 0x00003FFFU ,0x000007A0U),
     to:   EMIT_MASKWRITE(0XF800072C, 0x00003FFFU ,0x00001600U)
 ```
+this has been automated in the Makefile
 
 # Zedboard OLED
 TODO: add guide to get FBTFT running

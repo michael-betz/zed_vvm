@@ -14,12 +14,13 @@ try:
  python3 hello_LTC.py <build / synth / config>
 """
 from migen import *
+from migen.genlib.cdc import MultiReg
+from migen.genlib.resetsync import AsyncResetSynchronizer
+from migen.genlib.misc import WaitTimer
 from litex.build.generic_platform import *
 from litex.soc.interconnect.csr import *
 from litex.soc.integration.soc_zynq import *
 from litex.soc.integration.builder import *
-from migen.genlib.cdc import MultiReg
-from migen.genlib.resetsync import AsyncResetSynchronizer
 from litex.soc.cores import dna
 from litex.soc.cores.bitbang import I2CMaster, SPIMaster
 from litex.boards.platforms import zedboard
@@ -29,10 +30,12 @@ from iserdes.ltc_phy import LTCPhy, ltc_pads
 from util.common import main, LedBlinker
 from dsp.acquisition import Acquisition
 from dsp.vvm_dsp import VVM_DSP
+from operator import or_
+from functools import reduce
 
 
 class _CRG(Module):
-    def __init__(self, platform, f_sys, f_sample, add_rst=None):
+    def __init__(self, platform, f_sys, f_sample, add_rst=[]):
         '''
         The `cursor UP` button resets the sys clock domain!
 
@@ -56,10 +59,7 @@ class _CRG(Module):
         self.submodules.idelayctrl = S7IDELAYCTRL(self.cd_clk200)
 
         rst_sum = Signal()
-        if add_rst is not None:
-            self.comb += rst_sum.eq(platform.request('user_btn_u') | add_rst)
-        else:
-            self.comb += rst_sum.eq(platform.request('user_btn_u'))
+        self.comb += rst_sum.eq(reduce(or_, add_rst))
         self.specials += AsyncResetSynchronizer(self.cd_sys, rst_sum)
 
         # !!! sys_clk is provided by FCLK_CLK0 from PS7 !!!
@@ -165,11 +165,21 @@ class ZedVvm(SoCZynq):
         # ----------------------------
         #  FPGA clock and reset generation
         # ----------------------------
+        # Delay the CSR reset signal such that wishbone can send an ACK
+        # to the Zynq PS, which will freeze otherwise
+        csr_reset_active = Signal()
+        self.sync += If(self.ctrl.reset, csr_reset_active.eq(1))
+        self.submodules.rst_delay = WaitTimer(2**24)
+        self.comb += self.rst_delay.wait.eq(csr_reset_active)
         self.submodules.crg = _CRG(
             p,
             f_sys,
             f_sample,
-            ~self.fclk_reset0_n
+            [
+                ~self.fclk_reset0_n,  # Zynq PS reset signal (bitfile load)
+                p.request('user_btn_u'),  # UP button on zedboard
+                self.rst_delay.done  # ctrl_reset csr (delayed by 100 ms)
+            ]
         )
 
         # ----------------------------

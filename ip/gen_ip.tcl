@@ -12,10 +12,10 @@ set_property board_part em.avnet.com:zed:part0:1.4 [current_project]
 create_ip -name processing_system7 -vendor xilinx.com -library ip -version 5.5 -module_name processing_system7_0
 set_property -dict [list CONFIG.preset {ZedBoard}] [get_ips processing_system7_0]
 
-# I2C0: EMIO, SPI0: EMIO, SPI1: MIO 10 .. 15, GPIO: EMIO54 .. EMIO85
+# SPI0: EMIO, SPI1: MIO 10 .. 15, GPIO: EMIO54 .. EMIO85
+# CONFIG.PCW_I2C0_PERIPHERAL_ENABLE {1}
 set_property -dict [list \
 	CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1} \
-	CONFIG.PCW_I2C0_PERIPHERAL_ENABLE {1} \
 	CONFIG.PCW_SPI0_PERIPHERAL_ENABLE {1} \
 	CONFIG.PCW_SPI1_PERIPHERAL_ENABLE {1} \
 	CONFIG.PCW_SPI1_SPI1_IO {MIO 10 .. 15} \
@@ -27,5 +27,10 @@ set_property -dict [list \
     CONFIG.PCW_MIO_13_PULLUP {enabled} \
     CONFIG.PCW_MIO_13_SLEW {fast} \
 ] [get_ips processing_system7_0]
+
+# These steps are done by litex anyway, we just need the .xci file
+# generate_target all [get_ips processing_system7_0]
+# set_msg_config -id {Vivado 12-5447} -new_severity {Info}
+# synth_ip [get_ips processing_system7_0]
 
 quit
