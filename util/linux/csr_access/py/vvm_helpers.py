@@ -6,6 +6,8 @@ from time import sleep
 sys.path.append("./csr_access_test/py")
 from bitbang import SPI, I2C
 from Si570 import calcFreq, writeSi570
+from numpy import int32
+from struct import pack, unpack
 
 
 class LTC_SPI(SPI):
@@ -24,6 +26,13 @@ class LTC_SPI(SPI):
         # Test pattern value LSB
         self.set_ltc_reg(4, tpValue & 0xFF)
 
+def print_frm(c):
+    idel = c.read_reg('lvds_idelay_value')
+    v = c.read_reg('lvds_frame_peek')
+    print("ID: {:}  F: {:08b}".format(idel, v))
+    for i in range(4):
+        v = c.read_reg('lvds_data_peek{:}'.format(i))
+        print("CH{:}: {:016b}".format(i, v))
 
 def autoBitslip(c):
     '''
@@ -37,7 +46,6 @@ def autoBitslip(c):
             print("autoBitslip(): aligned after", i)
             return
         c.write_reg('lvds_bitslip_csr', 1)
-        sleep(0.05)
     raise RuntimeError("autoBitslip(): failed alignment :(")
 
 
@@ -65,27 +73,26 @@ def autoIdelay(c):
     setIdelay(c, 16)
 
     # decrement until the channels break
-    for i in range(32):
+    for i in range(16):
         val0 = c.read_reg('lvds_data_peek0')
         val1 = c.read_reg('lvds_data_peek2')
         if val0 != 1 or val1 != 1:
             break
         c.write_reg('lvds_idelay_dec', 1)
-        sleep(0.05)
     minValue = c.read_reg('lvds_idelay_value')
 
     # step back up a little
     for i in range(5):
         c.write_reg('lvds_idelay_inc', 1)
+    idel = c.read_reg('lvds_idelay_value')
 
     # increment until the channels break
-    for i in range(32):
+    for i in range(31 - idel):
         val0 = c.read_reg('lvds_data_peek0')
         val1 = c.read_reg('lvds_data_peek2')
         if val0 != 1 or val1 != 1:
             break
         c.write_reg('lvds_idelay_inc', 1)
-        sleep(0.05)
     maxValue = c.read_reg('lvds_idelay_value')
 
     # set idelay to the sweet spot in the middle
@@ -101,10 +108,19 @@ def autoIdelay(c):
 def initLTC(c, check_align=False):
     print("Resetting LTC")
     ltc_spi = LTC_SPI(c, "spi_r", "spi_w")
-    # XXX This seems to glitch the DCO clock!
-    ltc_spi.set_ltc_reg(0, 0x80)   # reset the chip
+
+    # Reset the ADC chip, this seems to glitch the DCO clock!
+    ltc_spi.set_ltc_reg(0, 0x80)
+    sleep(2e-3)
+
+    # Reset EVERY register on sys and sample clock domain and re-init ISERDES
+    c.write_reg('ctrl_reset', 1)
+    sleep(2e-3)
+
+    # Make ADC output 0x00000001 value samples and align ISERDES
     ltc_spi.setTp(1)
     autoBitslip(c)
+    print_frm(c)
     autoIdelay(c)
 
     if check_align:
@@ -121,26 +137,31 @@ def initLTC(c, check_align=False):
     ltc_spi.set_ltc_reg(1, (1 << 5))  # Randomizer off, twos complement output
 
 
-def initSi570(c, f_s):
+def initSi570(c, f_s=117.6e6):
+    ''' set f_sample frequency [Hz] '''
     f_s_read = c.read_reg("lvds_f_sample_value")
     print("f_s = {:.6f} MHz".format(f_s_read / 1e6))
 
-    if abs(f_s - f_s_read) > 1e3:
-        si570_initial = bytes([0xad, 0x42, 0xa8, 0xb2, 0x60, 0x6c])
-        si570_new = calcFreq(si570_initial, 10e6, f_s)._regs
-        i2c = I2C(c, 'si570_i2c_r', 'si570_i2c_w')
-        writeSi570(i2c, si570_new)
-    else:
+    if abs(f_s - f_s_read) < 1e3:
         print("f_s is close enough, not touching it")
+        return
+
+    si570_initial = bytes([0xad, 0x42, 0xa8, 0xb2, 0x60, 0x6c])
+    si570_new = calcFreq(si570_initial, 10e6, f_s)._regs
+    i2c = I2C(c, 'si570_i2c_r', 'si570_i2c_w')
+    writeSi570(i2c, si570_new)
 
 
-# def twos_comps(val, bits):
-#     """compute the 2's complement of an array of int"""
-#     isNeg = (val >> (bits - 1)) != 0
-#     val[isNeg] = val[isNeg] - (1 << bits)
-#     return val
+def twos_comps(val, bits):
+    """ compute the 2's complement of an array of int """
+    if type(val) is int:
+        return unpack("i", pack("I", val))[0]
+    isNeg = (val >> (bits - 1)) != 0
+    val_ = val.astype(int32)
+    val_[isNeg] -= (1 << bits)
+    return val_
 
 
-# def getSamples(c, CH):
-#     samples = c.read_mem('sample{:}'.format(CH))
-#     return twos_comps(samples, 14) / 2**13
+def getSamples(c, CH):
+    samples = c.read_mem('sample{:}'.format(CH))
+    return twos_comps(samples, 14) / 2**13

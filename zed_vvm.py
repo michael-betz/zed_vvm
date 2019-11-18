@@ -166,10 +166,10 @@ class ZedVvm(SoCZynq):
         #  FPGA clock and reset generation
         # ----------------------------
         # Delay the CSR reset signal such that wishbone can send an ACK
-        # to the Zynq PS, which will freeze otherwise
+        # to the Zynq PS, which would freeze up otherwise
         csr_reset_active = Signal()
         self.sync += If(self.ctrl.reset, csr_reset_active.eq(1))
-        self.submodules.rst_delay = WaitTimer(2**24)
+        self.submodules.rst_delay = WaitTimer(2**16)  # 655 us
         self.comb += self.rst_delay.wait.eq(csr_reset_active)
         self.submodules.crg = _CRG(
             p,

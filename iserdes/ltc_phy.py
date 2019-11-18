@@ -107,7 +107,7 @@ class LTCPhy(S7_iserdes, AutoCSR):
             # CSRs for peeking at data patterns
             # LVDS_B (data_outs[1]) has the LSB and needs to come first!
             n = 'data_peek{:d}'.format(i)
-            data_peek = CSRStatus(16, name=n)
+            data_peek = CSRStatus(14, name=n)
             setattr(self, n, data_peek)
             self.specials += MultiReg(
                 sample_out,
