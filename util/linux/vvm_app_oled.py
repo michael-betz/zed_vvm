@@ -35,9 +35,13 @@ def draw(c, d):
     d.blit(sur, (0, 0))
 
     for i in range(3):
+        mag_val = c.read_reg("vvm_mag{}".format(i + 1))
         val = c.read_reg("vvm_phase{}".format(i + 1))
         val = twos_comps(val, 32) / (1 << 21) * 180
-        _s  = "{:>6.1f}  ".format(val)
+        if 20 * log10(mag_val / (1 << 21)) > -70:
+            _s = "{:>6.1f}".format(val)
+        else:
+            _s = "{:>6s}".format('----')
         sur = fnts[2].render(_s, True, (0xFF,) * 3)
         d.blit(sur, (i * 80, 24))
 
