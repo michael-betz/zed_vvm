@@ -13,7 +13,7 @@
 	aliases {
 		ethernet0 = &gem0;
 		serial0 = &uart1;
-		spi0 = &qspi;
+//		spi0 = &qspi;
 		mmc0 = &sdhci0;
 	};
 
@@ -58,7 +58,7 @@
 		compatible = "gpio-leds";
 		led_status {
 			gpios = <&gpio0 14 0>;
-			color = <LED_COLOR_ID_WHITE>;
+			color = <0>;  // White
 		};
 	};
 };
