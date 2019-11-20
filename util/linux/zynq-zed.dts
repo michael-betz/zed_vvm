@@ -48,10 +48,17 @@
 	gpio_keys {
 		compatible = "gpio-keys";
 		rotary_switch {
-			label = "Rotary encoder push";
 			gpios = <&gpio0 11 0>;
 			linux,code = <0x161>; // KEY_SELECT
 			debounce-interval = <30>;
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led_status {
+			gpios = <&gpio0 14 0>;
+			color = "white";
 		};
 	};
 };

@@ -139,13 +139,7 @@ def initLTC(c, check_align=False):
 
 def initSi570(c, f_s=117.6e6):
     ''' set f_sample frequency [Hz] '''
-    f_s_read = c.read_reg("lvds_f_sample_value")
-    print("f_s = {:.6f} MHz".format(f_s_read / 1e6))
-
-    if abs(f_s - f_s_read) < 1e3:
-        print("f_s is close enough, not touching it")
-        return
-
+    # initial values for 570BCC000112DG
     si570_initial = bytes([0xad, 0x42, 0xa8, 0xb2, 0x60, 0x6c])
     si570_new = calcFreq(si570_initial, 10e6, f_s)._regs
     i2c = I2C(c, 'si570_i2c_r', 'si570_i2c_w')
@@ -162,6 +156,22 @@ def twos_comps(val, bits):
     return val_
 
 
-def getSamples(c, CH):
-    samples = c.read_mem('sample{:}'.format(CH))
+def getSamples(c, CH, N=None):
+    samples = c.read_mem('sample{:}'.format(CH), N)
     return twos_comps(samples, 14) / 2**13
+
+
+def set_led(isOn=True):
+    ''' set the front-panel status LED '''
+    with open('/sys/class/leds/led_status/brightness', 'w') as f:
+        f.write('1' if isOn else '0')
+
+
+def getNyquist(f, fs):
+    """ where does an under-sampled tone end up? """
+    f_n = f / fs
+    f_fract = f_n % 1
+    if f_fract <= 0.5:
+        return f_fract * fs
+    else:
+        return (1 - f_fract) * fs

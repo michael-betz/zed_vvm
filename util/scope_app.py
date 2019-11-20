@@ -4,20 +4,18 @@ and then dumps 4096 samples in a buffer.
 Buffer is read out through litex_server (etherbone) periodically,
 fft'ed and plotted.
 """
-from time import sleep
 from numpy import *
 from matplotlib.pyplot import *
-from matplotlib.animation import FuncAnimation
 from scipy.signal import periodogram
 import threading
 import argparse
-import os
-from common import *
+from common import conLitexServer
 
-def getSamples(r, CH, N=None):
-    addr = getattr(r.mems, 'sample{:}'.format(CH)).base
-    samples = array(r.big_read(addr, N))
-    return twos_comps(samples, 14) / 2**13
+import sys
+sys.path.append("linux/csr_access/py/")
+from csr_lib import CsrLibLegacyAdapter
+from vvm_helpers import initLTC, initSi570, getSamples
+
 
 class ScopeController:
     def __init__(self, r):
@@ -93,7 +91,7 @@ class ScopeController:
                 continue
 
             # print('z', end='', flush=True)
-            yVect = getSamples(r, args.CH, args.N)
+            yVect = getSamples(c, args.CH, args.N)
             ScopeController.buf_append(
                 self.rollBuffer_t,
                 yVect
@@ -147,7 +145,7 @@ def plotNpz(fNames, labels=None, ax=None, fs=120e6, *args, **kwargs):
 
 
 def main():
-    global fig, lt, lf, r, args, rollBuffer_t
+    global fig, lt, lf, r, c, args, rollBuffer_t
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--N", default=1024, type=int, help="Number of samples per acquisition"
@@ -166,10 +164,12 @@ def main():
     #  Init hardware
     # ----------------------------------------------
     r = conLitexServer('../build/csr.csv')
+    c = CsrLibLegacyAdapter(r)
     print("fs = {:6f} MHz, should be {:6f} MHz".format(
         r.regs.lvds_f_sample_value.read() / 1e6, args.fs / 1e6
     ))
-    initLTC(r, True)
+    initSi570(c, 117.6e6)
+    initLTC(c, False)
     r.regs.acq_trig_channel.write(args.CH)
 
     # ----------------------------------------------

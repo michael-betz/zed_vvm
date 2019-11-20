@@ -67,11 +67,13 @@ class CsrLib:
 
     def write_reg(self, name, value):
         reg = self.j['csr_registers'][name]
-        return self.write(reg['addr'], value)
+        self.write(reg['addr'], value)
 
-    def read_mem(self, name):
+    def read_mem(self, name, N=None):
         mem = self.j['memories'][name]
-        return self.read(mem['base'], mem['size'] // 4)
+        if N is None:
+            N = mem['size'] // 4
+        return self.read(mem['base'], N)
 
     def get_ident(self):
         addr = self.j['csr_bases']['identifier_mem']
@@ -82,6 +84,27 @@ class CsrLib:
                 break
             s += chr(c & 0xFF)
         return s
+
+
+class CsrLibLegacyAdapter:
+    '''
+    to use libraries written for CsrLib
+    with litex remote_server
+    '''
+    def __init__(self, remote_client):
+        self.rc = remote_client
+
+    def read_reg(self, name):
+        return getattr(self.rc.regs, name).read()
+
+    def write_reg(self, name, value):
+        getattr(self.rc.regs, name).write(value)
+
+    def read_mem(self, name, N=None):
+        mem = getattr(self.rc.mems, name)
+        if N is None:
+            N = mem.size // 4
+        return array(self.rc.big_read(mem.base, N), dtype=uint32)
 
 
 def hd(dat, pad_width=1, word_width=None):
