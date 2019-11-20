@@ -45,7 +45,8 @@ The stock version of U-Boot works perfectly fine for Zynq7000. No need for the X
 # Now try it on the Zedboard, you should see u-boot starting on the UART
 ```
 ## Linux kernel
-The stock kernel seems to work fine except for one thing: `/sys/class/fpga_manager/fpga0` does not seem to show up for some reason. This is needed to configure the FPGA-PL. So for now, use the xilinx version.
+The vanilla mainline kernel works fine now (see note below).
+Here's some old instructions how to compile the Xilinx kernel.
 
 ```bash
 # compile Kernel
@@ -77,6 +78,17 @@ to configure u-boot, create a `uEnv.txt` as shown below and copy it to SD card.
 Now is a good time to give it a test-run on the Zedboard,
 the linux kernel should boot and panic because of the missing root filesystem
 
+## Mainline kernel
+Zynq7000 is pretty well supported now in the mainline kernel and it is not
+really necessary to go with the xilinx version.
+
+(Mainline vs. Xilinx Kernel)[https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841873/Linux+Drivers]
+
+The only thing I was missing in practice was
+`/sys/class/fpga_manager/fpga0/firmware`, which I used to re-program the FPGA
+PL from linux. After some investigation, the whole driver infrastructure was
+there and operational. The `firmware` property was just not exposed to `sysfs`.
+I got this feature back with 2 tiny patches in `util/linux/mainline`.
 
 ## Debian buster rootfs
 
