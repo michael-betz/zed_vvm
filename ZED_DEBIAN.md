@@ -45,7 +45,7 @@ The stock version of U-Boot works perfectly fine for Zynq7000. No need for the X
 # Now try it on the Zedboard, you should see u-boot starting on the UART
 ```
 ## Linux kernel
-The vanilla mainline kernel works fine now (see note below).
+The vanilla mainline kernel almost but not quite works (see note below).
 Here's some old instructions how to compile the Xilinx kernel.
 
 ```bash
@@ -79,16 +79,28 @@ Now is a good time to give it a test-run on the Zedboard,
 the linux kernel should boot and panic because of the missing root filesystem
 
 ## Mainline kernel
-Zynq7000 is pretty well supported now in the mainline kernel and it is not
-really necessary to go with the xilinx version.
+Zynq7000 is pretty well supported now in the mainline kernel.
 
-(Mainline vs. Xilinx Kernel)[https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841873/Linux+Drivers]
+[Mainline vs. Xilinx Kernel](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841873/Linux+Drivers)
 
-The only thing I was missing in practice was
-`/sys/class/fpga_manager/fpga0/firmware`, which I used to re-program the FPGA
+It boots without errors. The PS connected OLED, rotary encoder and LED work as
+expected.
+
+FPGA manager works in theory. I was missing `/sys/class/fpga_manager/fpga0/firmware`,
+which is used to pipe the name of a bit-file to re-program the FPGA
 PL from linux. After some investigation, the whole driver infrastructure was
 there and operational. The `firmware` property was just not exposed to `sysfs`.
 I got this feature back with 2 tiny patches in `util/linux/mainline`.
+
+Now it loads the bit-file without error but I don't see the clock LEDs blinking...
+So something is still missing there.
+
+Loading a bit-file in U-Boot still works fine.
+
+__TODO: Accessing the CSRs through AXI GP0 completely freezes the CPU :(__
+
+So until I find time to work out these issues I'm using the xilinx kernel.
+
 
 ## Debian buster rootfs
 

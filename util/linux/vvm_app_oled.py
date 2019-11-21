@@ -15,23 +15,18 @@ from csr_lib import hd, CsrLib
 from bitbang import I2C
 from vvm_helpers import initLTC, initSi570, twos_comps
 
-sys.path.append("./oled")
-from font import PyGameHieroFont
 
-
-fntNames = ("CabinSketch", "Ranchers", "Engagement", "Electrolize")
-fnts = [PyGameHieroFont("oled/fonts/{}/{}.fnt".format(s, s)) for s in fntNames]
-dev_rot = InputDevice('/dev/input/event0')
-dev_push = InputDevice('/dev/input/event1')
+def meas_f_ref(c):
+    return c.read_reg('vvm_f_ref_csr') * f_s / 100e6
 
 
 def draw(c, d):
     d.fill((0x00, ) * 3)
-    s_ = "REF: {:7.3f} MHz,  {:5.1f} dB".format(
-        c.read_reg('vvm_f_ref_value') / 1e6,
-        20 * log10(c.read_reg("vvm_mag0") / (1 << 21))
+    s_ = "REF: {:8.4f} MHz,  {:5.1f} dBm".format(
+        meas_f_ref(c) / 1e6,
+        20 * log10(c.read_reg("vvm_mag0") / (1 << 21)) + 12
     )
-    sur = fnts[3].render(s_, True, (0xFF,) * 3)
+    sur = fnts[0].render(s_, True, (0xFF,) * 3)
     d.blit(sur, (0, 0))
 
     for i in range(3):
@@ -42,7 +37,7 @@ def draw(c, d):
             _s = "{:>6.1f}".format(val)
         else:
             _s = "{:>6s}".format('----')
-        sur = fnts[2].render(_s, True, (0xFF,) * 3)
+        sur = fnts[1].render(_s, True, (0xFF,) * 3)
         d.blit(sur, (i * 80, 24))
 
 
@@ -65,6 +60,8 @@ def getEncoderDelta():
 
 
 def main():
+    global dev_rot, dev_push, fnts, f_s
+
     f_s = 117.6e6
     f_dut = 22.43e6
 
@@ -77,6 +74,13 @@ def main():
     pg.font.init()
     pg.mouse.set_visible(False)
     d = pg.display.set_mode()  # returns the display surface
+
+    fntNames = ("Ubuntu-Regular", "UbuntuMono-Bold")
+    fntSizes = (17, 28)
+    fnts = [pg.font.Font('oled/fonts/{}.ttf'.format(n), s) for n, s in zip(fntNames, fntSizes)]
+
+    dev_rot = InputDevice('/dev/input/event0')
+    dev_push = InputDevice('/dev/input/event1')
 
     with CsrLib(0x40000000, "csr.json") as c:
         print(c.get_ident())
@@ -117,8 +121,8 @@ def main():
             pg.display.update()
 
             rot, btn = getEncoderDelta()
-            if btn:
-                f_meas = c.read_reg('vvm_f_ref_value')
+            if btn or i == 100:
+                f_meas = meas_f_ref(c)
                 print("Reset f_center to {:.3f} MHz".format(f_meas / 1e6))
                 ftw = int(((f_meas / f_s) % 1) * 2**32)
                 c.write_reg('vvm_ddc_ftw', ftw)

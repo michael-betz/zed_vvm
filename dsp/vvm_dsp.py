@@ -231,9 +231,52 @@ class VVM_DSP(Module, AutoCSR):
             setattr(self, n, csr)
             self.comb += csr.status.eq(sig)
 
+        self.submodules.zc = ZeroCrosser(int(100e6))
+        self.f_ref_csr = CSRStatus(32)
+        self.comb += [
+            self.zc.sig_in.eq(self.adcs[0] > 0),
+            self.f_ref_csr.status.eq(self.zc.n_zc)
+        ]
+
+
+class ZeroCrosser(Module, AutoCSR):
+    def __init__(self, N_CLOCKS):
+        ''' N_CLOCKS = integration time '''
+        self.n_zc = Signal(32)  # Number of zero crossings
+        self.sig_in = Signal()  # Input signal under test
+
         # ADC zero crossing frequency counter
-        self.submodules.f_ref = FreqMeter(f_sys)  # 1 s count integration time
-        self.comb += self.f_ref.clk.eq(self.adcs[0] > 0)
+        sig_in_ = Signal()
+        f_accu = Signal.like(self.n_zc)
+        _n_zc_sample = Signal.like(self.n_zc)
+        strobe = Signal()
+        meas_time = Signal.like(self.n_zc, reset=N_CLOCKS)
+        self.sync.sample += [
+            strobe.eq(0),
+            sig_in_.eq(self.sig_in),
+            If(meas_time == 0,
+                meas_time.eq(N_CLOCKS),
+                _n_zc_sample.eq(f_accu),
+                f_accu.eq(0),
+                strobe.eq(1)
+            ).Else(
+                # On positive wavefrom zero crossing
+                If(~sig_in_ & self.sig_in,
+                    f_accu.eq(f_accu + 1)
+                ),
+                meas_time.eq(meas_time - 1)
+            )
+        ]
+        self.submodules.cdc = BlindTransfer(
+            "sample",
+            "sys",
+            len(self.n_zc)
+        )
+        self.comb += [
+            self.cdc.data_i.eq(_n_zc_sample),
+            self.n_zc.eq(self.cdc.data_o),
+            self.cdc.i.eq(strobe)
+        ]
 
 
 def main():
