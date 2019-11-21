@@ -168,3 +168,15 @@
     debug = <4>;
   };
 };
+
+// Enable all clocks to the PL after loading the bit-file
+// In the mainline kernel clocks are disabled by default
+&devcfg {
+	clocks = <&clkc 12>, <&clkc 15>, <&clkc 16>, <&clkc 17>, <&clkc 18>;
+	clock-names = "ref_clk", "fclk0", "fclk1", "fclk2", "fclk3";
+};
+
+&clkc {
+	fclk-enable = <0xf>;
+};
+
