@@ -45,8 +45,8 @@ The stock version of U-Boot works perfectly fine for Zynq7000. No need for the X
 # Now try it on the Zedboard, you should see u-boot starting on the UART
 ```
 ## Linux kernel
-The vanilla mainline kernel works fine now for this application (see note below).
-Here's some old instructions how to compile the Xilinx kernel. They are the same for mainline.
+The [vanilla mainline kernel](https://github.com/torvalds/linux) works perfectly fine now for this application (see note below).
+Here's some old instructions how to compile the Xilinx kernel. The same instructions apply for mainline.
 
 ```bash
 # compile Kernel
