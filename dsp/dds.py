@@ -5,10 +5,11 @@ try:
 '''
 from sys import argv
 from os.path import join, dirname, abspath
+from litex.soc.interconnect.csr import AutoCSR, CSRStorage
 from migen import *
 
 
-class DDS(Module):
+class DDS(Module, AutoCSR):
     @staticmethod
     def add_sources(platform):
         vdir = abspath(dirname(__file__))
@@ -52,6 +53,10 @@ class DDS(Module):
             o_xout=self.o_cos,
             o_yout=self.o_sin
         )
+
+    def add_csr(self):
+        self.ftw_csr = CSRStorage(len(self.ftw), reset=0x40059350, name='ftw')
+        self.comb += self.ftw.eq(self.ftw_csr.storage)
 
 
 def main():

@@ -13,8 +13,12 @@ from numpy import *
 from matplotlib.pyplot import *
 from matplotlib.animation import FuncAnimation
 import argparse
-from scope_app import initLTC, unique_filename
-from common import *
+from common import conLitexServer, unique_filename
+
+import sys
+sys.path.append("linux/csr_access/py/")
+from csr_lib import CsrLibLegacyAdapter
+from vvm_helpers import initLTC, initSi570, meas_f_ref, twos_comps
 
 
 def main():
@@ -24,7 +28,7 @@ def main():
         help="Number of points to plot"
     )
     parser.add_argument(
-        "--fcenter", default=500.3e6, type=float,
+        "--fcenter", default=None,
         help="Digital down-conversion center frequency"
     )
     parser.add_argument(
@@ -35,16 +39,30 @@ def main():
         "--iir", default=15, type=int,
         help="IIR filter for result averaging. Smoothing factor from 0 - 15."
     )
+    parser.add_argument(
+        "--fs", default=117.6e6, type=float, help="ADC sample rate [MHz]. Must match hello_LTC.py setting."
+    )
     args = parser.parse_args()
     # ----------------------------------------------
     #  Init hardware
     # ----------------------------------------------
     r = conLitexServer('../build/csr.csv')
-    initLTC(r, True)
+    c = CsrLibLegacyAdapter(r)
+    initLTC(c, False)
 
     # Frequency / bandwidth setting
-    fSample = r.regs.lvds_f_sample_value.read()
-    ftw = int(((args.fcenter / fSample) % 1) * 2**32)
+    print("fs = {:6f} MHz, should be {:6f} MHz".format(
+        r.regs.lvds_f_sample_value.read() / 1e6, args.fs / 1e6
+    ))
+    f_ref = meas_f_ref(c, args.fs)
+    print("f_ref = {:6f} MHz".format(f_ref / 1e6))
+    if args.fcenter is None:
+        print("Using measured f_ref as f_center")
+        args.fcenter = f_ref
+    args.fcenter = float(f_ref)
+
+    ftw = int(((args.fcenter / args.fs) % 1) * 2**32)
+    print("tuning f_center for {:6f} MHz".format(ftw / 2**32 * args.fs / 1e6))
     r.regs.vvm_ddc_ftw.write(ftw)
     r.regs.vvm_ddc_deci.write(args.deci)
 
@@ -56,9 +74,8 @@ def main():
     r.regs.vvm_iir.write(args.iir)
 
     print('ddc_ftw', hex(r.regs.vvm_ddc_ftw.read()))
-    print('f_sample', fSample)
     print('ddc_deci', r.regs.vvm_ddc_deci.read())
-    print('bw', fSample / args.deci)
+    print('bw', args.fs / args.deci)
     print('iir_shift', r.regs.vvm_iir.read())
 
     # ----------------------------------------------
@@ -98,7 +115,7 @@ def main():
 
         for i in range(3):
             val = getattr(r.regs, "vvm_phase{}".format(i + 1)).read()
-            val = getInt32(val) / (1 << 21) * 180
+            val = twos_comps(val, 32) / (1 << 21) * 180
             datps[-1, i] = val
             lps[i].set_data(arange(datps.shape[0]), datps[:, i])
 

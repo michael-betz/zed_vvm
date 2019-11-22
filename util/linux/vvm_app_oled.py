@@ -13,17 +13,13 @@ from evdev import InputDevice
 sys.path.append("./csr_access/py")
 from csr_lib import hd, CsrLib
 from bitbang import I2C
-from vvm_helpers import initLTC, initSi570, twos_comps
-
-
-def meas_f_ref(c):
-    return c.read_reg('vvm_f_ref_csr') * f_s / 100e6
+from vvm_helpers import initLTC, initSi570, twos_comps, meas_f_ref
 
 
 def draw(c, d):
     d.fill((0x00, ) * 3)
     s_ = "REF: {:8.4f} MHz,  {:5.1f} dBm".format(
-        meas_f_ref(c) / 1e6,
+        meas_f_ref(c, f_s) / 1e6,
         20 * log10(c.read_reg("vvm_mag0") / (1 << 21)) + 12
     )
     sur = fnts[0].render(s_, True, (0xFF,) * 3)
@@ -122,7 +118,7 @@ def main():
 
             rot, btn = getEncoderDelta()
             if btn or i == 100:
-                f_meas = meas_f_ref(c)
+                f_meas = meas_f_ref(c, f_s)
                 print("Reset f_center to {:.3f} MHz".format(f_meas / 1e6))
                 ftw = int(((f_meas / f_s) % 1) * 2**32)
                 c.write_reg('vvm_ddc_ftw', ftw)

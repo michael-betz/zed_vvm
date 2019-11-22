@@ -10,6 +10,11 @@ from numpy import int32
 from struct import pack, unpack
 
 
+def meas_f_ref(c, f_s):
+    ''' measure REF input frequency with zero crossing coutner '''
+    return c.read_reg('vvm_f_ref_csr') * f_s / 100e6
+
+
 class LTC_SPI(SPI):
     ''' SPI register read / write specific to LTC2175 '''
     def set_ltc_reg(self, adr, val):

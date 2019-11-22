@@ -168,7 +168,7 @@ def main():
     print("fs = {:6f} MHz, should be {:6f} MHz".format(
         r.regs.lvds_f_sample_value.read() / 1e6, args.fs / 1e6
     ))
-    initSi570(c, 117.6e6)
+    # initSi570(c, 117.6e6)  # Bitbanging over ethernet is too slow :(
     initLTC(c, False)
     r.regs.acq_trig_channel.write(args.CH)
 
