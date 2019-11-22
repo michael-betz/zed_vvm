@@ -12,9 +12,9 @@ from migen.genlib.cdc import BlindTransfer
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage, CSRStatus
 from litex.soc.cores.freqmeter import FreqMeter
 from os.path import join, dirname, abspath
-from dsp.dds import DDS
-from dsp.ddc import VVM_DDC
-from dsp.tiny_iir import TinyIIR
+from dds import DDS
+from ddc import VVM_DDC
+from tiny_iir import TinyIIR
 
 
 class VVM_DSP(Module, AutoCSR):
@@ -82,7 +82,6 @@ class VVM_DSP(Module, AutoCSR):
             DI_W=37,   # CIC integrator width
             PCW=13     # decimation factor width
         ))
-        self.ddc.add_csr()
         result_iq_d = Signal.like(self.ddc.result_iq)
         self.sync.sample += result_iq_d.eq(self.ddc.result_iq)
 
@@ -162,6 +161,8 @@ class VVM_DSP(Module, AutoCSR):
 
     def add_csrs(self, f_sys, p):
         ''' Wire up the config-registers to litex CSRs '''
+        self.ddc.add_csr()
+
         # sys clock domain
         n_ch = len(self.adcs)
         self.mags_sys = [
@@ -264,6 +265,7 @@ def main():
                 *d.phases_iir,
                 d.ddc.cic_period,
                 d.ddc.cic_shift,
+                *[getattr(d.ddc, 'dds{}'.format(i)).ftw for i in range(4)],
                 d.iir_shift
             },
             display_run=True

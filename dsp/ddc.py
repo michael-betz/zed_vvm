@@ -8,7 +8,7 @@ try:
 from sys import argv
 from migen import *
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage
-from dsp.dds import DDS
+from dds import DDS
 
 
 class VVM_DDC(Module, AutoCSR):
@@ -59,10 +59,9 @@ class VVM_DDC(Module, AutoCSR):
         for i, adc in enumerate(adcs):
             dds = DDS(OSCW)
             setattr(self, 'dds{}'.format(i), dds)
-            dds.add_csr()
             self.submodules += dds
-            for dds in (dds.o_cos, dds.o_sin):
-                mixout = Signal((MIX_W, True))
+            for dds_o in (dds.o_cos, dds.o_sin):
+                mix_o = Signal((MIX_W, True))
                 self.specials += Instance(
                     'mixer',
                     p_NORMALIZE=0,
@@ -71,10 +70,10 @@ class VVM_DDC(Module, AutoCSR):
                     p_dwlo=OSCW,
                     i_clk=ClockSignal(),
                     i_adcf=adc,
-                    i_mult=dds,
-                    o_mixout=mixout
+                    i_mult=dds_o,
+                    o_mixout=mix_o
                 )
-                mixouts.append(mixout)
+                mixouts.append(mix_o)
 
         # Times the 'taking one out of N samples' part
         cic_sample = Signal()
@@ -84,9 +83,9 @@ class VVM_DDC(Module, AutoCSR):
             i_clk=ClockSignal(),
             i_ext_trig=1,
             i_sample_period=self.cic_period,
-            i_dsample0_period=1,
-            i_dsample1_period=1,
-            i_dsample2_period=1,
+            i_dsample0_period=Constant(1, 8),
+            i_dsample1_period=Constant(1, 8),
+            i_dsample2_period=Constant(1, 8),
             o_sample_out=cic_sample
         )
 
@@ -123,6 +122,8 @@ class VVM_DDC(Module, AutoCSR):
             self.cic_period.eq(self.ddc_deci.storage),
             self.cic_shift.eq(self.ddc_shift.storage)
         ]
+        for i in range(len(self.adcs)):
+            getattr(self, 'dds{}'.format(i)).add_csr()
 
 
 def main():

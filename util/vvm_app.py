@@ -60,7 +60,7 @@ def main():
     # IIR result averaging filter smoothing factor (0 - 15)
     r.regs.vvm_iir.write(args.iir)
 
-    print('ddc_ftw', hex(r.regs.vvm_ddc_ftw.read()))
+    print('ddc_ftw', hex(r.regs.vvm_ddc_dds0_ftw.read()))
     print('ddc_deci', r.regs.vvm_ddc_deci.read())
     print('bw', args.fs / args.deci)
     print('iir_shift', r.regs.vvm_iir.read())
@@ -92,7 +92,7 @@ def main():
     ax.set_ylabel("Phase [deg]")
     fig.tight_layout()
 
-    def upd(i):
+    def upd(frm):
         datms[:] = roll(datms, -1, 0)
         datps[:] = roll(datps, -1, 0)
         for i in range(4):
@@ -106,11 +106,12 @@ def main():
             datps[-1, i] = val
             lps[i].set_data(arange(datps.shape[0]), datps[:, i])
 
-        if (i % 200) == 0:
+        if (frm % 200) == 0:
             f_ref = meas_f_ref(c, args.fs)
             ftw = int(((f_ref / args.fs) % 1) * 2**32)
             print("tuning f_center for {:6f} MHz".format(ftw / 2**32 * args.fs / 1e6))
-            r.regs.vvm_ddc_ftw.write(ftw)
+            for i in range(4):
+                getattr(r.regs, 'vvm_ddc_dds{}_ftw'.format(i)).write(ftw)
 
     def dumpNpz(x):
         fName = unique_filename("measurements/vvm_dump.npz")
@@ -121,7 +122,7 @@ def main():
     bDump = Button(axes([0.005, 0.005, 0.1, 0.04]), 'Dump .npz')
     bDump.on_clicked(dumpNpz)
 
-    ani = FuncAnimation(fig, upd, interval=100)
+    ani = FuncAnimation(fig, upd, interval=50)
     show()
 
 if __name__ == '__main__':

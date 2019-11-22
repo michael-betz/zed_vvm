@@ -64,7 +64,7 @@ module vvm_dsp_tb;
                 f,
                 "%d, %d, %d, %d, %d, %d\n",
                 adc_ref, 0,
-                dsp_inst.dds_o_cos, dsp_inst.dds_o_sin,
+                dsp_inst.dds0_o_cos, dsp_inst.dds0_o_sin,
                 strobe_out ? adc_ref_dc_i : 32'sh0,
                 strobe_out ? adc_ref_dc_q : 32'sh0,
             );
@@ -105,8 +105,12 @@ module vvm_dsp_tb;
         .adcs_3         (adc_c),
 
         .ftw            (LO_FTW),
+        .ftw_1          (LO_FTW),
+        .ftw_2          (LO_FTW),
+        .ftw_3          (LO_FTW),
+
         .cic_period     (13'd100),
-        .cic_shift      (4'd2),
+        .cic_shift      (4'd7),
         // decimation by factor of 1000 works fine with cic_shift = 9
         // bandwidth = 117.6 kHz
 

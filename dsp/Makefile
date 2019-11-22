@@ -6,8 +6,8 @@ vpath %.v $(CORDIC_DIR) $(DSP_DIR)
 
 TARGET  = vvm_dsp
 
-SRC_V  += cordicg_b22.v cstageg.v addsubg.v ddc.v
-SRC_V  += iq_mixer_multichannel.v mixer.v
+SRC_V  += cordicg_b22.v cstageg.v addsubg.v
+SRC_V  += mixer.v
 SRC_V  += multi_sampler.v cic_multichannel.v
 SRC_V  += serializer_multichannel.v reg_delay.v ccfilt.v double_inte_smp.v
 SRC_V  += doublediff.v serialize.v grab_channels.v
