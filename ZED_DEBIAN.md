@@ -52,20 +52,20 @@ Here's some instructions on how to apply two tiny patches to the kernel and comp
     git clone https://github.com/torvalds/linux.git
     cd linux/
 
-    # Load my kernel config and device tree for zed_vvm
+# Load my kernel config and device tree for zed_vvm
     cp <..>/zed_vvm/util/linux/.config .
     cp <..>/zed_vvm/util/linux/zynq-zed.dts arch/arm/boot/dts/
 
-    # Patch to get /sys/class/fpga_mgr/fpga0/firmware
-    # Not needed with the xilinx version of the kernel
+# Patch to get /sys/class/fpga_mgr/fpga0/firmware
+# Not needed with the xilinx version of the kernel
     patch --strip=1 --input=<..>/zed_vvm/util/linux/fpga-mgr.patch
 
-    # Replace the fbtft driver with a working version for the 2 OLED displays
+# Replace the fbtft driver with a working version for the 2 OLED displays
     cd drivers/staging
     rm -rf fbtft
     git clone https://github.com/yetifrisstlama/fbtft.git
 
-    # Do any kernel customization you might need
+# Do any kernel customization you might need
     make menuconfig
 ```
 
