@@ -17,8 +17,10 @@ module vvm_dsp_tb;
     //  Simulate ADC signals
     // ------------------------------------------------------------------------
     // ALS MO reference and phase shifted signal under test
-    // localparam F_REF = 499600000;  // [Hz]
-    localparam F_REF = 25000000;  // [Hz]
+    localparam F_REF = 499600000;  // [Hz]
+    // localparam F_REF = 25000000;  // [Hz]
+    // localparam F_REF = 7000000;  // [Hz]
+
     localparam OMEGA_REF = (1.0 / F_ADC * 2.0 * pi * F_REF);
     // Phase shift between adc_ref and adc_a
     localparam THETA_A = 0;
@@ -109,7 +111,7 @@ module vvm_dsp_tb;
         .ftw_2          (LO_FTW),
         .ftw_3          (LO_FTW),
 
-        .cic_period     (13'd100),
+        .cic_period     (13'd10),
         .cic_shift      (4'd7),
         // decimation by factor of 1000 works fine with cic_shift = 9
         // bandwidth = 117.6 kHz

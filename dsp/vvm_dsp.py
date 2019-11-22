@@ -159,7 +159,7 @@ class VVM_DSP(Module, AutoCSR):
             ]
             self.submodules += iir
 
-    def add_csrs(self, f_sys, p):
+    def add_csr(self, f_sys, p):
         ''' Wire up the config-registers to litex CSRs '''
         self.ddc.add_csr()
 
@@ -199,12 +199,10 @@ class VVM_DSP(Module, AutoCSR):
             setattr(self, n, csr)
             self.comb += csr.status.eq(sig)
 
+        # Frequency counter for the REF input
         self.submodules.zc = ZeroCrosser(int(100e6))
-        self.f_ref_csr = CSRStatus(32)
-        self.comb += [
-            self.zc.sig_in.eq(self.adcs[0] > 0),
-            self.f_ref_csr.status.eq(self.zc.n_zc)
-        ]
+        self.zc.add_csr()
+
 
 
 class ZeroCrosser(Module, AutoCSR):
@@ -247,6 +245,13 @@ class ZeroCrosser(Module, AutoCSR):
             self.cdc.data_i.eq(_n_zc_sample),
             self.n_zc.eq(self.cdc.data_o),
             self.cdc.i.eq(strobe)
+        ]
+
+    def add_csr(self):
+        self.f_ref_csr = CSRStatus(32, name='vvm_f_ref_csr')
+        self.comb += [
+            self.sig_in.eq(self.adcs[0] > 0),
+            self.f_ref_csr.status.eq(self.n_zc)
         ]
 
 
