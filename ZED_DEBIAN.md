@@ -32,7 +32,7 @@ The stock version of U-Boot works perfectly fine for the Zynq7000 on the zedboar
 # see also: `PS_PERIPHERALS.md`
 
     make
-    export PATH=$PATH:/<..>/u-boot-xlnx/tools/
+    export PATH=$PATH:<..>/u-boot/tools/
 
 # Create a ~ 32 MB FAT16 partition on the SD card,
 # follow the guide below or use gparted
@@ -65,14 +65,15 @@ Here's some instructions on how to apply two tiny patches to the kernel and comp
     rm -rf fbtft
     git clone https://github.com/yetifrisstlama/fbtft.git
 
-# Do any kernel customization you might need
+# Apply any kernel customization you might need
+    cd ../..
+    export CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm
     make menuconfig
 ```
 
 Then build the kernel and device-tree ...
 
 ```bash
-    export CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm
     make -j4 uImage LOADADDR=0x00008000
     make zynq-zed.dtb
 ```

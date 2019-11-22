@@ -28,10 +28,6 @@ def main():
         help="Number of points to plot"
     )
     parser.add_argument(
-        "--fcenter", default=None,
-        help="Digital down-conversion center frequency"
-    )
-    parser.add_argument(
         "--deci", default=100, type=float,
         help="Digital down-conversion decimation factor"
     )
@@ -54,16 +50,7 @@ def main():
     print("fs = {:6f} MHz, should be {:6f} MHz".format(
         r.regs.lvds_f_sample_value.read() / 1e6, args.fs / 1e6
     ))
-    f_ref = meas_f_ref(c, args.fs)
-    print("f_ref = {:6f} MHz".format(f_ref / 1e6))
-    if args.fcenter is None:
-        print("Using measured f_ref as f_center")
-        args.fcenter = f_ref
-    args.fcenter = float(f_ref)
 
-    ftw = int(((args.fcenter / args.fs) % 1) * 2**32)
-    print("tuning f_center for {:6f} MHz".format(ftw / 2**32 * args.fs / 1e6))
-    r.regs.vvm_ddc_ftw.write(ftw)
     r.regs.vvm_ddc_deci.write(args.deci)
 
     # Throw away N bits after CIC to avoid saturation with large deci factors
@@ -118,6 +105,12 @@ def main():
             val = twos_comps(val, 32) / (1 << 21) * 180
             datps[-1, i] = val
             lps[i].set_data(arange(datps.shape[0]), datps[:, i])
+
+        if (i % 200) == 0:
+            f_ref = meas_f_ref(c, args.fs)
+            ftw = int(((f_ref / args.fs) % 1) * 2**32)
+            print("tuning f_center for {:6f} MHz".format(ftw / 2**32 * args.fs / 1e6))
+            r.regs.vvm_ddc_ftw.write(ftw)
 
     def dumpNpz(x):
         fName = unique_filename("measurements/vvm_dump.npz")
