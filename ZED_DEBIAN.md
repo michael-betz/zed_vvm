@@ -97,21 +97,19 @@ Pros of going mainline
   * more widely adopted
   * hence better peer-reviewed
 
-Zynq7000 is pretty well supported now in the mainline kernel.
+The Zynq7000 is pretty well supported now in the mainline kernel.
 
 [Mainline vs. Xilinx Kernel](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841873/Linux+Drivers)
 
-I started this project on the xilinx fork of the kernel. When I first tried switching over to mainline, I just copied `linux-xlnx/.config` to `linux/.config` and compiled as of the instructions above.
+I started this project on the Xilinx kernel-fork. When I first tried switching over to mainline, I just copied `linux-xlnx/.config` to `linux/.config` and compiled as of the instructions above.
 
   * Both OLED displays, GPIOs and rotary encoder worked as expected
   * It booted without errors in dmesg
   * `/sys/class/fpga_manager/fpga0` was there, so the linux FPGA manager driver was working
 
 However I was missing `/sys/class/fpga_manager/fpga0/firmware`,
-which is used to pipe the name of a bit-file to re-program the FPGA
-PL from linux. After some investigation, it looks like this was a convenience
-feature from Xilinx. I brought it back with 2 tiny patches to the kernel,
-which you can find in [`util/linux/mainline`](https://github.com/yetifrisstlama/zed_vvm/tree/master/util/linux/mainline).
+which is used to pipe the name of a `.bit.bin` file to re-program the FPGA PL from linux. After some investigation, it looks like the fpga-manager was not intended to be accessed from user-space and Xilinx added this feature as a convenience for developers. I brought it back with a tiny patch to the mainline kernel,
+which you can find in [`util/linux/mainline`](https://github.com/yetifrisstlama/zed_vvm/tree/master/util/linux/fpga-mgr.patch).
 
 With the patch I was able to load bit-files in the same way as with the
  Xilinx kernel. However the fabric clocks were still disabled and the FPGA
