@@ -6,7 +6,7 @@ This guide is mostly based on these two:
   * https://blog.n621.de/2016/05/running-linux-on-a-zynq-without-vivado-madness/
 
 ## Bootloader
-The stock version of U-Boot works perfectly fine for Zynq7000. No need for the Xilinx version.
+The stock version of U-Boot works perfectly fine for the Zynq7000 on the zedboard. No need for the Xilinx version.
 ```bash
 # Cross compiler
     sudo apt install libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses-dev
@@ -45,20 +45,34 @@ The stock version of U-Boot works perfectly fine for Zynq7000. No need for the X
 # Now try it on the Zedboard, you should see u-boot starting on the UART
 ```
 ## Linux kernel
-The [vanilla mainline kernel](https://github.com/torvalds/linux) works perfectly fine now for this application (see note below).
-Here's some old instructions how to compile the Xilinx kernel. The same instructions apply for mainline.
+The [vanilla mainline kernel](https://github.com/torvalds/linux) works perfectly fine for this application (see note below).
+Here's some instructions on how to apply two tiny patches to the kernel and compile it. The same instructions apply for the Xilinx version of the kernel if you go with that.
 
 ```bash
-# compile Kernel
-    git clone https://github.com/Xilinx/linux-xlnx.git --recursive
-    cd linux-xlnx/
-    make xilinx_zynq_defconfig
+    git clone https://github.com/torvalds/linux.git
+    cd linux/
+
+    # Load my kernel config and device tree for zed_vvm
+    cp <..>/zed_vvm/util/linux/.config .
+    cp <..>/zed_vvm/util/linux/zynq-zed.dts arch/arm/boot/dts/
+
+    # Patch to get /sys/class/fpga_mgr/fpga0/firmware
+    # Not needed with the xilinx version of the kernel
+    patch --strip=1 --input=<..>/zed_vvm/util/linux/fpga-mgr.patch
+
+    # Replace the fbtft driver with a working version for the 2 OLED displays
+    cd drivers/staging
+    rm -rf fbtft
+    git clone https://github.com/yetifrisstlama/fbtft.git
+
+    # Do any kernel customization you might need
     make menuconfig
 ```
 
-Then build the kernel ...
+Then build the kernel and device-tree ...
 
 ```bash
+    export CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm
     make -j4 uImage LOADADDR=0x00008000
     make zynq-zed.dtb
 ```
@@ -87,26 +101,24 @@ Zynq7000 is pretty well supported now in the mainline kernel.
 
 [Mainline vs. Xilinx Kernel](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841873/Linux+Drivers)
 
-For my first try I just copied linux-xlnx/.config to linux/.config and compiled
-as of the instructions above.
+I started this project on the xilinx fork of the kernel. When I first tried switching over to mainline, I just copied `linux-xlnx/.config` to `linux/.config` and compiled as of the instructions above.
 
-  * Both OLED displays, GPIOs and rotary encoder work as expected
-  * boots without errors in dmesg
-  * `/sys/class/fpga_manager/fpga0` was there, so the linux fpga maanger driver
-    was working
+  * Both OLED displays, GPIOs and rotary encoder worked as expected
+  * It booted without errors in dmesg
+  * `/sys/class/fpga_manager/fpga0` was there, so the linux FPGA manager driver was working
 
 However I was missing `/sys/class/fpga_manager/fpga0/firmware`,
 which is used to pipe the name of a bit-file to re-program the FPGA
 PL from linux. After some investigation, it looks like this was a convenience
-feature from xilinx. I brought it back with 2 tiny patches to the kernel,
+feature from Xilinx. I brought it back with 2 tiny patches to the kernel,
 which you can find in [`util/linux/mainline`](https://github.com/yetifrisstlama/zed_vvm/tree/master/util/linux/mainline).
 
 With the patch I was able to load bit-files in the same way as with the
- xilinx kernel. However the fabrick clocks were still disabled and the FPGA
- appeared dead. This was due to different default settings in `zynq-7000.dtsi`.
- I was able to switch the clocks back on in [`util/linux/zynq-zed.dts`](https://github.com/yetifrisstlama/zed_vvm/blob/master/util/linux/zynq-zed.dts)
- and everything seems fine now.
-
+ Xilinx kernel. However the fabric clocks were still disabled and the FPGA
+ appeared completely un-responsive after configuration.
+ Some intensive diff-ing later I could trace this down to different default settings in `zynq-7000.dtsi`.
+ Switching the clocks back on was easily done in [`util/linux/zynq-zed.dts`](https://github.com/yetifrisstlama/zed_vvm/blob/master/util/linux/zynq-zed.dts)
+ and life on mainline is good now.
 
 ## Debian buster rootfs
 
