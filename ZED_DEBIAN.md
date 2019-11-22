@@ -108,8 +108,7 @@ I started this project on the Xilinx kernel-fork. When I first tried switching o
   * `/sys/class/fpga_manager/fpga0` was there, so the linux FPGA manager driver was working
 
 However I was missing `/sys/class/fpga_manager/fpga0/firmware`,
-which is used to pipe the name of a `.bit.bin` file to re-program the FPGA PL from linux. After some investigation, it looks like the fpga-manager was not intended to be accessed from user-space and Xilinx added this feature as a convenience for developers. I brought it back with a tiny patch to the mainline kernel,
-which you can find in [`util/linux/mainline`](https://github.com/yetifrisstlama/zed_vvm/tree/master/util/linux/fpga-mgr.patch).
+which is used to pipe the name of a `.bit.bin` file to re-program the FPGA PL from linux. After some investigation, it looks like the fpga-manager was not intended to be accessed from user-space and Xilinx added this feature as a convenience for developers. I brought it back with a [tiny patch](https://github.com/yetifrisstlama/zed_vvm/tree/master/util/linux/fpga-mgr.patch) to the mainline kernel.
 
 With the patch I was able to load bit-files in the same way as with the
  Xilinx kernel. However the fabric clocks were still disabled and the FPGA
