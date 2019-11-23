@@ -1,22 +1,26 @@
 [*]
 [*] GTKWave Analyzer v3.3.94 (w)1999-2018 BSI
-[*] Fri Oct 25 00:53:45 2019
+[*] Fri Nov 22 20:05:28 2019
 [*]
-[dumpfile] "/home/michael/fpga_wsp/litex_test_project/zedboard/dsp/vvm_dsp.vcd"
-[dumpfile_mtime] "Fri Oct 25 00:47:35 2019"
-[dumpfile_size] 223346614
+[dumpfile] "/home/michael/fpga_wsp/zed_vvm/dsp/vvm_dsp.vcd"
+[dumpfile_mtime] "Fri Nov 22 19:41:22 2019"
+[dumpfile_size] 632498422
 [optimize_vcd]
-[savefile] "/home/michael/fpga_wsp/litex_test_project/zedboard/dsp/vvm_dsp.gtkw"
+[savefile] "/home/michael/fpga_wsp/zed_vvm/dsp/vvm_dsp.gtkw"
 [timestart] 0
 [size] 1916 508
 [pos] -1 -1
-*-15.000000 41888 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-9.000000 1640 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] vvm_dsp_tb.
-[treeopen] vvm_dsp_tb.dsp_inst.ddc.i_cic_multichannel_i.
+[treeopen] vvm_dsp_tb.dsp_inst.
+[treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.
+[treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.
+[treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.
+[treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.s1.
 [sst_width] 318
-[signals_width] 276
+[signals_width] 763
 [sst_expanded] 1
-[sst_vpaned_height] 105
+[sst_vpaned_height] 182
 @28
 vvm_dsp_tb.clk_adc
 @c00200
@@ -42,15 +46,56 @@ vvm_dsp_tb.adc_c[13:0]
 -testbench
 @c00200
 -dds
-@20000
--
--
 @22
+vvm_dsp_tb.dsp_inst.dds0_o_cos[17:0]
+vvm_dsp_tb.dsp_inst.dds1_o_cos[17:0]
+vvm_dsp_tb.dsp_inst.dds2_o_cos[17:0]
+vvm_dsp_tb.dsp_inst.dds3_o_cos[17:0]
+vvm_dsp_tb.dsp_inst.dds0_o_sin[17:0]
+vvm_dsp_tb.dsp_inst.dds1_o_sin[17:0]
+vvm_dsp_tb.dsp_inst.dds2_o_sin[17:0]
+vvm_dsp_tb.dsp_inst.dds3_o_sin[17:0]
 vvm_dsp_tb.dsp_inst.ftw[31:0]
 @1401200
 -dds
 @800200
 -DDC
+@22
+vvm_dsp_tb.dsp_inst.mixer.mult[17:0]
+vvm_dsp_tb.dsp_inst.mixer_1.mult[17:0]
+@200
+-
+@22
+vvm_dsp_tb.dsp_inst.mixer.mixout[17:0]
+vvm_dsp_tb.dsp_inst.mixer_1.mixout[17:0]
+@200
+-
+@22
+vvm_dsp_tb.dsp_inst.cic_multichannel.d_in[143:0]
+vvm_dsp_tb.dsp_inst.cic_multichannel.di_sr_out[36:0]
+vvm_dsp_tb.dsp_inst.cic_multichannel.cc_sr_out[20:0]
+vvm_dsp_tb.dsp_inst.cic_multichannel.cc_shift[3:0]
+vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.sr_in[35:0]
+vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.d2[35:0]
+@200
+-
+@28
+vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.g_in
+@22
+vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.d_in[35:0]
+vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.d_out[35:0]
+vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.dpass1[35:0]
+vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.dpass2[35:0]
+@200
+-
+@28
+vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.s1.reset
+vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.s1.gate
+@22
+vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.s1.din[35:0]
+vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.s1.dout[35:0]
+@200
+-
 @22
 vvm_dsp_tb.dsp_inst.result_iq[20:0]
 @28
@@ -65,7 +110,7 @@ vvm_dsp_tb.adc_ref_dc_q[20:0]
 -
 @1000200
 -DDC
-@800200
+@c00200
 -phase_calc
 @22
 vvm_dsp_tb.dsp_inst.mag_out[20:0]
@@ -88,7 +133,7 @@ vvm_dsp_tb.dsp_inst.phase[21:0]
 vvm_dsp_tb.dsp_inst.phase_1[21:0]
 vvm_dsp_tb.dsp_inst.phase_2[21:0]
 vvm_dsp_tb.dsp_inst.phase_3[21:0]
-@1000200
+@1401200
 -phase_calc
 [pattern_trace] 1
 [pattern_trace] 0

@@ -17,8 +17,8 @@ module vvm_dsp_tb;
     //  Simulate ADC signals
     // ------------------------------------------------------------------------
     // ALS MO reference and phase shifted signal under test
-    localparam F_REF = 499600000;  // [Hz]
-    // localparam F_REF = 25000000;  // [Hz]
+    // localparam F_REF = 499600000;  // [Hz]
+    localparam F_REF = 25000000;  // [Hz]
     // localparam F_REF = 7000000;  // [Hz]
 
     localparam OMEGA_REF = (1.0 / F_ADC * 2.0 * pi * F_REF);
@@ -80,7 +80,7 @@ module vvm_dsp_tb;
     initial begin
         if ($test$plusargs("vcd")) begin
             $dumpfile("vvm_dsp.vcd");
-            $dumpvars(7,vvm_dsp_tb);
+            $dumpvars(12,vvm_dsp_tb);
         end
         f = $fopen("output.txt","w");
         $fwrite(f, "adc_ref, lo, adc_ref_dc\n");
@@ -111,13 +111,13 @@ module vvm_dsp_tb;
         .ftw_2          (LO_FTW),
         .ftw_3          (LO_FTW),
 
-        .cic_period     (13'd10),
-        .cic_shift      (4'd7),
         // decimation by factor of 1000 works fine with cic_shift = 9
         // bandwidth = 117.6 kHz
+        .cic_period     (13'd100),
+        .cic_shift      (4'd2),
 
-        .iir_shift      (6'd4)
         // Measurement smoothing factor
+        .iir_shift      (6'd4)
     );
 
 endmodule

@@ -92,7 +92,17 @@ class VVM_DDC(Module, AutoCSR):
         # Poly-phase CIC down-conversion, output is a sample stream
         self.specials += Instance(
             'cic_multichannel',
-            p_n_chan=len(adcs) * 2,
+            # Okay, this is really strange and I don't understand it.
+            # Without using Constant() here I get I get 4'd8 in ddc.v,
+            # which breaks the reg_delay module!!!!!!!
+            # It doesn't output the MSBs of `shifter` as it should.
+            # However, putting a $display() in reg_delay and printing
+            # its parameters, there is no difference visible at all.
+            # Also I was not able to re-produce this error in a simpler
+            # setup (reg_delay_tb.v)
+            # very strange things are happening inside iverilog!!!!
+            # p_n_chan=len(adcs) * 2,
+            p_n_chan=Constant(len(adcs) * 2, 32),
             p_di_dwi=MIX_W,
             p_di_rwi=DI_W,
             p_cc_outw=OUT_W,

@@ -201,8 +201,8 @@ class VVM_DSP(Module, AutoCSR):
 
         # Frequency counter for the REF input
         self.submodules.zc = ZeroCrosser(int(100e6))
+        self.comb += self.zc.sig_in.eq(self.adcs[0] > 0)
         self.zc.add_csr()
-
 
 
 class ZeroCrosser(Module, AutoCSR):
@@ -248,11 +248,8 @@ class ZeroCrosser(Module, AutoCSR):
         ]
 
     def add_csr(self):
-        self.f_ref_csr = CSRStatus(32, name='vvm_f_ref_csr')
-        self.comb += [
-            self.sig_in.eq(self.adcs[0] > 0),
-            self.f_ref_csr.status.eq(self.n_zc)
-        ]
+        self.f_ref_csr = CSRStatus(32, name='f_ref')
+        self.comb += self.f_ref_csr.status.eq(self.n_zc)
 
 
 def main():
@@ -270,7 +267,7 @@ def main():
                 *d.phases_iir,
                 d.ddc.cic_period,
                 d.ddc.cic_shift,
-                *[getattr(d.ddc, 'dds{}'.format(i)).ftw for i in range(4)],
+                *[getattr(d.ddc, 'dds{}'.format(i)).ftw for i in range(len(d.adcs))],
                 d.iir_shift
             },
             display_run=True

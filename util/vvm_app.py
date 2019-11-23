@@ -28,8 +28,12 @@ def main():
         help="Number of points to plot"
     )
     parser.add_argument(
-        "--deci", default=100, type=float,
+        "--deci", default=100, type=int,
         help="Digital down-conversion decimation factor"
+    )
+    parser.add_argument(
+        "--ddcshift", default=2, type=int,
+        help="Bits to discard after down conversion to prevent overflow"
     )
     parser.add_argument(
         "--iir", default=15, type=int,
@@ -55,13 +59,14 @@ def main():
 
     # Throw away N bits after CIC to avoid saturation with large deci factors
     # This will change the scaling!
-    r.regs.vvm_ddc_shift.write(0)
+    r.regs.vvm_ddc_shift.write(args.ddcshift)
 
     # IIR result averaging filter smoothing factor (0 - 15)
     r.regs.vvm_iir.write(args.iir)
 
     print('ddc_ftw', hex(r.regs.vvm_ddc_dds0_ftw.read()))
     print('ddc_deci', r.regs.vvm_ddc_deci.read())
+    print('ddc_shift', r.regs.vvm_ddc_shift.read())
     print('bw', args.fs / args.deci)
     print('iir_shift', r.regs.vvm_iir.read())
 
@@ -96,22 +101,25 @@ def main():
         datms[:] = roll(datms, -1, 0)
         datps[:] = roll(datps, -1, 0)
         for i in range(4):
-            val = getattr(r.regs, "vvm_mag{}".format(i)).read() / (1 << 21)
+            val = getattr(r.regs, "vvm_mag{}".format(i)).read()
+            val = val / (1 << 21) * (1 << (args.ddcshift - 1))
             datms[-1, i] = val
             lms[i].set_data(arange(datms.shape[0]), 20 * log10(datms[:, i]))
 
         for i in range(3):
             val = getattr(r.regs, "vvm_phase{}".format(i + 1)).read()
-            val = twos_comps(val, 32) / (1 << 21) * 180
+            val = twos_comps(val, 32)
+            val = val / (1 << 21) * 180
             datps[-1, i] = val
             lps[i].set_data(arange(datps.shape[0]), datps[:, i])
 
-        if (frm % 200) == 0:
+        if frm == 50:
             f_ref = meas_f_ref(c, args.fs)
             ftw = int(((f_ref / args.fs) % 1) * 2**32)
-            print("tuning f_center for {:6f} MHz".format(ftw / 2**32 * args.fs / 1e6))
-            for i in range(4):
-                getattr(r.regs, 'vvm_ddc_dds{}_ftw'.format(i)).write(ftw)
+            for i, mult in enumerate((1, 1, 4, 4)):
+                ftw_ = ftw * mult
+                print("f_center_{} at {:6f} MHz".format(i, ftw_ / 2**32 * args.fs / 1e6))
+                getattr(r.regs, 'vvm_ddc_dds{}_ftw'.format(i)).write(ftw_)
 
     def dumpNpz(x):
         fName = unique_filename("measurements/vvm_dump.npz")

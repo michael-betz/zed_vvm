@@ -28,8 +28,10 @@ from litex.soc.cores.clock import S7MMCM, S7IDELAYCTRL
 from litex.soc.interconnect import wishbone
 from iserdes.ltc_phy import LTCPhy, ltc_pads
 from util.common import main, LedBlinker
-from dsp.acquisition import Acquisition
-from dsp.vvm_dsp import VVM_DSP
+import sys
+sys.path.append('dsp')
+from acquisition import Acquisition
+from vvm_dsp import VVM_DSP
 from operator import or_
 from functools import reduce
 
@@ -233,7 +235,7 @@ class ZedVvm(SoCZynq):
         # ----------------------------
         VVM_DSP.add_sources(p)
         self.submodules.vvm = VVM_DSP(self.lvds.sample_outs)
-        self.vvm.add_csrs(f_sys, p)
+        self.vvm.add_csr(f_sys, p)
 
         # -------------------------------------------------------
         #  OLED display / PS GPIOs / Si570

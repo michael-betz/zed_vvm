@@ -4,6 +4,7 @@ include $(CORDIC_DIR)/rules.mk
 
 vpath %.v $(CORDIC_DIR) $(DSP_DIR)
 
+# TARGET  = reg_delay
 TARGET  = vvm_dsp
 
 SRC_V  += cordicg_b22.v cstageg.v addsubg.v
@@ -17,7 +18,9 @@ all: $(TARGET).vcd
 %.v: %.py
 	python3 $< build
 
-$(TARGET)_tb: $(SRC_V) $(TARGET).v
+vvm_dsp_tb: $(SRC_V)
+
+$(TARGET)_tb: $(TARGET).v
 
 plot: $(TARGET).vcd
 	python3 quickPlot.py output.txt --skip 100 --fs 117.6e6
