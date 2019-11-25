@@ -42,13 +42,18 @@ def main():
     parser.add_argument(
         "--fs", default=117.6e6, type=float, help="ADC sample rate [MHz]. Must match hello_LTC.py setting."
     )
+    parser.add_argument(
+        "--noinit", action='store_true', help="Do not initialize the hardware."
+    )
     args = parser.parse_args()
     # ----------------------------------------------
     #  Init hardware
     # ----------------------------------------------
     r = conLitexServer('../build/csr.csv')
     c = CsrLibLegacyAdapter(r)
-    initLTC(c, False)
+
+    if not args.noinit:
+        initLTC(c, False)
 
     # Frequency / bandwidth setting
     print("fs = {:6f} MHz, should be {:6f} MHz".format(
@@ -64,7 +69,7 @@ def main():
     # IIR result averaging filter smoothing factor (0 - 15)
     r.regs.vvm_iir.write(args.iir)
 
-    print('ddc_ftw', hex(r.regs.vvm_ddc_dds0_ftw.read()))
+    print('ddc_ftw', hex(r.regs.vvm_ddc_dds_ftw0.read()))
     print('ddc_deci', r.regs.vvm_ddc_deci.read())
     print('ddc_shift', r.regs.vvm_ddc_shift.read())
     print('bw', args.fs / args.deci)
@@ -113,13 +118,14 @@ def main():
             datps[-1, i] = val
             lps[i].set_data(arange(datps.shape[0]), datps[:, i])
 
-        if frm == 50:
+        if (frm % 50) == 0:
             f_ref = meas_f_ref(c, args.fs)
             ftw = int(((f_ref / args.fs) % 1) * 2**32)
             for i, mult in enumerate((1, 1, 4, 4)):
-                ftw_ = ftw * mult
+                ftw_ = int(ftw * mult)
                 print("f_center_{} at {:6f} MHz".format(i, ftw_ / 2**32 * args.fs / 1e6))
-                getattr(r.regs, 'vvm_ddc_dds{}_ftw'.format(i)).write(ftw_)
+                getattr(r.regs, 'vvm_ddc_dds_ftw{}'.format(i)).write(ftw_)
+            r.regs.vvm_ddc_dds_ctrl.write(0x2 | (frm == 0))  # FTW_UPDATE, RESET
 
     def dumpNpz(x):
         fName = unique_filename("measurements/vvm_dump.npz")

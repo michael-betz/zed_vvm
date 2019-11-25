@@ -56,15 +56,13 @@ class VVM_DDC(Module, AutoCSR):
         mixouts = []
 
         # Connect each input channel to an I and Q mixer with separate LOs
+        self.submodules.dds = DDS(len(adcs), OSCW)
         for i, adc in enumerate(adcs):
-            dds = DDS(OSCW)
-            setattr(self, 'dds{}'.format(i), dds)
-            self.submodules += dds
-            for dds_o in (dds.o_cos, dds.o_sin):
+            for dds_o in (self.dds.o_coss[i], self.dds.o_sins[i]):
                 mix_o = Signal((MIX_W, True))
                 self.specials += Instance(
                     'mixer',
-                    p_NORMALIZE=0,
+                    p_NORMALIZE=False,
                     p_dwi=DW,
                     p_davr=DAVR,
                     p_dwlo=OSCW,
@@ -108,8 +106,8 @@ class VVM_DDC(Module, AutoCSR):
             p_cc_outw=OUT_W,
             # NOTE: Setting to 1 to compensate for removed /2 from double_inte
             p_di_noise_bits=1,
-            p_cc_halfband=0,
-            p_cc_use_delay=0,
+            p_cc_halfband=False,
+            p_cc_use_delay=False,
             # Bits to discard after CIC (added to i_cic_shift)
             p_cc_shift_base=7,
 
@@ -132,8 +130,7 @@ class VVM_DDC(Module, AutoCSR):
             self.cic_period.eq(self.ddc_deci.storage),
             self.cic_shift.eq(self.ddc_shift.storage)
         ]
-        for i in range(len(self.adcs)):
-            getattr(self, 'dds{}'.format(i)).add_csr()
+        self.dds.add_csr()
 
 
 def main():

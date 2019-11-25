@@ -159,6 +159,9 @@ def main():
     parser.add_argument(
         "--fs", default=117.6e6, type=float, help="ADC sample rate [MHz]. Must match hello_LTC.py setting."
     )
+    parser.add_argument(
+        "--noinit", action='store_true', help="Do not initialize the hardware."
+    )
     args = parser.parse_args()
     # ----------------------------------------------
     #  Init hardware
@@ -168,8 +171,9 @@ def main():
     print("fs = {:6f} MHz, should be {:6f} MHz".format(
         r.regs.lvds_f_sample_value.read() / 1e6, args.fs / 1e6
     ))
-    # initSi570(c, 117.6e6)  # Bitbanging over ethernet is too slow :(
-    initLTC(c, False)
+    if not args.noinit:
+        # initSi570(c, 117.6e6)  # Bitbanging over ethernet is too slow :(
+        initLTC(c, False)
     r.regs.acq_trig_channel.write(args.CH)
 
     # ----------------------------------------------
