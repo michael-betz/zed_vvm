@@ -27,16 +27,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.9899495"
-     inkscape:cx="661.75517"
-     inkscape:cy="342.21817"
+     inkscape:cx="499.34968"
+     inkscape:cy="461.54631"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
      showguides="false"
      inkscape:guide-bbox="true"
-     inkscape:window-width="2044"
-     inkscape:window-height="1105"
-     inkscape:window-x="1920"
+     inkscape:window-width="1916"
+     inkscape:window-height="1033"
+     inkscape:window-x="0"
      inkscape:window-y="22"
      inkscape:window-maximized="0">
     <inkscape:grid
@@ -1262,22 +1262,6 @@
     <marker
        inkscape:isstock="true"
        style="overflow:visible"
-       id="marker5351-8"
-       refX="0"
-       refY="0"
-       orient="auto"
-       inkscape:stockid="Arrow1Send"
-       inkscape:collect="always">
-      <path
-         inkscape:connector-curvature="0"
-         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
-         style="fill:#5c3566;fill-opacity:1;fill-rule:evenodd;stroke:#5c3566;stroke-width:1.00000003pt;stroke-opacity:1"
-         d="M 0,0 5,-5 -12.5,0 5,5 Z"
-         id="path5349-5" />
-    </marker>
-    <marker
-       inkscape:isstock="true"
-       style="overflow:visible"
        id="marker5436-7"
        refX="0"
        refY="0"
@@ -1344,12 +1328,12 @@
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';letter-spacing:0px;word-spacing:0px;fill:#204a87;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        x="46.77647"
-       y="109.75237"
+       y="111.33987"
        id="text5404"><tspan
          sodipodi:role="line"
          id="tspan5402"
          x="46.77647"
-         y="109.75237"
+         y="111.33987"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#204a87;stroke-width:0.26458332">Processing System (PS)</tspan></text>
     <rect
        ry="11.1503"
@@ -1371,12 +1355,12 @@
        ry="2.6458333" />
     <text
        id="text4869"
-       y="109.75237"
+       y="111.33987"
        x="157.088"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';letter-spacing:0px;word-spacing:0px;fill:#204a87;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"><tspan
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#204a87;stroke-width:0.26458332"
-         y="109.75237"
+         y="111.33987"
          x="157.088"
          id="tspan4867"
          sodipodi:role="line">Programmable Logic (PL)</tspan></text>
@@ -1643,15 +1627,9 @@
          sodipodi:role="line"
          id="tspan5321">and waveform capture</tspan></text>
     <path
-       inkscape:connector-curvature="0"
-       id="path5343-2"
-       d="m 230.1875,220.27083 v -9.26041"
-       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#5c3566;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker5351-8);marker-start:url(#marker5582)"
-       sodipodi:nodetypes="cc" />
-    <path
        sodipodi:nodetypes="cc"
-       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#5c3566;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker5416);marker-start:url(#marker5578)"
-       d="m 239.44792,220.27083 0,-9.26041"
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#5c3566;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker5578);marker-end:url(#marker5416)"
+       d="m 235.47917,238.79167 0,-22.48959"
        id="path5412"
        inkscape:connector-curvature="0" />
     <rect
@@ -1808,19 +1786,19 @@
     <path
        inkscape:connector-curvature="0"
        id="path5562"
-       d="m 256.27105,214.03103 -6.2398,6.2398 H 230.1875 v 18.52084"
+       d="m 255.85208,214.45 -13.75833,13.75833 v 10.58334"
        style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#5c3566;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker5574);marker-end:url(#marker5570)"
-       sodipodi:nodetypes="cccc" />
+       sodipodi:nodetypes="ccc" />
     <text
        id="text5560"
-       y="336.97861"
-       x="28.991989"
+       y="330.60663"
+       x="30.250631"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#204a87;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        transform="rotate(-45)"><tspan
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';text-align:end;text-anchor:end;fill:#204a87;stroke-width:0.26458332"
-         y="336.97861"
-         x="28.991989"
+         y="330.60663"
+         x="30.250631"
          sodipodi:role="line"
          id="tspan5743">SPI</tspan></text>
     <rect
