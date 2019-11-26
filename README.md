@@ -41,7 +41,7 @@ The main reason to choose embedded linux is the convenience for application deve
 # System block diagram
 ![High level system overview](https://github.com/yetifrisstlama/zed_vvm/raw/master/doc/system.png)
 
-# DSP block diagram
+# `vvm_dsp.py` block diagram
 ![DSP blocks implementing the VVM](https://github.com/yetifrisstlama/zed_vvm/raw/master/doc/dsp.png)
 
 # Hardware modifications
