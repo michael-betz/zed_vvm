@@ -16,7 +16,7 @@
    id="svg5693"
    inkscape:version="0.92.1 r15371"
    sodipodi:docname="system.svg"
-   inkscape:export-filename="/home/michael/fpga_wsp/zed_vvm/doc/dsp.png"
+   inkscape:export-filename="/home/michael/fpga_wsp/zed_vvm/doc/system.png"
    inkscape:export-xdpi="153.08"
    inkscape:export-ydpi="153.08">
   <sodipodi:namedview
@@ -27,8 +27,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.9899495"
-     inkscape:cx="1042.1076"
-     inkscape:cy="332.77178"
+     inkscape:cx="732.85473"
+     inkscape:cy="492.93139"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -1372,14 +1372,14 @@
     <text
        id="text4869"
        y="106.0106"
-       x="160.12657"
+       x="157.088"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';letter-spacing:0px;word-spacing:0px;fill:#204a87;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"><tspan
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#204a87;stroke-width:0.26458332"
          y="106.0106"
-         x="160.12657"
+         x="157.088"
          id="tspan4867"
-         sodipodi:role="line">Programable Logic (PL)</tspan></text>
+         sodipodi:role="line">Programmable Logic (PL)</tspan></text>
     <rect
        style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.66099995;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4895"
