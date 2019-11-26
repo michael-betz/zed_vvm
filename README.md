@@ -38,6 +38,9 @@ The main reason to choose embedded linux is the convenience for application deve
   * Not too expensive, such that it can be installed in multiple places across the facility
   * Epics support
 
+# System block diagram
+![High level system overview](https://github.com/yetifrisstlama/zed_vvm/raw/master/doc/system.png)
+
 # DSP block diagram
 ![DSP blocks implementing the VVM](https://github.com/yetifrisstlama/zed_vvm/raw/master/doc/dsp.png)
 
