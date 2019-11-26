@@ -14,9 +14,9 @@
    viewBox="0 0 297 210"
    version="1.1"
    id="svg5693"
-   inkscape:version="0.92.1 r15371"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="dsp.svg"
-   inkscape:export-filename="/home/michael/fpga_wsp/zed_vvm/doc/dsp.png"
+   inkscape:export-filename="dsp.png"
    inkscape:export-xdpi="153.08"
    inkscape:export-ydpi="153.08">
   <sodipodi:namedview
@@ -26,18 +26,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="1038.474"
-     inkscape:cy="169.96388"
+     inkscape:zoom="0.9899495"
+     inkscape:cx="814.62479"
+     inkscape:cy="195.44658"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
-     showgrid="false"
+     showgrid="true"
      showguides="false"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1916"
-     inkscape:window-height="1037"
+     inkscape:window-width="2044"
+     inkscape:window-height="1105"
      inkscape:window-x="1920"
-     inkscape:window-y="20"
+     inkscape:window-y="22"
      inkscape:window-maximized="0">
     <inkscape:grid
        id="grid5178"
@@ -114,21 +114,6 @@
          d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
          transform="scale(0.2) rotate(180) translate(6,0)" />
-    </marker>
-    <marker
-       inkscape:isstock="true"
-       style="overflow:visible;"
-       id="marker10654"
-       refX="0.0"
-       refY="0.0"
-       orient="auto"
-       inkscape:stockid="Arrow1Send"
-       inkscape:collect="always">
-      <path
-         transform="scale(0.2) rotate(180) translate(6,0)"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         id="path10652" />
     </marker>
     <marker
        inkscape:stockid="Arrow1Send"
@@ -726,7 +711,7 @@
          id="tspan6660"
          sodipodi:role="line" /></text>
     <rect
-       style="opacity:0.75;vector-effect:none;fill:#fce94f;fill-opacity:1;stroke:none;stroke-width:0.60000002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:0.75;vector-effect:none;fill:#bfbfbf;fill-opacity:1;stroke:none;stroke-width:0.60000002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect5114"
        width="98.830437"
        height="154.4818"
@@ -1618,17 +1603,91 @@
          id="tspan10531"
          sodipodi:role="line">Q3</tspan></text>
     <path
-       sodipodi:nodetypes="cc"
-       inkscape:connector-curvature="0"
-       id="path10650"
-       d="m 170.77576,185.875 h 54.23958"
-       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10654)" />
-    <path
        style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10660)"
-       d="m 170.77576,200.42709 h 27.78126"
+       d="m 170.77576,200.42709 50.15132,0"
        id="path10656"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';letter-spacing:0px;word-spacing:0px;fill:#a40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="177.28502"
+       y="178.25911"
+       id="text10668"><tspan
+         sodipodi:role="line"
+         x="177.28502"
+         y="178.25911"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332"
+         id="tspan10664">4 x phase</tspan><tspan
+         sodipodi:role="line"
+         x="177.28502"
+         y="182.66884"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332"
+         id="tspan10666" /></text>
+    <text
+       id="text10723"
+       y="173.84586"
+       x="203.18724"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';letter-spacing:0px;word-spacing:0px;fill:#a40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         id="tspan10719"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332"
+         y="173.84586"
+         x="203.18724"
+         sodipodi:role="line">3 x phase-</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332"
+         y="178.25558"
+         x="203.18724"
+         sodipodi:role="line"
+         id="tspan10729">difference</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332"
+         y="182.6653"
+         x="203.18724"
+         sodipodi:role="line"
+         id="tspan10741">(vs REF)</tspan><tspan
+         id="tspan10721"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332"
+         y="187.07503"
+         x="203.18724"
+         sodipodi:role="line" /></text>
+    <text
+       id="text10739"
+       y="207.06061"
+       x="177.28502"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';letter-spacing:0px;word-spacing:0px;fill:#a40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         id="tspan10735"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332"
+         y="207.06061"
+         x="177.28502"
+         sodipodi:role="line">4 x magnitude</tspan><tspan
+         id="tspan10737"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332"
+         y="211.47034"
+         x="177.28502"
+         sodipodi:role="line" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="14.279119"
+       y="163.7634"
+       id="text10745"><tspan
+         sodipodi:role="line"
+         x="14.279119"
+         y="163.7634"
+         style="font-size:3.52777767px;stroke-width:0.26458332"
+         id="tspan10747">REF channel</tspan></text>
+    <path
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.661;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Send)"
+       d="m 250.03125,193.05655 h 11.24479"
+       id="path5116"
+       inkscape:connector-curvature="0" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path1444"
+       d="m 170.77576,185.875 h 50.15132"
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10660)" />
     <g
        id="g10648"
        transform="translate(-26.458349,28.716359)">
@@ -1673,80 +1732,6 @@
            sodipodi:role="line"
            id="tspan11172">conversion</tspan></text>
     </g>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';letter-spacing:0px;word-spacing:0px;fill:#a40000;fill-opacity:1;stroke:none;stroke-width:0.26458332;"
-       x="177.28502"
-       y="205.85138"
-       id="text10668"><tspan
-         sodipodi:role="line"
-         x="177.28502"
-         y="205.85138"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332;"
-         id="tspan10664">4 x phase</tspan><tspan
-         sodipodi:role="line"
-         x="177.28502"
-         y="210.26111"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332;"
-         id="tspan10666" /></text>
-    <text
-       id="text10723"
-       y="206.18547"
-       x="203.18724"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';letter-spacing:0px;word-spacing:0px;fill:#a40000;fill-opacity:1;stroke:none;stroke-width:0.26458332;"
-       xml:space="preserve"><tspan
-         id="tspan10719"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332;"
-         y="206.18547"
-         x="203.18724"
-         sodipodi:role="line">3 x phase-</tspan><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332;"
-         y="210.5952"
-         x="203.18724"
-         sodipodi:role="line"
-         id="tspan10729">difference</tspan><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332;"
-         y="215.00491"
-         x="203.18724"
-         sodipodi:role="line"
-         id="tspan10741">(vs REF)</tspan><tspan
-         id="tspan10721"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332;"
-         y="219.41464"
-         x="203.18724"
-         sodipodi:role="line" /></text>
-    <text
-       id="text10739"
-       y="191.56358"
-       x="177.28502"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';letter-spacing:0px;word-spacing:0px;fill:#a40000;fill-opacity:1;stroke:none;stroke-width:0.26458332;"
-       xml:space="preserve"><tspan
-         id="tspan10735"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332;"
-         y="191.56358"
-         x="177.28502"
-         sodipodi:role="line">4 x magnitude</tspan><tspan
-         id="tspan10737"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#a40000;stroke-width:0.26458332;"
-         y="195.97331"
-         x="177.28502"
-         sodipodi:role="line" /></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="14.279119"
-       y="163.7634"
-       id="text10745"><tspan
-         sodipodi:role="line"
-         x="14.279119"
-         y="163.7634"
-         style="font-size:3.52777767px;stroke-width:0.26458332"
-         id="tspan10747">REF channel</tspan></text>
-    <path
-       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.661;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Send)"
-       d="m 250.03125,193.05655 h 11.24479"
-       id="path5116"
-       inkscape:connector-curvature="0" />
     <rect
        ry="2.6458333"
        rx="2.6458333"
@@ -1821,15 +1806,10 @@
          y="203.95485"
          x="236.92181"
          sodipodi:role="line">result averaging</tspan></text>
-    <path
-       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10855)"
-       d="M 198.55702,200.42709 H 221.0466"
-       id="path10849"
-       inkscape:connector-curvature="0" />
     <g
        style="stroke-width:2.96853614;stroke-miterlimit:4;stroke-dasharray:none"
        id="g10339-3-9"
-       transform="matrix(0.20211983,0,0,0.20211983,162.4642,255.61253)">
+       transform="matrix(0.20211983,0,0,0.20211983,162.4642,241.06165)">
       <g
          style="fill:#ffffff;stroke:none;stroke-width:2.37038493;stroke-miterlimit:4;stroke-dasharray:none"
          id="g10345-6-7"
@@ -1888,7 +1868,7 @@
     <path
        inkscape:connector-curvature="0"
        id="path10871"
-       d="M 213.1091,199.10417 210.46327,201.75"
+       d="m 213.1091,184.55208 -2.64583,2.64583"
        style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
     <path
        inkscape:connector-curvature="0"
@@ -2011,46 +1991,41 @@
          id="tspan11039">ddc_shift: out scaling factor</tspan></text>
     <text
        id="text11127"
-       y="181.06357"
-       x="256.22708"
+       y="212.4286"
+       x="212.59729"
        style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#5c3566;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"><tspan
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Bold';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         y="181.06357"
-         x="256.22708"
+         y="212.4286"
+         x="212.59729"
          sodipodi:role="line"
          id="tspan11113">CSRs</tspan><tspan
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         y="185.4733"
-         x="256.22708"
-         sodipodi:role="line"
-         id="tspan11164"><tspan
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:start;text-anchor:start"
-   id="tspan11166">mag&lt;x&gt;:</tspan> </tspan><tspan
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         y="189.88301"
-         x="256.22708"
-         sodipodi:role="line"
-         id="tspan5394">4 x Magnitude values</tspan><tspan
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         y="194.29274"
-         x="256.22708"
+         y="216.83833"
+         x="212.59729"
          sodipodi:role="line"
          id="tspan11125"><tspan
-           id="tspan11115"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:start;text-anchor:start"></tspan></tspan><tspan
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         y="198.70245"
-         x="256.22708"
-         sodipodi:role="line"
-         id="tspan5396"><tspan
    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:start;text-anchor:start"
-   id="tspan5398">phase&lt;x&gt;:</tspan> </tspan><tspan
+   id="tspan11166">mag&lt;x&gt;:</tspan>   4x Magnitude values</tspan><tspan
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         y="203.11218"
-         x="256.22708"
+         y="221.24805"
+         x="212.59729"
          sodipodi:role="line"
-         id="tspan5400">3 x Phase values</tspan></text>
+         id="tspan1414"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:start;text-anchor:start"
+   id="tspan5398">phase&lt;x&gt;:</tspan> 3x Phase values</tspan><tspan
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
+         y="225.65778"
+         x="212.59729"
+         sodipodi:role="line"
+         id="tspan1420"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono'"
+   id="tspan1422">vvm_iir:</tspan>  common averaging </tspan><tspan
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
+         y="230.06749"
+         x="212.59729"
+         sodipodi:role="line"
+         id="tspan1418">          factor (0 - 15)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#5c3566;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2059,16 +2034,9 @@
        id="text11146"><tspan
          sodipodi:role="line"
          x="225.06578"
-         y="212.73366"
+         y="216.02399"
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         id="tspan11154"><tspan
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono'"
-   id="tspan11156">vvm_iir:</tspan> Common averaging </tspan><tspan
-         sodipodi:role="line"
-         x="225.06578"
-         y="217.14339"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         id="tspan11152">         factor (0 - 15)</tspan></text>
+         id="tspan11152" /></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';letter-spacing:0px;word-spacing:0px;fill:#204a87;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2080,5 +2048,21 @@
          x="74.684555"
          y="134.09225"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#204a87;stroke-width:0.26458332">ddc.py</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       x="254.44058"
+       y="197.50891"
+       id="text1426"><tspan
+         sodipodi:role="line"
+         id="tspan1424"
+         x="254.44058"
+         y="197.50891"
+         style="font-size:3.17499995px;stroke-width:0.26458332">to litex</tspan><tspan
+         sodipodi:role="line"
+         x="254.44058"
+         y="201.47766"
+         style="font-size:3.17499995px;stroke-width:0.26458332"
+         id="tspan1446">CSRs</tspan></text>
   </g>
 </svg>
