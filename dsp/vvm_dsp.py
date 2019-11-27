@@ -117,13 +117,16 @@ class VVM_DSP(Module, AutoCSR):
         mags = [Signal.like(self.mags_iir[0]) for i in range(n_ch)]
         phases = [Signal.like(self.phases_iir[0]) for i in range(n_ch)]
         t = []
+        self.mult_factors = []
         # For each mag / phase result
         for i, (m, p) in enumerate(zip(mags, phases)):
             instrs = [m.eq(mag_out)]
             if i == 0:
                 instrs.append(p.eq(phase_out))
             else:
-                instrs.append(p.eq(phases[0] - phase_out))
+                mult_factor = Signal(8, reset=1)
+                instrs.append(p.eq((phases[0] * mult_factor) - phase_out))
+                self.mult_factors.append(mult_factor)
             t.append((
                 CORDIC_DEL + 2 * i,  # N cycles after self.ddc.result_strobe
                 instrs               # ... carry out these instructions
@@ -199,10 +202,18 @@ class VVM_DSP(Module, AutoCSR):
             setattr(self, n, csr)
             self.comb += csr.status.eq(sig)
 
-        # Frequency counter for the REF input
-        self.submodules.zc = ZeroCrosser(int(100e6))
-        self.comb += self.zc.sig_in.eq(self.adcs[0] > 0)
-        self.zc.add_csr()
+        # Frequency counters for the ADC inputs
+        for i, adc in enumerate(self.adcs):
+            zc = ZeroCrosser(int(100e6))
+            self.comb += zc.sig_in.eq(adc > 0)
+            zc.add_csr()
+            setattr(self.submodules, 'zc{}'.format(i), zc)
+
+        for i, multf in enumerate(self.mult_factors):
+            n = 'mult{}'.format(i + 1)
+            csr = CSRStorage(8, reset=1, name=n)
+            setattr(self, n, csr)
+            self.comb += multf.eq(csr.storage)
 
 
 class ZeroCrosser(Module, AutoCSR):
@@ -248,7 +259,7 @@ class ZeroCrosser(Module, AutoCSR):
         ]
 
     def add_csr(self):
-        self.f_ref_csr = CSRStatus(32, name='f_ref')
+        self.f_ref_csr = CSRStatus(32, name='f_meas')
         self.comb += self.f_ref_csr.status.eq(self.n_zc)
 
 
@@ -267,7 +278,7 @@ def main():
                 *d.phases_iir,
                 d.ddc.cic_period,
                 d.ddc.cic_shift,
-                *[getattr(d.ddc, 'dds{}'.format(i)).ftw for i in range(len(d.adcs))],
+                *[getattr(d.ddc, 'dds.ftw{}'.format(i)) for i in range(len(d.adcs))],
                 d.iir_shift
             },
             display_run=True

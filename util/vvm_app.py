@@ -36,7 +36,7 @@ def main():
         help="Bits to discard after down conversion to prevent overflow"
     )
     parser.add_argument(
-        "--iir", default=15, type=int,
+        "--iir", default=10, type=int,
         help="IIR filter for result averaging. Smoothing factor from 0 - 15."
     )
     parser.add_argument(
@@ -118,13 +118,15 @@ def main():
             datps[-1, i] = val
             lps[i].set_data(arange(datps.shape[0]), datps[:, i])
 
-        if (frm % 50) == 0:
+        if (frm % 500) == 0:
             f_ref = meas_f_ref(c, args.fs)
             ftw = int(((f_ref / args.fs) % 1) * 2**32)
             for i, mult in enumerate((1, 1, 4, 4)):
                 ftw_ = int(ftw * mult)
                 print("f_center_{} at {:6f} MHz".format(i, ftw_ / 2**32 * args.fs / 1e6))
                 getattr(r.regs, 'vvm_ddc_dds_ftw{}'.format(i)).write(ftw_)
+                if i > 0:
+                    getattr(r.regs, 'vvm_mult{}'.format(i)).write(mult)
             r.regs.vvm_ddc_dds_ctrl.write(0x2 | (frm == 0))  # FTW_UPDATE, RESET
 
     def dumpNpz(x):
