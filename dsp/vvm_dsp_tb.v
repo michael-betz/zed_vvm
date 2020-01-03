@@ -46,8 +46,8 @@ module vvm_dsp_tb;
         .DW     (W_CORDIC)
     ) gc_inst (
         .clk        (clk_adc),
-        .stream_in  (dsp_inst.result_iq),
-        .strobe_in  (dsp_inst.result_strobe),
+        .stream_in  (dsp_inst.vvm_ddc_result_iq),
+        .strobe_in  (dsp_inst.vvm_ddc_result_strobe),
 
         .strobe_out (strobe_out),
         .i_out0     (adc_ref_dc_i),
@@ -66,7 +66,7 @@ module vvm_dsp_tb;
                 f,
                 "%d, %d, %d, %d, %d, %d\n",
                 adc_ref, 0,
-                dsp_inst.dds0_o_cos, dsp_inst.dds0_o_sin,
+                dsp_inst.vvm_ddc_o_coss0, dsp_inst.vvm_ddc_o_sins0,
                 strobe_out ? adc_ref_dc_i : 32'sh0,
                 strobe_out ? adc_ref_dc_q : 32'sh0,
             );
@@ -106,10 +106,10 @@ module vvm_dsp_tb;
         .adcs_2         (adc_b),
         .adcs_3         (adc_c),
 
-        .ftw            (LO_FTW),
-        .ftw_1          (LO_FTW),
-        .ftw_2          (LO_FTW),
-        .ftw_3          (LO_FTW),
+        .ftws            (LO_FTW),
+        .ftws_1          (LO_FTW),
+        .ftws_2          (LO_FTW),
+        .ftws_3          (LO_FTW),
 
         // decimation by factor of 1000 works fine with cic_shift = 9
         // bandwidth = 117.6 kHz

@@ -278,7 +278,7 @@ def main():
                 *d.phases_iir,
                 d.ddc.cic_period,
                 d.ddc.cic_shift,
-                *[getattr(d.ddc, 'dds.ftw{}'.format(i)) for i in range(len(d.adcs))],
+                *d.ddc.dds.ftws,
                 d.iir_shift
             },
             display_run=True

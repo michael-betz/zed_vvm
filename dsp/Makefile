@@ -4,8 +4,9 @@ include $(CORDIC_DIR)/rules.mk
 
 vpath %.v $(CORDIC_DIR) $(DSP_DIR)
 
-# TARGET  = reg_delay
 TARGET  = vvm_dsp
+# TARGET  = reg_delay
+# TARGET = phase_processor
 
 SRC_V  += cordicg_b22.v cstageg.v addsubg.v
 SRC_V  += mixer.v

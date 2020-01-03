@@ -47,6 +47,8 @@ class VVM_DDC(Module, AutoCSR):
         #  IQ stream output
         # ---------------------------
         # <strobe_cc high> I0, Q0, I1, Q1, I2, Q2, I3, Q3 <strobe_cc low>
+        # self.source = source = stream.Endpoint(("iq_data", OUT_W))
+
         self.result_iq = Signal((OUT_W, True))
         self.result_strobe = Signal()
 
