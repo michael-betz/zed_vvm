@@ -21,6 +21,7 @@ from migen import *
 from migen.genlib.misc import timeline
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage, CSRStatus
 from os.path import join, dirname, abspath
+from collections import defaultdict
 
 
 class Multiplier5(Module):
@@ -50,6 +51,34 @@ class Multiplier5(Module):
         ]
 
 
+def pipelined_timeline(trigger, events):
+    '''
+    the `trigger` Signal gets fed into a tapped delay line
+    `events` is a list of tuples like (tap_number, instructions)
+    the instructions are executed when the respective tap is asserted
+    useful for setting up data paths
+    '''
+
+    # Keys = tap_numbers,  Values = lists of instructions
+    evt = dict()
+
+    # For compatibility with timeline interface
+    if type(events) in (list, tuple):
+        for e in events:
+            evt[e[0]] = e[1]
+
+    ts = Signal(max(evt.keys()))
+    sync = [ts.eq((ts << 1) | trigger)]
+
+    for tap, instrs in evts.items():
+        if tap == 0:
+            sync.append(If(trigger, *instrs))
+        else:
+            sync.append(If(ts[tap - 1], *instrs))
+
+    return sync
+
+
 class PhaseProcessor(Module, AutoCSR):
     def __init__(self, mag_in=None, phase_in=None, N_CH=4, W_CORDIC=21):
         # From cordic
@@ -71,50 +100,43 @@ class PhaseProcessor(Module, AutoCSR):
 
         ###
 
-        ps = []  # temporary variables to latch cordic phase output
-        t = []
+        eventList = defaultdict(list)
         cycle = W_CORDIC + 2
 
-        for m in self.mags:
-            p = Signal.like(self.phases[0])
-            t.append((
-                cycle,          # N cycles after self.ddc.result_strobe ...
-                [               # ... latch phase and magnitude
-                    m.eq(mag_in),
-                    p.eq(phase_in)
-                ]
-            ))
-            cycle += 2
-            ps.append(p)
-        self.comb += self.phases[0].eq(ps[0])
+        ref_phase = Signal.like(self.phases[0])
 
-        # Feed the multiplier after all 8 cordic outputs have been latched
-        B = Signal.like(ps[0])
-        self.submodules.mult = Multiplier5(ps[0], B)
-        for b in self.mult_factors:
-            t.append((
-                cycle,
-                [B.eq(b)]
-            ))
-            cycle += 1
+        # Latch the reference phase
+        eventList[cycle] += [ref_phase.eq(phase_in)]
 
-        # We gave the multiplier 3 cycles by now already,
-        # it needs 5 + 1 to spit out the first result
+        # Latch the magnitudes
+        for i, m in enumerate(self.mags):
+            eventList[cycle + 2 * i] += [m.eq(mag_in)]
+
+        self.comb += self.phases[0].eq(ref_phase)
+
+        # Feed the multiplier
+        B = Signal.like(ref_phase)
+        self.submodules.mult = Multiplier5(ref_phase, B)
+        for i, b in enumerate(self.mult_factors):
+            eventList[cycle + 5 + 2 * i] += [B.eq(b)]
+
+        # Delay phase_in a bit to match up with multiplier result
+        temp = phase_in
+        for i in range(1):
+            phase_in_ = Signal.like(phase_in)
+            self.sync += phase_in_.eq(temp)
+            temp = phase_in_
+
+        # The multiplier needs 5 + 1 to spit out the first result
         # store the multiplier result - previously latched phase from cordic
-        cycle += 3
-        for phase, p in zip(self.phases[1:], ps[1:]):
-            t.append((
-                cycle,
-                [phase.eq(self.mult.OUT - p)]
-            ))
-            cycle += 1
-        t.append((
-            cycle,
-            [self.strobe_out.eq(1)]
-        ))
+        for i, p_out in enumerate(self.phases[1:]):
+            eventList[cycle + 11 + 2 * i] += [p_out.eq(self.mult.OUT - p)]
+
+        eventList[20] += [self.strobe_out.eq(1)]
+
         self.sync += [
             self.strobe_out.eq(0),
-            timeline(self.strobe_in, t)
+            pipelined_timeline(self.strobe_in, t)
         ]
 
 def main():

@@ -11,6 +11,7 @@ module phase_processor_tb;
     // ------------------------------------------------------------------------
     reg reset = 1;
     reg strobe_in = 0;
+    reg [20:0] mag_in = 21'h1;
     initial begin
         if ($test$plusargs("vcd")) begin
             $dumpfile("phase_processor.vcd");
@@ -22,6 +23,12 @@ module phase_processor_tb;
         strobe_in <= 1;
         @(posedge clk);
         strobe_in <= 0;
+        // repeat (20) @(posedge clk);
+        // @(posedge clk);
+        // mag_in <= 2;
+        // strobe_in <= 1;
+        // @(posedge clk);
+        // strobe_in <= 0;
         repeat (1600) @(posedge clk);
         $finish;
     end
@@ -39,7 +46,7 @@ module phase_processor_tb;
         .sys_clk       (clk),
         .sys_rst       (reset),
 
-        .mag_in        (21'h1),
+        .mag_in        (mag_in),
         .phase_in      (22'h2),
         .strobe_in     (strobe_in),
         .mult_factors  (4'h3),
