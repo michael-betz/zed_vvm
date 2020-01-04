@@ -81,8 +81,8 @@ def main():
     #  Setup Matplotlib
     # ----------------------------------------------
     fig, axs = subplots(2, sharex=True, figsize=(9,7))
-    datms = zeros((args.N, 4))
-    datps = zeros((args.N, 3))
+    datms = ones((args.N, 4)) * NaN
+    datps = ones((args.N, 3)) * NaN
     lms = []
     lps = []
     for i in range(datms.shape[1]):
@@ -117,6 +117,8 @@ def main():
             val = getattr(r.regs, "vvm_phase{}".format(i + 1)).read()
             val = twos_comps(val, 32)
             val = val / (1 << 21) * 180
+            if 20 * log10(datms[-1, i + 1]) < -85:
+                val = NaN
             datps[-1, i] = val
             lps[i].set_data(arange(datps.shape[0]), datps[:, i])
 
