@@ -55,20 +55,22 @@ class VVM_DSP(Module, AutoCSR):
         self.W_PHASE = self.W_CORDIC + 1
         self.W_MAG = self.W_CORDIC
 
+        # inputs
         if adcs is None:
             # Mock input for simulation
             adcs = [Signal((14, True)) for i in range(4)]
         self.adcs = adcs
         n_ch = len(adcs)
+        self.iir_shift = Signal(6)
 
+        # outputs
         self.mags_iir = [
             Signal((self.W_MAG, False), name='mag') for i in range(n_ch)
         ]
         self.phases_iir = [
             Signal((self.W_PHASE, True), name='phase') for i in range(n_ch)
         ]
-
-        self.iir_shift = Signal(6)
+        self.strobe_out = Signal()
 
         ###
 
@@ -114,7 +116,7 @@ class VVM_DSP(Module, AutoCSR):
         self.submodules.pp = ClockDomainsRenamer('sample')(PhaseProcessor(
             mag_in=mag_out,
             phase_in=phase_out,
-            strobe_in=self.ddc.result_strobe,
+            strobe_in=self.ddc.result_first,
             N_CH=n_ch,
             W_CORDIC=self.W_CORDIC
         ))
@@ -143,10 +145,12 @@ class VVM_DSP(Module, AutoCSR):
                 iir.strobe.eq(self.pp.strobe_out),
             ]
             self.submodules += iir
+        self.comb += self.strobe_out.eq(iir.strobe_out)
 
     def add_csr(self, f_sys, p):
         ''' Wire up the config-registers to litex CSRs '''
         self.ddc.add_csr()
+        self.pp.add_csr()
 
         # sys clock domain
         n_ch = len(self.adcs)
@@ -170,7 +174,7 @@ class VVM_DSP(Module, AutoCSR):
         self.comb += [
             self.iir_shift.eq(self.iir.storage),
             self.cdc.data_i.eq(Cat(self.mags_iir + self.phases_iir)),
-            self.cdc.i.eq(self.strobe__),
+            self.cdc.i.eq(self.strobe_out),
             Cat(self.mags_sys + self.phases_sys).eq(self.cdc.data_o)
         ]
 
@@ -190,12 +194,6 @@ class VVM_DSP(Module, AutoCSR):
             self.comb += zc.sig_in.eq(adc > 0)
             zc.add_csr()
             setattr(self.submodules, 'zc{}'.format(i), zc)
-
-        for i, multf in enumerate(self.mult_factors):
-            n = 'mult{}'.format(i + 1)
-            csr = CSRStorage(8, reset=1, name=n)
-            setattr(self, n, csr)
-            self.comb += multf.eq(csr.storage)
 
 
 class ZeroCrosser(Module, AutoCSR):
@@ -262,6 +260,7 @@ def main():
                 *d.ddc.dds.ftws,
                 d.iir_shift,
                 d.ddc.dds.update_ftw,
+                *d.pp.mult_factors,
                 # Outputs
                 *d.mags_iir,
                 *d.phases_iir

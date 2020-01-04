@@ -32,7 +32,7 @@ class Multiplier5(Module):
         B_ = Signal.like(B)
         A__ = Signal.like(A)
         B__ = Signal.like(B)
-        R = Signal(len(A) + len(B))
+        R = Signal((len(A) + len(B), True))
         R_ = Signal.like(R)
         self.OUT = Signal.like(R)
 
@@ -103,7 +103,7 @@ class PhaseProcessor(Module, AutoCSR):
         self.mag_in = mag_in
 
         if phase_in is None:
-            phase_in = Signal(W_CORDIC + 1)
+            phase_in = Signal((W_CORDIC + 1, True))
         self.phase_in = phase_in
 
         if strobe_in is None:
@@ -121,7 +121,7 @@ class PhaseProcessor(Module, AutoCSR):
 
         # 1 x absolute phase (rotating) of reference channel
         # 3 x phase difference (static) to reference
-        self.phases = [Signal(W_CORDIC + 1) for i in range(N_CH)]
+        self.phases = [Signal((W_CORDIC + 1, True)) for i in range(N_CH)]
 
         # pulses when all the above outputs are valid
         self.strobe_out = Signal()

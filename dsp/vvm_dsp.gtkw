@@ -1,16 +1,16 @@
 [*]
 [*] GTKWave Analyzer v3.3.94 (w)1999-2018 BSI
-[*] Fri Nov 22 20:05:28 2019
+[*] Sat Jan  4 04:34:40 2020
 [*]
 [dumpfile] "/home/michael/fpga_wsp/zed_vvm/dsp/vvm_dsp.vcd"
-[dumpfile_mtime] "Fri Nov 22 19:41:22 2019"
-[dumpfile_size] 632498422
+[dumpfile_mtime] "Sat Jan  4 04:33:59 2020"
+[dumpfile_size] 634412809
 [optimize_vcd]
 [savefile] "/home/michael/fpga_wsp/zed_vvm/dsp/vvm_dsp.gtkw"
-[timestart] 0
+[timestart] 1540
 [size] 1916 508
 [pos] -1 -1
-*-9.000000 1640 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-7.000000 1648 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] vvm_dsp_tb.
 [treeopen] vvm_dsp_tb.dsp_inst.
 [treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.
@@ -18,9 +18,9 @@
 [treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.
 [treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.s1.
 [sst_width] 318
-[signals_width] 763
+[signals_width] 535
 [sst_expanded] 1
-[sst_vpaned_height] 182
+[sst_vpaned_height] 167
 @28
 vvm_dsp_tb.clk_adc
 @c00200
@@ -44,19 +44,9 @@ vvm_dsp_tb.adc_c[13:0]
 -
 @1401200
 -testbench
-@c00200
+@800200
 -dds
-@22
-vvm_dsp_tb.dsp_inst.dds0_o_cos[17:0]
-vvm_dsp_tb.dsp_inst.dds1_o_cos[17:0]
-vvm_dsp_tb.dsp_inst.dds2_o_cos[17:0]
-vvm_dsp_tb.dsp_inst.dds3_o_cos[17:0]
-vvm_dsp_tb.dsp_inst.dds0_o_sin[17:0]
-vvm_dsp_tb.dsp_inst.dds1_o_sin[17:0]
-vvm_dsp_tb.dsp_inst.dds2_o_sin[17:0]
-vvm_dsp_tb.dsp_inst.dds3_o_sin[17:0]
-vvm_dsp_tb.dsp_inst.ftw[31:0]
-@1401200
+@1000200
 -dds
 @800200
 -DDC
@@ -96,10 +86,6 @@ vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.s1.din[35:0]
 vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.s1.dout[35:0]
 @200
 -
-@22
-vvm_dsp_tb.dsp_inst.result_iq[20:0]
-@28
-vvm_dsp_tb.dsp_inst.result_strobe
 @8420
 vvm_dsp_tb.adc_ref_dc_i[20:0]
 @20000
@@ -108,20 +94,42 @@ vvm_dsp_tb.adc_ref_dc_i[20:0]
 vvm_dsp_tb.adc_ref_dc_q[20:0]
 @20000
 -
+@28
+[color] 2
+vvm_dsp_tb.dsp_inst.vvm_ddc_result_strobe
+@29
+[color] 2
+vvm_dsp_tb.dsp_inst.vvm_ddc_result_first
+@420
+[color] 2
+vvm_dsp_tb.dsp_inst.vvm_ddc_result_iq[20:0]
 @1000200
 -DDC
-@c00200
+@800200
 -phase_calc
+@28
+vvm_dsp_tb.dsp_inst.sample_clk
+vvm_dsp_tb.dsp_inst.phaseprocessor_ts[32:0]
+@200
+-
 @22
 vvm_dsp_tb.dsp_inst.mag_out[20:0]
+vvm_dsp_tb.dsp_inst.phaseprocessor_mags0[20:0]
+vvm_dsp_tb.dsp_inst.phaseprocessor_mags1[20:0]
+vvm_dsp_tb.dsp_inst.phaseprocessor_mags2[20:0]
+vvm_dsp_tb.dsp_inst.phaseprocessor_mags3[20:0]
+@200
+-
+@22
 vvm_dsp_tb.dsp_inst.phase_out[21:0]
+vvm_dsp_tb.dsp_inst.phaseprocessor_phases0[21:0]
+vvm_dsp_tb.dsp_inst.phaseprocessor_phases1[21:0]
+vvm_dsp_tb.dsp_inst.phaseprocessor_phases2[21:0]
+vvm_dsp_tb.dsp_inst.phaseprocessor_phases3[21:0]
 @200
 -
 @22
 vvm_dsp_tb.dsp_inst.iir_shift[5:0]
-@28
-vvm_dsp_tb.dsp_inst.strobe_
-@22
 vvm_dsp_tb.dsp_inst.mag[20:0]
 vvm_dsp_tb.dsp_inst.mag_1[20:0]
 vvm_dsp_tb.dsp_inst.mag_2[20:0]
@@ -133,7 +141,7 @@ vvm_dsp_tb.dsp_inst.phase[21:0]
 vvm_dsp_tb.dsp_inst.phase_1[21:0]
 vvm_dsp_tb.dsp_inst.phase_2[21:0]
 vvm_dsp_tb.dsp_inst.phase_3[21:0]
-@1401200
+@1000200
 -phase_calc
 [pattern_trace] 1
 [pattern_trace] 0

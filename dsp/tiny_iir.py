@@ -14,6 +14,7 @@ class TinyIIR(Module):
     def __init__(self, IO_W=8):
         N_SHIFTS = 4
         self.strobe = Signal()
+        self.strobe_out = Signal()
         self.x = Signal((IO_W, True))
         self.y = Signal.like(self.x)
         # averaging factor: 0 = no averaging, 15 = maximum averaging
@@ -37,6 +38,7 @@ class TinyIIR(Module):
 
         self.sync += [
             strobe_.eq(self.strobe),
+            self.strobe_out.eq(strobe_),
             If(self.strobe,
                 # First cycle, compute error signal and latch
                 delta.eq(x_hr - acc_)

@@ -40,10 +40,12 @@ def main():
         help="IIR filter for result averaging. Smoothing factor from 0 - 15."
     )
     parser.add_argument(
-        "--fs", default=117.6e6, type=float, help="ADC sample rate [MHz]. Must match hello_LTC.py setting."
+        "--fs", default=117.6e6, type=float,
+        help="ADC sample rate [MHz]. Must match hello_LTC.py setting."
     )
     parser.add_argument(
-        "--noinit", action='store_true', help="Do not initialize the hardware."
+        "--noinit", action='store_true',
+        help="Do not initialize the hardware."
     )
     args = parser.parse_args()
     # ----------------------------------------------
@@ -121,13 +123,15 @@ def main():
         if (frm % 500) == 0:
             f_ref = meas_f_ref(c, args.fs)
             ftw = int(((f_ref / args.fs) % 1) * 2**32)
-            for i, mult in enumerate((1, 1, 4, 4)):
+            for i, mult in enumerate((1, 1, 1, 1)):
                 ftw_ = int(ftw * mult)
-                print("f_center_{} at {:6f} MHz".format(i, ftw_ / 2**32 * args.fs / 1e6))
+                print("f_center_{} at {:6f} MHz".format(
+                    i, ftw_ / 2**32 * args.fs / 1e6
+                ))
                 getattr(r.regs, 'vvm_ddc_dds_ftw{}'.format(i)).write(ftw_)
                 if i > 0:
-                    getattr(r.regs, 'vvm_mult{}'.format(i)).write(mult)
-            r.regs.vvm_ddc_dds_ctrl.write(0x2 | (frm == 0))  # FTW_UPDATE, RESET
+                    getattr(r.regs, 'vvm_pp_mult{}'.format(i)).write(mult)
+            r.regs.vvm_ddc_dds_ctrl.write(0x2 | (frm == 0))  # FTW_UPDATE, RST
 
     def dumpNpz(x):
         fName = unique_filename("measurements/vvm_dump.npz")

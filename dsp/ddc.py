@@ -50,7 +50,8 @@ class VVM_DDC(Module, AutoCSR):
         # self.source = source = stream.Endpoint(("iq_data", OUT_W))
 
         self.result_iq = Signal((OUT_W, True))
-        self.result_strobe = Signal()
+        self.result_strobe = Signal()  # high when valid samples are output
+        self.result_first = Signal()  # pulse when first sample is output
 
         ###
 
@@ -124,6 +125,10 @@ class VVM_DDC(Module, AutoCSR):
             o_cc_sr_out=self.result_iq,
             o_cc_stb_out=self.result_strobe
         )
+
+        result_strobe_ = Signal()
+        self.sync += result_strobe_.eq(self.result_strobe)
+        self.comb += self.result_first.eq(self.result_strobe & ~result_strobe_)
 
     def add_csr(self):
         self.ddc_deci = CSRStorage(len(self.cic_period), reset=48, name="deci")

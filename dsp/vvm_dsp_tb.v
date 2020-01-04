@@ -116,6 +116,10 @@ module vvm_dsp_tb;
         .ftws_3          (LO_FTW),
         .update_ftw      (update_ftw),
 
+        .mult_factors    (4'h0),
+        .mult_factors_1  (4'h1),
+        .mult_factors_2  (4'h2),
+
         // decimation by factor of 1000 works fine with cic_shift = 9
         // bandwidth = 117.6 kHz
         .cic_period     (13'd100),
