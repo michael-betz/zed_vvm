@@ -11,24 +11,22 @@ module phase_processor_tb;
     // ------------------------------------------------------------------------
     reg reset = 1;
     reg strobe_in = 0;
-    reg [20:0] mag_in = 21'h1;
     initial begin
         if ($test$plusargs("vcd")) begin
             $dumpfile("phase_processor.vcd");
             $dumpvars(12, phase_processor_tb);
         end
-        repeat (100) @(posedge clk);
+        repeat (99) @(posedge clk);
         reset <= 0;
         @(posedge clk);
         strobe_in <= 1;
         @(posedge clk);
         strobe_in <= 0;
-        // repeat (20) @(posedge clk);
-        // @(posedge clk);
-        // mag_in <= 2;
-        // strobe_in <= 1;
-        // @(posedge clk);
-        // strobe_in <= 0;
+        repeat (9) @(posedge clk);
+        @(posedge clk);
+        strobe_in <= 1;
+        @(posedge clk);
+        strobe_in <= 0;
         repeat (1600) @(posedge clk);
         $finish;
     end
@@ -36,10 +34,11 @@ module phase_processor_tb;
     // ------------------------------------------------------------------------
     //  Instantiate the unit under test
     // ------------------------------------------------------------------------
-    reg [35:0] d_in = 36'h0;
-
+    reg [20:0] mag_in = 21'h0;
+    reg [21:0] phase_in = 22'h0;
     always @(posedge clk) begin
-        d_in <= d_in + 36'h1;
+        phase_in <= phase_in + 22'h3;
+        mag_in <= mag_in + 21'h1;
     end
 
     phase_processor dut(
@@ -47,7 +46,7 @@ module phase_processor_tb;
         .sys_rst       (reset),
 
         .mag_in        (mag_in),
-        .phase_in      (22'h2),
+        .phase_in      (phase_in),
         .strobe_in     (strobe_in),
         .mult_factors  (4'h3),
         .mult_factors_1(4'h4),

@@ -12,8 +12,6 @@
   MULT = fixed multiplication factor (measurement harmonic)
   P_IN_N = input absolute phase of channel N = 1 .. 3
 
-  This is implemented as a timeline = a serial string of 40 instructions
-
   try:  python3 phase_processor.py build
 '''
 from sys import argv
@@ -55,33 +53,51 @@ def pipelined_timeline(trigger, events):
     '''
     the `trigger` Signal gets fed into a tapped delay line
     `events` is a list of tuples like (tap_number, instructions)
+    or
+    `events` is a dict with key = tap_number and value = list of instructions
     the instructions are executed when the respective tap is asserted
-    useful for setting up data paths
+    useful for setting up pipelined data-paths
     '''
 
     # Keys = tap_numbers,  Values = lists of instructions
-    evt = dict()
 
     # For compatibility with timeline interface
     if type(events) in (list, tuple):
+        evts = dict()
         for e in events:
-            evt[e[0]] = e[1]
+            evts[e[0]] = e[1]
+    else:
+        evts = events
 
-    ts = Signal(max(evt.keys()))
+    ts = Signal(max(evts.keys()))
     sync = [ts.eq((ts << 1) | trigger)]
 
-    for tap, instrs in evts.items():
+    for tap in sorted(evts.keys()):
         if tap == 0:
-            sync.append(If(trigger, *instrs))
+            sync.append(If(trigger, *evts[tap]))
         else:
-            sync.append(If(ts[tap - 1], *instrs))
+            sync.append(If(ts[tap - 1], *evts[tap]))
 
     return sync
 
 
 class PhaseProcessor(Module, AutoCSR):
-    def __init__(self, mag_in=None, phase_in=None, N_CH=4, W_CORDIC=21):
-        # From cordic
+    '''
+    Implements the phase measurement data-path, dealing with the phase &
+    magnitude output stream from the cordic. See doc/phase_processor.png
+
+    W_CORDIC = width of cordic (to calculate its latency)
+    strobe_in = pulse when first sample of IQ stream is valid at cordic input
+    latency with W_CORDIC = 21 (strobe_in to strobe_out): 34 cycles
+    dead-time: at least 11 cycles between strobe_in pulses
+    '''
+    def __init__(
+        self, mag_in=None, phase_in=None, strobe_in=None, N_CH=4, W_CORDIC=21
+    ):
+        #---------
+        # inputs
+        #---------
+        # Magnitude / phase streams from cordic
         if mag_in is None:
             mag_in = Signal(W_CORDIC)
         self.mag_in = mag_in
@@ -90,54 +106,77 @@ class PhaseProcessor(Module, AutoCSR):
             phase_in = Signal(W_CORDIC + 1)
         self.phase_in = phase_in
 
-        self.strobe_in = Signal()
+        if strobe_in is None:
+            strobe_in = Signal()
+        self.strobe_in = strobe_in
+
+        # 3 multiplication factors for the reference phase (0 - 15)
         self.mult_factors = [Signal(4) for i in range(N_CH - 1)]
 
+        #---------
         # outputs
+        #---------
+        # 4 x absolute magnitude value
         self.mags = [Signal(W_CORDIC) for i in range(N_CH)]
+
+        # 1 x absolute phase (rotating) of reference channel
+        # 3 x phase difference (static) to reference
         self.phases = [Signal(W_CORDIC + 1) for i in range(N_CH)]
+
+        # pulses when all the above outputs are valid
         self.strobe_out = Signal()
 
         ###
 
+        # Which instructions to run at which cycle of the pipeline
         eventList = defaultdict(list)
-        cycle = W_CORDIC + 2
 
-        ref_phase = Signal.like(self.phases[0])
+        # Latency of the cordic upstream of this block
+        lat_cordic = W_CORDIC + 2
 
-        # Latch the reference phase
-        eventList[cycle] += [ref_phase.eq(phase_in)]
+        # Latch the reference phase from cordic output stream
+        eventList[lat_cordic] += [self.phases[0].eq(phase_in)]
 
-        # Latch the magnitudes
+        # Latch 4 x magnitude from cordic output stream
         for i, m in enumerate(self.mags):
-            eventList[cycle + 2 * i] += [m.eq(mag_in)]
+            eventList[lat_cordic + 2 * i] += [m.eq(mag_in)]
 
-        self.comb += self.phases[0].eq(ref_phase)
-
-        # Feed the multiplier
-        B = Signal.like(ref_phase)
-        self.submodules.mult = Multiplier5(ref_phase, B)
+        # Feed reference phase and 3 x constants (B) into the multiplier
+        B = Signal.like(self.phases[0])
+        self.submodules.mult = Multiplier5(self.phases[0], B)
         for i, b in enumerate(self.mult_factors):
-            eventList[cycle + 5 + 2 * i] += [B.eq(b)]
+            eventList[lat_cordic + 2 * i] += [B.eq(b)]
 
-        # Delay phase_in a bit to match up with multiplier result
+        # Delay phase_in stream to match up with multiplier result stream
         temp = phase_in
-        for i in range(1):
+        for i in range(4):
             phase_in_ = Signal.like(phase_in)
             self.sync += phase_in_.eq(temp)
             temp = phase_in_
 
-        # The multiplier needs 5 + 1 to spit out the first result
-        # store the multiplier result - previously latched phase from cordic
+        # The multiplier needs 5 + 1 cycles to spit out the first result
+        # store `multiplier result - delayed phase` from cordic
         for i, p_out in enumerate(self.phases[1:]):
-            eventList[cycle + 11 + 2 * i] += [p_out.eq(self.mult.OUT - p)]
+            eventList[lat_cordic + 6 + 2 * i] += [
+                p_out.eq(self.mult.OUT - phase_in_)
+            ]
 
-        eventList[20] += [self.strobe_out.eq(1)]
+        # We're done, all results have been calculated, assert strobe_out.
+        eventList[lat_cordic + 6 + 2 * i] += [self.strobe_out.eq(1)]
 
         self.sync += [
             self.strobe_out.eq(0),
-            pipelined_timeline(self.strobe_in, t)
+            pipelined_timeline(self.strobe_in, eventList)
         ]
+
+    def add_csr(self):
+        # Reference phase multiplication factors
+        for i, multf in enumerate(self.mult_factors):
+            n = 'mult{}'.format(i + 1)
+            csr = CSRStorage(len(multf), reset=1, name=n)
+            setattr(self, n, csr)
+            self.comb += multf.eq(csr.storage)
+
 
 def main():
     ''' generate a .v file for simulation with Icarus / general usage '''

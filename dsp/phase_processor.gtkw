@@ -1,0 +1,68 @@
+[*]
+[*] GTKWave Analyzer v3.3.94 (w)1999-2018 BSI
+[*] Sat Jan  4 02:22:02 2020
+[*]
+[dumpfile] "/home/michael/fpga_wsp/zed_vvm/dsp/phase_processor.vcd"
+[dumpfile_mtime] "Fri Jan  3 23:05:20 2020"
+[dumpfile_size] 237808
+[savefile] "/home/michael/fpga_wsp/zed_vvm/dsp/phase_processor.gtkw"
+[timestart] 1870
+[size] 1916 1037
+[pos] -1 -1
+*-8.000000 2220 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] phase_processor_tb.
+[sst_width] 272
+[signals_width] 241
+[sst_expanded] 1
+[sst_vpaned_height] 152
+@29
+phase_processor_tb.dut.sys_clk
+@28
+phase_processor_tb.dut.sys_rst
+@200
+-
+@28
+phase_processor_tb.dut.strobe_in
+phase_processor_tb.dut.strobe_out
+@24
+phase_processor_tb.mag_in[20:0]
+phase_processor_tb.phase_in[21:0]
+@200
+-
+-
+@800200
+-latching
+@24
+phase_processor_tb.dut.phases[21:0]
+phase_processor_tb.dut.mags[20:0]
+phase_processor_tb.dut.mags_1[20:0]
+phase_processor_tb.dut.mags_2[20:0]
+phase_processor_tb.dut.mags_3[20:0]
+@1000200
+-latching
+@800200
+-multiplier
+@24
+phase_processor_tb.dut.A_[21:0]
+phase_processor_tb.dut.B_[21:0]
+phase_processor_tb.dut.OUT[43:0]
+@1000200
+-multiplier
+@800200
+-difference
+@24
+[color] 2
+phase_processor_tb.dut.OUT[43:0]
+phase_processor_tb.dut.phase_in_3[21:0]
+@200
+-
+@24
+phase_processor_tb.dut.phases[21:0]
+@420
+phase_processor_tb.dut.phases_1[21:0]
+phase_processor_tb.dut.phases_2[21:0]
+phase_processor_tb.dut.phases_3[21:0]
+@1000200
+-difference
+[pattern_trace] 1
+[pattern_trace] 0

@@ -14,6 +14,7 @@ from litex.soc.cores.freqmeter import FreqMeter
 from os.path import join, dirname, abspath
 from dds import DDS
 from ddc import VVM_DDC
+from phase_processor import PhaseProcessor
 from tiny_iir import TinyIIR
 
 
@@ -82,8 +83,8 @@ class VVM_DSP(Module, AutoCSR):
             DI_W=37,   # CIC integrator width
             PCW=13     # decimation factor width
         ))
-        result_iq_d = Signal.like(self.ddc.result_iq)
-        self.sync.sample += result_iq_d.eq(self.ddc.result_iq)
+        result_iq_ = Signal.like(self.ddc.result_iq)
+        self.sync.sample += result_iq_.eq(self.ddc.result_iq)
 
         # -----------------------------------------------
         #  Rectangular to Polar conversion
@@ -98,52 +99,31 @@ class VVM_DSP(Module, AutoCSR):
 
             i_clk=ClockSignal('sample'),
             i_opin=Constant(1, 2),
-            i_xin=result_iq_d,  # I
-            i_yin=self.ddc.result_iq,    # Q
+            i_xin=result_iq_,           # I
+            i_yin=self.ddc.result_iq,   # Q
             i_phasein=Constant(0, self.W_CORDIC + 1),
 
             o_xout=mag_out,
             o_phaseout=phase_out
         )
-        CORDIC_DEL = self.W_CORDIC + 2
 
         # -----------------------------------------------
-        #  Latch the stream
+        #  phase_processor.py datapath
         # -----------------------------------------------
-        # from cordic output at the right time into the right place
-        self.strobe = Signal()
-        self.strobe_ = Signal()
-        self.strobe__ = Signal()
-        mags = [Signal.like(self.mags_iir[0]) for i in range(n_ch)]
-        phases = [Signal.like(self.phases_iir[0]) for i in range(n_ch)]
-        t = []
-        self.mult_factors = []
-        # For each mag / phase result
-        for i, (m, p) in enumerate(zip(mags, phases)):
-            instrs = [m.eq(mag_out)]
-            if i == 0:
-                instrs.append(p.eq(phase_out))
-            else:
-                mult_factor = Signal(8, reset=1)
-                instrs.append(p.eq((phases[0] * mult_factor) - phase_out))
-                self.mult_factors.append(mult_factor)
-            t.append((
-                CORDIC_DEL + 2 * i,  # N cycles after self.ddc.result_strobe
-                instrs               # ... carry out these instructions
-            ))
-        t[-1][1].append(self.strobe.eq(1))
-        self.sync.sample += [
-            self.strobe.eq(0),
-            timeline(self.ddc.result_strobe, t),
-            self.strobe_.eq(self.strobe),
-            self.strobe__.eq(self.strobe_)
-        ]
+        # calculate and latch P_OUT_N = (P_IN0 * MULT) - P_IN_N
+        self.submodules.pp = ClockDomainsRenamer('sample')(PhaseProcessor(
+            mag_in=mag_out,
+            phase_in=phase_out,
+            strobe_in=self.ddc.result_strobe,
+            N_CH=n_ch,
+            W_CORDIC=self.W_CORDIC
+        ))
 
         # -----------------------------------------------
         #  IIR lowpass filter for result averaging
         # -----------------------------------------------
         for i, (m, mi) in enumerate(zip(
-            mags + phases,
+            self.pp.mags + self.pp.phases,
             self.mags_iir + self.phases_iir
         )):
             # No filter for the reference phase output
@@ -151,14 +131,16 @@ class VVM_DSP(Module, AutoCSR):
                 self.comb += mi.eq(m)
                 continue
 
+            # Phase & magnitude results have a different bit-width!
             w = self.W_MAG if i < n_ch else self.W_PHASE
-            # DC error for shift > 31
+
+            # Watch out for DC errors for shifts > 31
             iir = ClockDomainsRenamer('sample')(TinyIIR(w))
             self.comb += [
                 iir.x.eq(m),
                 mi.eq(iir.y),
                 iir.shifts.eq(self.iir_shift),
-                iir.strobe.eq(self.strobe),
+                iir.strobe.eq(self.pp.strobe_out),
             ]
             self.submodules += iir
 
@@ -273,13 +255,16 @@ def main():
             d,
             name=tName,
             ios={
+                # Inputs
                 *d.adcs,
-                *d.mags_iir,
-                *d.phases_iir,
                 d.ddc.cic_period,
                 d.ddc.cic_shift,
                 *d.ddc.dds.ftws,
-                d.iir_shift
+                d.iir_shift,
+                d.ddc.dds.update_ftw,
+                # Outputs
+                *d.mags_iir,
+                *d.phases_iir
             },
             display_run=True
         ).write(tName + '.v')

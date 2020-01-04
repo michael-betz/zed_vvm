@@ -77,6 +77,7 @@ module vvm_dsp_tb;
     //  Handle the power on Reset
     // ------------------------------------------------------------------------
     reg reset = 1;
+    reg update_ftw = 0;
     initial begin
         if ($test$plusargs("vcd")) begin
             $dumpfile("vvm_dsp.vcd");
@@ -86,6 +87,9 @@ module vvm_dsp_tb;
         $fwrite(f, "adc_ref, lo, adc_ref_dc\n");
         repeat (100) @(posedge clk_adc);
         reset <= 0;
+        update_ftw <= 1;
+        @(posedge clk_adc);
+        update_ftw <= 0;
         repeat (16000) @(posedge clk_adc);
         $fclose(f);
         $finish;
@@ -110,6 +114,7 @@ module vvm_dsp_tb;
         .ftws_1          (LO_FTW),
         .ftws_2          (LO_FTW),
         .ftws_3          (LO_FTW),
+        .update_ftw      (update_ftw),
 
         // decimation by factor of 1000 works fine with cic_shift = 9
         // bandwidth = 117.6 kHz
