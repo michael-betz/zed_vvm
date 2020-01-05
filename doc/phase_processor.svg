@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="614.6185"
-     inkscape:cy="429.03951"
+     inkscape:zoom="3.959798"
+     inkscape:cx="554.39531"
+     inkscape:cy="281.94976"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -925,7 +925,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1034,11 +1034,7 @@
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cssssc" />
       <g
-         aria-label="cordicg_b22.v
-
-rect. to
- polar 
-conversion"
+         aria-label="cordicg_b22.v  rect. to  polar  conversion"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
          id="text10569">
         <path
@@ -1441,10 +1437,10 @@ conversion"
          y="239.70752"
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"><tspan
    id="tspan19557"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:start;text-anchor:start">mult&lt;x&gt;:</tspan>   4x reference phasor</tspan><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:start;text-anchor:start">mult&lt;x&gt;:</tspan>   3x reference phasor</tspan><tspan
          sodipodi:role="line"
          x="108.30823"
-         y="244.11725"
+         y="244.11723"
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
          id="tspan19791">           multiplication constants</tspan></text>
     <g
