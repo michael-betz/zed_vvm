@@ -3,6 +3,8 @@ A digital RF vector volt-meter (VVM).
 Measures amplitude and phase of a sinusoidal signal under test against a reference signal of same frequency.
 Intended as an instrument to monitor and troubleshoot legacy accelerator RF systems.
 
+![Photo of first prototype chassis](doc/vvm.jpg)
+
 Based on a Digilent Zedboard running Debian with a DC1525A FMC daughter board on top.
 
   * 4 channel, 14 bit, 125 MSps, 800 MHz bandwidth (3 dB) analog to digital converter with LVDS interface: [__LTC2175-14__](https://www.analog.com/en/products/ltc2175-14.html)
