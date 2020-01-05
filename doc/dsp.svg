@@ -14,7 +14,7 @@
    viewBox="0 0 297 210"
    version="1.1"
    id="svg5693"
-   inkscape:version="0.92.1 r15371"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="dsp.svg"
    inkscape:export-filename="dsp.png"
    inkscape:export-xdpi="153.08"
@@ -26,18 +26,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="394.99084"
-     inkscape:cy="481.20515"
+     inkscape:zoom="1.979899"
+     inkscape:cx="764.83269"
+     inkscape:cy="380.96206"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
      showguides="false"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1916"
-     inkscape:window-height="1037"
-     inkscape:window-x="0"
-     inkscape:window-y="20"
+     inkscape:window-width="2044"
+     inkscape:window-height="1105"
+     inkscape:window-x="1920"
+     inkscape:window-y="22"
      inkscape:window-maximized="0">
     <inkscape:grid
        id="grid5178"
@@ -45,6 +45,20 @@
   </sodipodi:namedview>
   <defs
      id="defs5687">
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5383"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5135"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#669900;stroke-width:1pt;stroke-opacity:1;fill:#669900;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
     <marker
        inkscape:isstock="true"
        style="overflow:visible;"
@@ -764,6 +778,12 @@
        y="123.99833"
        rx="11.1503"
        ry="11.1503" />
+    <path
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#669900;stroke-width:0.71600002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker5383)"
+       d="m 129.64583,222.3875 h 82.02083 v -13.22917"
+       id="path5118"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
@@ -2146,5 +2166,16 @@
          y="210.51212"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#a40000;stroke-width:0.26458332"
          id="tspan5646">values</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#669900;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="182.33063"
+       y="226.68768"
+       id="text5391"><tspan
+         sodipodi:role="line"
+         x="182.33063"
+         y="226.68768"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#669900;stroke-width:0.26458332"
+         id="tspan5389">strobe</tspan></text>
   </g>
 </svg>

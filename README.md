@@ -39,10 +39,14 @@ The main reason to choose embedded linux is the convenience for application deve
   * Epics support
 
 # System block diagram
-![High level system overview](https://github.com/yetifrisstlama/zed_vvm/raw/master/doc/system.png)
+![High level system overview](doc/system.png)
 
 # `vvm_dsp.py` block diagram
-![DSP blocks implementing the VVM](https://github.com/yetifrisstlama/zed_vvm/raw/master/doc/dsp.png)
+![DSP blocks implementing the VVM](doc/dsp.png)
+
+# `phase_processor.py` block diagram
+![Phase and Magnitude pipelined data path](doc/phase_processor.png)
+
 
 # Hardware modifications
 ## Zedboard
