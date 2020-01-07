@@ -6,7 +6,7 @@ from time import sleep
 sys.path.append("./csr_access_test/py")
 from bitbang import SPI, I2C
 from Si570 import calcFreq, writeSi570
-from numpy import int32
+from numpy import int32, load, atleast_2d, argmin, zeros_like, zeros, log10
 from struct import pack, unpack
 
 
@@ -180,3 +180,51 @@ def getNyquist(f, fs):
         return f_fract * fs
     else:
         return (1 - f_fract) * fs
+
+
+def getMags(r, vvm_ddc_shift):
+    ''' [dbFs] '''
+    mags = zeros(4)
+    for i in range(len(mags)):
+        val = getattr(r.regs, "vvm_mag{}".format(i)).read()
+        val = val / (1 << 21) * (1 << (vvm_ddc_shift - 1))
+        mags[i] = val
+    return 20 * log10(mags)
+
+
+def getPhases(r):
+    ''' [degree] '''
+    phs = zeros(3)
+    for i in range(3):
+        val = getattr(r.regs, "vvm_phase{}".format(i + 1)).read()
+        val = twos_comps(val, 32)
+        val = val / (1 << 21) * 180
+        phs[i] = val
+    return phs
+
+
+class MagCal:
+    ''' calibration for magnitude readings to [dBm] '''
+    def __init__(self, cal_file):
+        ''' cal_file must be in .npz format '''
+        self.d = d = load(cal_file)
+        p_test_dbm = atleast_2d(d['p_test'] + d['cab_s21mag_db']).transpose()
+        self.cal_facts_db = p_test_dbm - d['mag_results']
+        self.cal_freqs = d['f_test']
+
+    def get_mag_cal(self, f):
+        '''
+        return 4 channel magnitude correction factors [dB] closest to f [Hz]
+        '''
+        corInd = argmin(abs(self.cal_freqs - f))
+        return self.cal_facts_db[corInd]
+
+    def correct_mags(self, mags, f_test):
+        '''
+        correct an array of 4 channel magnitude measurements which were
+        measured at f_test
+        '''
+        mags_cor = zeros_like(mags)
+        for i, (m, f) in enumerate(zip(mags, f_test)):
+            mags_cor[i, :] = m + self.get_mag_cal(f)
+        return mags_cor

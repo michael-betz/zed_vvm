@@ -18,7 +18,8 @@ from common import conLitexServer, unique_filename
 import sys
 sys.path.append("linux/csr_access/py/")
 from csr_lib import CsrLibLegacyAdapter
-from vvm_helpers import initLTC, initSi570, meas_f_ref, twos_comps
+from vvm_helpers import initLTC, initSi570, meas_f_ref, twos_comps, MagCal,\
+    getMags
 
 
 def main():
@@ -47,7 +48,17 @@ def main():
         "--noinit", action='store_true',
         help="Do not initialize the hardware."
     )
+    parser.add_argument(
+        "--f_meas", default=499.6e6, type=float,
+        help="Frequency of signal under test [Hz]."
+    )
     args = parser.parse_args()
+
+    # ----------------------------------------------
+    #  Load calibration
+    # ----------------------------------------------
+    cal = MagCal('cal/cal1.npz')
+
     # ----------------------------------------------
     #  Init hardware
     # ----------------------------------------------
@@ -80,7 +91,7 @@ def main():
     # ----------------------------------------------
     #  Setup Matplotlib
     # ----------------------------------------------
-    fig, axs = subplots(2, sharex=True, figsize=(9,7))
+    fig, axs = subplots(2, sharex=True, figsize=(9, 7))
     datms = ones((args.N, 4)) * NaN
     datps = ones((args.N, 3)) * NaN
     lms = []
@@ -95,7 +106,7 @@ def main():
         lps.append(l)
 
     axs[0].set_ylim(-80, 0)
-    axs[0].set_ylabel("Magnitude [dB FS]")
+    axs[0].set_ylabel("Power [dBm]")
     for ax in axs:
         ax.set_xlim(0, args.N)
         ax.set_xlabel("Sample #")
@@ -107,11 +118,11 @@ def main():
     def upd(frm):
         datms[:] = roll(datms, -1, 0)
         datps[:] = roll(datps, -1, 0)
+
+        mags = getMags(r, args.ddcshift)
+        datms[-1, :] = mags + cal.get_mag_cal(args.f_meas)
         for i in range(4):
-            val = getattr(r.regs, "vvm_mag{}".format(i)).read()
-            val = val / (1 << 21) * (1 << (args.ddcshift - 1))
-            datms[-1, i] = val
-            lms[i].set_data(arange(datms.shape[0]), 20 * log10(datms[:, i]))
+            lms[i].set_data(arange(datms.shape[0]), datms[:, i])
 
         for i in range(3):
             val = getattr(r.regs, "vvm_phase{}".format(i + 1)).read()
@@ -122,8 +133,10 @@ def main():
             datps[-1, i] = val
             lps[i].set_data(arange(datps.shape[0]), datps[:, i])
 
-        if (frm % 500) == 0:
-            f_ref = meas_f_ref(c, args.fs)
+        # if (frm % 500) == 0:
+        if frm == 0:
+            # f_ref = meas_f_ref(c, args.fs)
+            f_ref = args.f_meas
             ftw = int(((f_ref / args.fs) % 1) * 2**32)
             for i, mult in enumerate((1, 1, 1, 1)):
                 ftw_ = int(ftw * mult)
@@ -134,6 +147,7 @@ def main():
                 if i > 0:
                     getattr(r.regs, 'vvm_pp_mult{}'.format(i)).write(mult)
             r.regs.vvm_ddc_dds_ctrl.write(0x2 | (frm == 0))  # FTW_UPDATE, RST
+
 
     def dumpNpz(x):
         fName = unique_filename("measurements/vvm_dump.npz")
