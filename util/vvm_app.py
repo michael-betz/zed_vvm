@@ -19,7 +19,7 @@ import sys
 sys.path.append("linux/csr_access/py/")
 from csr_lib import CsrLibLegacyAdapter
 from vvm_helpers import initLTC, initSi570, meas_f_ref, twos_comps, MagCal,\
-    getMags
+    getMags, getPhases
 
 
 def main():
@@ -120,17 +120,14 @@ def main():
         datps[:] = roll(datps, -1, 0)
 
         mags = getMags(r, args.ddcshift)
-        datms[-1, :] = mags + cal.get_mag_cal(args.f_meas)
+        datms[-1, :] = mags  # + cal.get_mag_cal(args.f_meas)
         for i in range(4):
             lms[i].set_data(arange(datms.shape[0]), datms[:, i])
 
-        for i in range(3):
-            val = getattr(r.regs, "vvm_phase{}".format(i + 1)).read()
-            val = twos_comps(val, 32)
-            val = val / (1 << 21) * 180
-            if 20 * log10(datms[-1, i + 1]) < -85:
-                val = NaN
-            datps[-1, i] = val
+        datps[-1, :] = getPhases(r)
+        for i, p in enumerate(datps[-1, :]):
+            if mags[i + 1] < -80:
+                datps[-1, i] = NaN
             lps[i].set_data(arange(datps.shape[0]), datps[:, i])
 
         # if (frm % 500) == 0:
