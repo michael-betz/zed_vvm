@@ -173,13 +173,16 @@ def set_led(isOn=True):
 
 
 def getNyquist(f, fs):
-    """ where does an under-sampled tone end up? """
+    """
+    where does an under-sampled tone end up?
+    returns base band frequency and `inverted spectrum` flag
+    """
     f_n = f / fs
     f_fract = f_n % 1
     if f_fract <= 0.5:
-        return f_fract * fs
+        return f_fract * fs, False
     else:
-        return (1 - f_fract) * fs
+        return (1 - f_fract) * fs, True
 
 
 def getMags(r, vvm_ddc_shift):
@@ -203,28 +206,31 @@ def getPhases(r):
     return phs
 
 
-class MagCal:
-    ''' calibration for magnitude readings to [dBm] '''
+class CalHelper:
+    ''' calibration for magnitude and phase readings '''
     def __init__(self, cal_file):
         ''' cal_file must be in .npz format '''
         self.d = d = load(cal_file)
-        p_test_dbm = atleast_2d(d['p_test'] + d['cab_s21mag_db']).transpose()
-        self.cal_facts_db = p_test_dbm - d['mag_results']
-        self.cal_freqs = d['f_test']
+        self.f_test = d['f_test']
+        self.power_cal_db = d['power_cal_db']
+        self.phase_cal_deg = d['phase_cal_deg']
 
-    def get_mag_cal(self, f):
+    def get_cals(self, f):
         '''
-        return 4 channel magnitude correction factors [dB] closest to f [Hz]
-        '''
-        corInd = argmin(abs(self.cal_freqs - f))
-        return self.cal_facts_db[corInd]
+        get 4 channel correction factors closest to f [Hz]
+        add them to the raw magnitude [dB] or raw phase [deg]
+        to get a calibrated reading
 
-    def correct_mags(self, mags, f_test):
+        returns
+            (mag0, mag1, mag2, mag3), (ph1, ph2, ph3)
         '''
-        correct an array of 4 channel magnitude measurements which were
-        measured at f_test
-        '''
-        mags_cor = zeros_like(mags)
-        for i, (m, f) in enumerate(zip(mags, f_test)):
-            mags_cor[i, :] = m + self.get_mag_cal(f)
-        return mags_cor
+        ind = argmin(abs(self.f_test - f))
+        return self.power_cal_db[ind], self.phase_cal_deg[ind]
+
+    def get_mags(self, r, vvm_ddc_shift, f):
+        raw = getMags(r, vvm_ddc_shift)
+        return raw + self.get_cals(f)[0]
+
+    def get_phases(self, r, f):
+        raw = getPhases(r)
+        return raw + self.get_cals(f)[1]

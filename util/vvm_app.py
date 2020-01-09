@@ -130,19 +130,19 @@ def main():
                 datps[-1, i] = NaN
             lps[i].set_data(arange(datps.shape[0]), datps[:, i])
 
-        # if (frm % 500) == 0:
-        if frm == 0:
-            # f_ref = meas_f_ref(c, args.fs)
-            f_ref = args.f_meas
+        if (frm % 100) == 0:
+        # if frm == 0:
+            f_ref = meas_f_ref(c, args.fs)
+            # f_ref = args.f_meas
             ftw = int(((f_ref / args.fs) % 1) * 2**32)
             for i, mult in enumerate((1, 1, 1, 1)):
                 ftw_ = int(ftw * mult)
-                print("f_center_{} at {:6f} MHz".format(
-                    i, ftw_ / 2**32 * args.fs / 1e6
-                ))
                 getattr(r.regs, 'vvm_ddc_dds_ftw{}'.format(i)).write(ftw_)
                 if i > 0:
                     getattr(r.regs, 'vvm_pp_mult{}'.format(i)).write(mult)
+            print("f_ref at {:6f} MHz".format(
+                ftw_ / 2**32 * args.fs / 1e6
+            ))
             r.regs.vvm_ddc_dds_ctrl.write(0x2 | (frm == 0))  # FTW_UPDATE, RST
 
 
