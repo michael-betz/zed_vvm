@@ -18,11 +18,13 @@ from common import conLitexServer, unique_filename
 import sys
 sys.path.append("linux/csr_access/py/")
 from csr_lib import CsrLibLegacyAdapter
-from vvm_helpers import initLTC, initSi570, meas_f_ref, twos_comps, MagCal,\
-    getMags, getPhases
+from vvm_helpers import initLTC, initSi570, meas_f_ref, twos_comps, \
+    CalHelper, getNyquist
 
 
 def main():
+    global isInverted
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--N", default=1024, type=int,
@@ -57,7 +59,7 @@ def main():
     # ----------------------------------------------
     #  Load calibration
     # ----------------------------------------------
-    cal = MagCal('cal/cal1.npz')
+    cal = CalHelper('cal/cal2.npz')
 
     # ----------------------------------------------
     #  Init hardware
@@ -115,33 +117,39 @@ def main():
     ax.set_ylabel("Phase [deg]")
     fig.tight_layout()
 
+    isInverted = False
+
     def upd(frm):
+        global isInverted
         datms[:] = roll(datms, -1, 0)
         datps[:] = roll(datps, -1, 0)
 
-        mags = getMags(r, args.ddcshift)
-        datms[-1, :] = mags  # + cal.get_mag_cal(args.f_meas)
+        mags = cal.get_mags(r, args.ddcshift, args.f_meas)
+        datms[-1, :] = mags
         for i in range(4):
             lms[i].set_data(arange(datms.shape[0]), datms[:, i])
 
-        datps[-1, :] = getPhases(r)
+        datps[-1, :] = cal.get_phases(r, args.f_meas)
+        if isInverted:
+            datps[-1, :] *= -1
         for i, p in enumerate(datps[-1, :]):
-            if mags[i + 1] < -80:
+            if mags[i + 1] < -50:
                 datps[-1, i] = NaN
             lps[i].set_data(arange(datps.shape[0]), datps[:, i])
 
-        if (frm % 100) == 0:
-        # if frm == 0:
-            f_ref = meas_f_ref(c, args.fs)
-            # f_ref = args.f_meas
-            ftw = int(((f_ref / args.fs) % 1) * 2**32)
+        # if (frm % 100) == 0:
+        if frm == 0:
+            # f_ref = meas_f_ref(c, args.fs)
+            f_ref = args.f_meas
+            f_tune, isInverted = getNyquist(f_ref, args.fs)
+            ftw = int((f_tune / args.fs) * 2**32)
             for i, mult in enumerate((1, 1, 1, 1)):
                 ftw_ = int(ftw * mult)
                 getattr(r.regs, 'vvm_ddc_dds_ftw{}'.format(i)).write(ftw_)
                 if i > 0:
                     getattr(r.regs, 'vvm_pp_mult{}'.format(i)).write(mult)
             print("f_ref at {:6f} MHz".format(
-                ftw_ / 2**32 * args.fs / 1e6
+                ftw_ / 2**32 * meas_f_ref(c, args.fs) / 1e6
             ))
             r.regs.vvm_ddc_dds_ctrl.write(0x2 | (frm == 0))  # FTW_UPDATE, RST
 
