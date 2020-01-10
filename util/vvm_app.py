@@ -59,7 +59,7 @@ def main():
     # ----------------------------------------------
     #  Load calibration
     # ----------------------------------------------
-    cal = CalHelper('cal/cal2.npz')
+    cal = CalHelper('cal/cal2_att.npz')
 
     # ----------------------------------------------
     #  Init hardware
