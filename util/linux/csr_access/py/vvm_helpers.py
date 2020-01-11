@@ -10,11 +10,6 @@ from numpy import int32, load, atleast_2d, argmin, zeros_like, zeros, log10
 from struct import pack, unpack
 
 
-def meas_f_ref(c, f_s):
-    ''' measure REF input frequency with zero crossing coutner '''
-    return c.read_reg('vvm_zc0_f_meas') * f_s / 100e6
-
-
 class LTC_SPI(SPI):
     ''' SPI register read / write specific to LTC2175 '''
     def set_ltc_reg(self, adr, val):
@@ -31,6 +26,12 @@ class LTC_SPI(SPI):
         # Test pattern value LSB
         self.set_ltc_reg(4, tpValue & 0xFF)
 
+
+def meas_f_ref(c, f_s):
+    ''' measure REF input frequency with zero crossing coutner '''
+    return c.read_reg('vvm_zc0_f_meas') * f_s / 100e6
+
+
 def print_frm(c):
     idel = c.read_reg('lvds_idelay_value')
     v = c.read_reg('lvds_frame_peek')
@@ -38,6 +39,7 @@ def print_frm(c):
     for i in range(4):
         v = c.read_reg('lvds_data_peek{:}'.format(i))
         print("CH{:}: {:016b}".format(i, v))
+
 
 def autoBitslip(c):
     '''
@@ -175,7 +177,7 @@ def set_led(isOn=True):
 def getNyquist(f, fs):
     """
     where does an under-sampled tone end up?
-    returns base band frequency and `inverted spectrum` flag
+    returns baseband frequency and `inverted spectrum` flag
     """
     f_n = f / fs
     f_fract = f_n % 1
@@ -185,21 +187,44 @@ def getNyquist(f, fs):
         return (1 - f_fract) * fs, True
 
 
-def getMags(r, vvm_ddc_shift):
+def getRealFreq(N, fbb, fs):
+    '''
+    inverse of getNyquist()
+    N:  nyquist band,
+        0: 0 Hz     .. 1 / 2 fs
+        1: 1 / 2 fs .. fs (inverted)
+        2: fs       .. 3 / 2 fs
+
+    fbb: baseband frequency [Hz]
+         fbb < fs / 2
+
+    fs: sampling rate [Hz]
+
+    returns: actual real frequency [Hz]
+    '''
+    if (N % 2) == 0:
+        # regular spectrum
+        return N * fs / 2 + fbb
+    else:
+        # inverted spectrum
+        return (N + 1) * fs / 2 - fbb
+
+
+def get_mags(c, vvm_ddc_shift):
     ''' [dbFs] '''
     mags = zeros(4)
     for i in range(len(mags)):
-        val = getattr(r.regs, "vvm_mag{}".format(i)).read()
+        val = c.read_reg("vvm_mag" + str(i))
         val = val / (1 << 21) * (1 << (vvm_ddc_shift - 1))
         mags[i] = val
     return 20 * log10(mags)
 
 
-def getPhases(r):
+def get_phases(c):
     ''' [degree] '''
     phs = zeros(3)
     for i in range(3):
-        val = getattr(r.regs, "vvm_phase{}".format(i + 1)).read()
+        val = c.read_reg("vvm_phase" + str(i + 1))
         val = twos_comps(val, 32)
         val = val / (1 << 21) * 180
         phs[i] = val
@@ -208,8 +233,11 @@ def getPhases(r):
 
 class CalHelper:
     ''' calibration for magnitude and phase readings '''
-    def __init__(self, cal_file):
+    def __init__(self, cal_file, vvm_ddc_shift=None, c=None, fs=None):
         ''' cal_file must be in .npz format '''
+        self.c = c
+        self.vvm_ddc_shift = vvm_ddc_shift
+        self.fs = fs
         self.d = d = load(cal_file)
         self.f_test = d['f_test']
         self.power_cal_db = d['power_cal_db']
@@ -227,10 +255,13 @@ class CalHelper:
         ind = argmin(abs(self.f_test - f))
         return self.power_cal_db[ind], self.phase_cal_deg[ind]
 
-    def get_mags(self, r, vvm_ddc_shift, f):
-        raw = getMags(r, vvm_ddc_shift)
+    def get_mags(self, f):
+        raw = get_mags(self.c, self.vvm_ddc_shift)
         return raw + self.get_cals(f)[0]
 
-    def get_phases(self, r, f):
-        raw = getPhases(r)
+    def get_phases(self, f):
+        f_bb, isInverted = getNyquist(f, self.fs)
+        raw = get_phases(self.c)
+        if isInverted:
+            raw *= -1
         return raw + self.get_cals(f)[1]
