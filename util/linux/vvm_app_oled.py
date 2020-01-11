@@ -3,6 +3,7 @@
 display phase / magnitude on the OLED screen
 '''
 import sys
+import signal
 from time import sleep
 from numpy import log10
 from os import putenv
@@ -128,7 +129,16 @@ class VvmApp:
         return rot, btn
 
 
+def handler(signum, frame):
+    """Why is systemd sending sighups? I DON'T KNOW."""
+    print("Got a {} signal. Doing nothing".format(signum))
+
+
 def main():
+    signal.signal(signal.SIGHUP, handler)
+    # signal.signal(signal.SIGTERM, handler)
+    # signal.signal(signal.SIGCONT, handler)
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         '--deci', default=100, type=int,

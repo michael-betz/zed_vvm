@@ -8,4 +8,6 @@ Copy / link it to `linux/arch/arm/boot/dts/zynq-zed.dts`.
 
 __fpga-mgr.patch__ Patch for the linux mainline kernel to get the /sys/class/fpga_mgr/fpga0/firmware file which is needed to easily configure the fpga from linux. The xilinx version of the kernel has this little convenience feature already builtin.
 
+__vvm_appp.service__ for auto-starting the OLED app. Copy to `/lib/systemd/system/` and enable with `sudo systemctl start vvm_app`
+
 All the other stuff are applications which are supposed to run on the zedboard.
