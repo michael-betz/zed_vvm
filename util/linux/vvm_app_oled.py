@@ -6,7 +6,7 @@ import sys
 import signal
 from time import sleep
 from numpy import log10
-from os import putenv
+from os import putenv, environ
 from socket import gethostname
 from datetime import datetime
 from random import randint, choice
@@ -115,29 +115,28 @@ class VvmApp:
         ''' returns encoder steps and button pushes '''
         rot = 0
         btn = False
-        try:
-            for evt in self.dev_rot.read():
-                if evt.type == 2:
-                    rot += evt.value
-        except BlockingIOError:
-            pass
-        try:
-            for evt in self.dev_push.read():
-                btn |= evt.value
-        except BlockingIOError:
-            pass
+
+        while True:
+            # unfortunately using read() and try / except:
+            # causes a huge memory leak
+            evt = self.dev_rot.read_one()
+            if evt is None:
+                break
+            if evt.type == 2:
+                rot += evt.value
+
+        while True:
+            evt = self.dev_push.read_one()
+            if evt is None:
+                break
+            btn |= evt.value
+
         return rot, btn
 
 
-def handler(signum, frame):
-    """Why is systemd sending sighups? I DON'T KNOW."""
-    print("Got a {} signal. Doing nothing".format(signum))
-
-
 def main():
-    signal.signal(signal.SIGHUP, handler)
-    # signal.signal(signal.SIGTERM, handler)
-    # signal.signal(signal.SIGCONT, handler)
+    # systemd sends a SIGHUP at startup :p ignore it
+    signal.signal(signal.SIGHUP, lambda x, y: print("SIGHUP"))
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -211,8 +210,9 @@ def main():
             pg.display.update()
 
             i += 1
-            pg.time.delay(50)
+            sleep(1 / 60)
 
 
 if __name__ == '__main__':
+    print(environ)
     main()
