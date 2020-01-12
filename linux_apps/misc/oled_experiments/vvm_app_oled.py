@@ -47,7 +47,7 @@ class VvmApp:
 
         fntNames = ('Ubuntu-Regular', 'UbuntuMono-Bold')
         fntSizes = (17, 28)
-        self.fnts = [pg.font.Font('oled/fonts/{}.ttf'.format(n), s) for n, s in zip(fntNames, fntSizes)]
+        self.fnts = [pg.font.Font('fonts/{}.ttf'.format(n), s) for n, s in zip(fntNames, fntSizes)]
 
         self.dev_rot = InputDevice('/dev/input/event0')
         self.dev_push = InputDevice('/dev/input/event1')

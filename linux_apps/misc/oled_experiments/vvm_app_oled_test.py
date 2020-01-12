@@ -30,7 +30,7 @@ class VvmApp:
 
         fntNames = ('UbuntuMono-Regular', 'UbuntuMono-Bold')
         fntSizes = (16, 26)
-        self.fnts = [pg.font.Font('oled/fonts/{}.ttf'.format(n), s) for n, s in zip(fntNames, fntSizes)]
+        self.fnts = [pg.font.Font('fonts/{}.ttf'.format(n), s) for n, s in zip(fntNames, fntSizes)]
 
 
     def draw(self, frm=0):
