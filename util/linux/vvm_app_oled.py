@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 '''
 display phase / magnitude on the OLED screen
+TODO modify to connect over MQTT
 '''
 import sys
 import signal

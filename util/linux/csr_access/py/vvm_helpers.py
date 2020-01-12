@@ -3,11 +3,14 @@ Helper functions specific to the VVM hardware
 '''
 import sys
 from time import sleep
+import logging
+from struct import pack, unpack
 sys.path.append("./csr_access_test/py")
 from bitbang import SPI, I2C
 from Si570 import calcFreq, writeSi570
 from numpy import int32, load, atleast_2d, argmin, zeros_like, zeros, log10
-from struct import pack, unpack
+
+log = logging.getLogger('vvm_helper')
 
 
 class LTC_SPI(SPI):
@@ -35,10 +38,10 @@ def meas_f_ref(c, f_s):
 def print_frm(c):
     idel = c.read_reg('lvds_idelay_value')
     v = c.read_reg('lvds_frame_peek')
-    print("ID: {:}  F: {:08b}".format(idel, v))
+    log.info("ID: {:}  F: {:08b}".format(idel, v))
     for i in range(4):
         v = c.read_reg('lvds_data_peek{:}'.format(i))
-        print("CH{:}: {:016b}".format(i, v))
+        log.info("CH{:}: {:016b}".format(i, v))
 
 
 def autoBitslip(c):
@@ -50,7 +53,7 @@ def autoBitslip(c):
     for i in range(8):
         val = c.read_reg('lvds_frame_peek')
         if val == 0xF0:
-            print("autoBitslip(): aligned after", i)
+            log.info("autoBitslip(): aligned after %d shifts", i)
             return
         c.write_reg('lvds_bitslip_csr', 1)
     raise RuntimeError("autoBitslip(): failed alignment :(")
@@ -105,7 +108,7 @@ def autoIdelay(c):
     # set idelay to the sweet spot in the middle
     setIdelay(c, (minValue + maxValue) // 2)
 
-    print('autoIdelay(): min = {:}, mean = {:}, max = {:} idelays'.format(
+    log.info('autoIdelay(): min = {:}, mean = {:}, max = {:} idelays'.format(
         minValue,
         c.read_reg('lvds_idelay_value'),
         maxValue
@@ -113,7 +116,7 @@ def autoIdelay(c):
 
 
 def initLTC(c, check_align=False):
-    print("Resetting LTC")
+    log.info("Resetting LTC")
     ltc_spi = LTC_SPI(c, "spi_r", "spi_w")
 
     # Reset the ADC chip, this seems to glitch the DCO clock!
@@ -131,12 +134,12 @@ def initLTC(c, check_align=False):
     autoIdelay(c)
 
     if check_align:
-        print("ADC word bits:")
+        log.info("ADC word bits:")
         for i in range(14):
             tp = 1 << i
             ltc_spi.setTp(tp)
             tp_read = c.read_reg('lvds_data_peek0')
-            print("{:014b} {:014b}".format(tp, tp_read))
+            log.info("{:014b} {:014b}".format(tp, tp_read))
             if tp != tp_read:
                 raise RuntimeError("LVDS alignment error")
 
@@ -255,8 +258,10 @@ class CalHelper:
         ind = argmin(abs(self.f_test - f))
         return self.power_cal_db[ind], self.phase_cal_deg[ind]
 
-    def get_mags(self, f):
-        raw = get_mags(self.c, self.vvm_ddc_shift)
+    def get_mags(self, f, vvm_ddc_shift=None):
+        if vvm_ddc_shift is None:
+            vvm_ddc_shift = self.vvm_ddc_shift
+        raw = get_mags(self.c, vvm_ddc_shift)
         return raw + self.get_cals(f)[0]
 
     def get_phases(self, f):
