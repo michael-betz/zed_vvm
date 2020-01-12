@@ -1,0 +1,12 @@
+[Unit]
+Description=Vector Voltmeter MQTT Daemon
+After=multi-user.target
+
+[Service]
+WorkingDirectory=/home/michael
+ExecStart=/usr/bin/python3 vvm_daemon.py
+Restart=always
+RestartSec=20
+
+[Install]
+WantedBy=multi-user.target
