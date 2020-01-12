@@ -1,12 +1,14 @@
+from sys import path
+
 from migen import *
 from migen.build.xilinx.common import *
 from litex.soc.interconnect.csr import *
 from litex.soc.cores.freqmeter import FreqMeter
 from migen.genlib.cdc import MultiReg, PulseSynchronizer
 from litex.build.generic_platform import Subsignal, Pins, IOStandard, Misc
-from sys import path
-from iserdes.s7_iserdes import S7_iserdes
-from util.common import LedBlinker, myzip
+
+from .s7_iserdes import S7_iserdes
+from common import LedBlinker, myzip
 
 ltc_pads = [
     ("LTC_SPI", 0,

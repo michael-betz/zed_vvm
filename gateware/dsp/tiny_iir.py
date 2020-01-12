@@ -3,11 +3,11 @@ Tiny first order IIR filter without multipliers
   * there's a DC error when shifts > ACC_GUARD
 https://zipcpu.com/dsp/2017/08/19/simple-filter.html
 '''
-from migen import *
-from migen.fhdl import verilog
-from matplotlib.pyplot import *
 from numpy import *
 from sys import argv
+
+from migen import *
+from matplotlib.pyplot import *
 
 
 class TinyIIR(Module):

@@ -2,6 +2,7 @@
 '''
 MQTT client to expose VVM measurements and controls
 '''
+import logging
 import sys
 import signal
 from time import sleep
@@ -9,13 +10,11 @@ from numpy import log10, zeros
 from socket import gethostname
 from datetime import datetime
 import argparse
-import logging
 from mqtt_pvs import MqttPvs
 
-sys.path.append('./csr_access/py')
-from csr_lib import hd, CsrLib
-from bitbang import I2C
-from vvm_helpers import initLTC, initSi570, twos_comps, meas_f_ref, \
+from lib.csr_lib import hd, CsrLib
+from lib.bitbang import I2C
+from lib.vvm_helpers import initLTC, initSi570, twos_comps, meas_f_ref, \
     CalHelper, getNyquist, getRealFreq
 
 log = logging.getLogger('vvm_daemon')

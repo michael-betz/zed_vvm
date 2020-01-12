@@ -6,9 +6,11 @@ try:
     python3 ddc.py build
 '''
 from sys import argv
+
 from migen import *
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage
-from dds import DDS
+
+from .dds import DDS
 
 
 class VVM_DDC(Module, AutoCSR):

@@ -5,6 +5,7 @@ try:
 '''
 from sys import argv
 from os.path import join, dirname, abspath
+
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage, CSRStatus, CSRField
 from migen.genlib.cdc import PulseSynchronizer
 from migen import *

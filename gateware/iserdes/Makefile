@@ -24,4 +24,4 @@ $(TARGET).vcd: $(TARGET)_tb
 	xsim -nolog -R $< -testplusarg vcd
 
 clean:
-	rm -rf $(TARGET).vcd webtalk* vivado.* xsim.dir .Xil *.pb *.jou
+	rm -rf $(TARGET).v $(TARGET).vcd webtalk* vivado.* xsim.dir .Xil *.pb *.jou

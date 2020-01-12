@@ -66,7 +66,7 @@ class DoubleTextWidget(TextWidget):
         l1 = self.fnt.render('{:>6.1f}'.format(
             (random() - 0.5) * 360
         ), True, W)
-        l2 = self.fnt.render('❗', True, W)
+        l2 = self.fnt.render('line2', True, W)
         self.s.blit(l1, (0, 0))
         self.s.blit(l2, (0, self.pos.h // 2))
         return self.s
@@ -144,4 +144,4 @@ while True:
     pg.display.update()
 
     i += 1
-    pg.time.delay(30)
+    pg.time.wait(30)

@@ -6,16 +6,18 @@ try:
 """
 
 from sys import argv
+from os.path import join, dirname, abspath, basename
+
 from migen import *
 from migen.genlib.misc import timeline
 from migen.genlib.cdc import BlindTransfer
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage, CSRStatus
 from litex.soc.cores.freqmeter import FreqMeter
-from os.path import join, dirname, abspath
-from dds import DDS
-from ddc import VVM_DDC
-from phase_processor import PhaseProcessor
-from tiny_iir import TinyIIR
+
+from .dds import DDS
+from .ddc import VVM_DDC
+from .phase_processor import PhaseProcessor
+from .tiny_iir import TinyIIR
 
 
 class VVM_DSP(Module, AutoCSR):
@@ -32,13 +34,13 @@ class VVM_DSP(Module, AutoCSR):
             "double_inte_smp.v", "doublediff.v", "serialize.v"
         ]
         for src in srcs:
-            platform.add_source(join(vdir, "../../bedrock/dsp", src))
+            platform.add_source(join(vdir, "../../../bedrock/dsp", src))
 
         srcs = [
             "cstageg.v", "addsubg.v"
         ]
         for src in srcs:
-            platform.add_source(join(vdir, "../../bedrock/cordic", src))
+            platform.add_source(join(vdir, "../../../bedrock/cordic", src))
 
     def __init__(self, adcs=None):
         """
@@ -245,7 +247,8 @@ class ZeroCrosser(Module, AutoCSR):
 
 def main():
     ''' generate a .v file for simulation with Icarus / general usage '''
-    tName = argv[0].replace('.py', '')
+    tName = basename(__file__).replace('.py', '')
+
     d = VVM_DSP()
     if 'build' in argv:
         from migen.fhdl.verilog import convert

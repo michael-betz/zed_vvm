@@ -9,6 +9,7 @@ python3 acquisition.py build
 """
 
 from sys import argv
+
 from migen import *
 from litex.soc.interconnect.csr import AutoCSR, CSR, CSRStorage
 from migen.genlib.cdc import PulseSynchronizer

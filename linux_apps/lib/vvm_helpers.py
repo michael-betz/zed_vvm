@@ -1,14 +1,13 @@
 '''
 Helper functions specific to the VVM hardware
 '''
-import sys
-from time import sleep
 import logging
+from numpy import int32, load, argmin, zeros, log10
+from time import sleep
 from struct import pack, unpack
-sys.path.append("./csr_access_test/py")
+
 from bitbang import SPI, I2C
 from Si570 import calcFreq, writeSi570
-from numpy import int32, load, atleast_2d, argmin, zeros_like, zeros, log10
 
 log = logging.getLogger('vvm_helper')
 

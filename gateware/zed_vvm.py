@@ -13,6 +13,9 @@ They do speak to each other through litex CSRs and `comm_devmem.py`.
 try:
  python3 hello_LTC.py <build / synth / config>
 """
+from operator import or_
+from functools import reduce
+
 from migen import *
 from migen.genlib.cdc import MultiReg
 from migen.genlib.resetsync import AsyncResetSynchronizer
@@ -26,14 +29,11 @@ from litex.soc.cores.bitbang import I2CMaster, SPIMaster
 from litex.boards.platforms import zedboard
 from litex.soc.cores.clock import S7MMCM, S7IDELAYCTRL
 from litex.soc.interconnect import wishbone
+
+from common import main, LedBlinker
 from iserdes.ltc_phy import LTCPhy, ltc_pads
-from util.common import main, LedBlinker
-import sys
-sys.path.append('dsp')
-from acquisition import Acquisition
-from vvm_dsp import VVM_DSP
-from operator import or_
-from functools import reduce
+from dsp.acquisition import Acquisition
+from dsp.vvm_dsp import VVM_DSP
 
 
 class _CRG(Module):

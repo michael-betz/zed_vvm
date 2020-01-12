@@ -15,11 +15,12 @@
   try:  python3 phase_processor.py build
 '''
 from sys import argv
+from os.path import join, dirname, abspath
+from collections import defaultdict
+
 from migen import *
 from migen.genlib.misc import timeline
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage, CSRStatus
-from os.path import join, dirname, abspath
-from collections import defaultdict
 
 
 class Multiplier5(Module):

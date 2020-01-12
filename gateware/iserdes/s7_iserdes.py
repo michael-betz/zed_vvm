@@ -1,15 +1,14 @@
-"""\
+"""
  7-series ISERDES receiver for LVDS ADCs
 
  DCO is a DDR clock signal, doing one transition for every bit.
  This transition happens when data is stable (90 deg phase shift)
 
  try `python3 s7_iserdes.py build`
-
- TODO add ISERDES + BUFMCE reset (with CSR)
- """
+"""
 
 from sys import argv
+
 from migen import *
 from migen.build.xilinx.common import xilinx_special_overrides
 from migen.genlib.resetsync import AsyncResetSynchronizer

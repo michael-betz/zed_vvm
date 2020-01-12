@@ -1,4 +1,4 @@
-include ../../bedrock/dir_list.mk
+include ../../../bedrock/dir_list.mk
 include $(BUILD_DIR)/top_rules.mk
 include $(CORDIC_DIR)/rules.mk
 
@@ -16,8 +16,8 @@ SRC_V  += doublediff.v serialize.v grab_channels.v
 
 all: $(TARGET).vcd
 
-%.v: %.py
-	python3 $< build
+$(TARGET).v:
+	(cd .. && python3 -m dsp.$(TARGET) build && mv $(TARGET).v dsp)
 
 vvm_dsp_tb: $(SRC_V)
 
