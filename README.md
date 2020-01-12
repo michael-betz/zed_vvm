@@ -111,12 +111,12 @@ $ python3 vvm_app.py
 ```
 
 # Setting up linux
-[ZED_DEBIAN.md](https://github.com/yetifrisstlama/zed_vvm/blob/master/ZED_DEBIAN.md)
+[ZED_DEBIAN.md](linux_kernel/ZED_DEBIAN.md)
 
 # Setting up Peripherals
 How to connect Linux to the FPGA or the outside world. WIP ...
 
-[PS_PERIPHERALS.md](https://github.com/yetifrisstlama/zed_vvm/blob/master/PS_PERIPHERALS.md)
+[PS_PERIPHERALS.md](linux_kernel/PS_PERIPHERALS.md)
 
 # Load bitfile in linux
 Bitfiles are loaded trough the [Linux FPGA Manager](https://www.kernel.org/doc/html/v4.18/driver-api/fpga/fpga-mgr.html).
