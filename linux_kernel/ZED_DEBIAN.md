@@ -53,14 +53,15 @@ Here's some instructions on how to apply two tiny patches to the kernel and comp
     cd linux/
 
 # Load my kernel config and device tree for zed_vvm
-    cp <..>/zed_vvm/util/linux/.config .
-    cp <..>/zed_vvm/util/linux/zynq-zed.dts arch/arm/boot/dts/
+    cp <..>/zed_vvm/linux_kernel/.config .
+    cp <..>/zed_vvm/linux_kernel/zynq-zed.dts arch/arm/boot/dts/
 
 # Patch to get /sys/class/fpga_mgr/fpga0/firmware
 # Not needed with the xilinx version of the kernel
-    patch --strip=1 --input=<..>/zed_vvm/util/linux/fpga-mgr.patch
+    patch --strip=1 --input=<..>/zed_vvm/linux_kernel/fpga-mgr.patch
 
-# Replace the fbtft driver with a working version for the 2 OLED displays
+# If you want to use the tiny ssd1306 based display on the zed-board,
+# replace the kernel fbtft driver with a working version:
     cd drivers/staging
     rm -rf fbtft
     git clone https://github.com/yetifrisstlama/fbtft.git
@@ -109,13 +110,13 @@ I started this project on the Xilinx kernel-fork. When I first tried switching o
   * `/sys/class/fpga_manager/fpga0` was there, so the linux FPGA manager driver was working
 
 However I was missing `/sys/class/fpga_manager/fpga0/firmware`,
-which is used to pipe the name of a `.bit.bin` file to re-program the FPGA PL from linux. After some investigation, it looks like the fpga-manager was not intended to be accessed from user-space and Xilinx added this feature as a convenience for developers. I brought it back with a [tiny patch](https://github.com/yetifrisstlama/zed_vvm/tree/master/util/linux/fpga-mgr.patch) to the mainline kernel.
+which is used to pipe the name of a `.bit.bin` file to re-program the FPGA PL from linux. After some investigation, it looks like the fpga-manager was not intended to be accessed from user-space and Xilinx added this feature as a convenience for developers. I brought it back with a [tiny patch](fpga-mgr.patch) to the mainline kernel.
 
 With the patch I was able to load bit-files in the same way as with the
  Xilinx kernel. However the fabric clocks were still disabled and the FPGA
  appeared completely un-responsive after configuration.
  Some intensive diff-ing later I could trace this down to different default settings in `zynq-7000.dtsi`.
- Switching the clocks back on was easily done in [`util/linux/zynq-zed.dts`](https://github.com/yetifrisstlama/zed_vvm/blob/master/util/linux/zynq-zed.dts)
+ Switching the clocks back on was easily done in [`zynq-zed.dts`](zynq-zed.dts)
  and life on mainline is good now.
 
 ## Debian buster rootfs
@@ -143,14 +144,14 @@ login as each of the two users below and run the `passwd` command.
 
 Also remote login over ssh should work now if the network is up.
 
-The last step (if ssh works) is to copy the litex_server directory
+The last step (if ssh works) is to copy the `linux_apps` directory
 form the host machine onto the zedboard:
 
 ```bash
-    scp -r util/linux/litex_server <user_name>@<hostname>:~
+    scp -r <..>/zed_vvm/linux_apps <user_name>@<hostname>:~
 ```
 
-Alternatively, just install my litex-fork on the zedboard, which includes
+Alternatively, just install my [litex-fork](https://github.com/yetifrisstlama/litex) on the zedboard, which includes
 litex_server with mmap access support.
 
 ### Taking the scenic route ...
@@ -244,7 +245,7 @@ ff02::2     ip6-allrouters
     sudo tar -cpzvf ../rootfs_buster_clean.tar.gz .
 ```
 
-Un-tar the rootfs onto a large ext4 partition on the SD card as shown [here](https://github.com/yetifrisstlama/zed_vvm/blob/master/ZED_DEBIAN.md#shortcut-install-pre-made-rootfs).
+Un-tar the rootfs onto a large ext4 partition on the SD card as shown [here](ZED_DEBIAN.md#shortcut-install-pre-made-rootfs).
 
 ## Partitioning the SD card
 What we need

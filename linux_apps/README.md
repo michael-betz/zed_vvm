@@ -1,13 +1,18 @@
-# linux
+# linux_apps
 
-__.config__ my current linux kernel configuration file for `make menuconfig`.
-Copy / link it to `linux/.config`.
+These are mostly python applications which are supposed to run on the zedboard.
 
-__zynq-zed.dts__ my current device tree.
-Copy / link it to `linux/arch/arm/boot/dts/zynq-zed.dts`.
+__vvm_daemon.py__ daemon application to setup and use the VVM. Measurement data and parameters are exported as mqtt topics.
 
-__fpga-mgr.patch__ Patch for the linux mainline kernel to get the /sys/class/fpga_mgr/fpga0/firmware file which is needed to easily configure the fpga from linux. The xilinx version of the kernel has this little convenience feature already builtin.
+__vvm_oled.py__ handles the front-panel OLED display and user interface, connects to vvm_daemon.py through mqtt.
 
-__vvm_appp.service__ for auto-starting the OLED app. Copy to `/lib/systemd/system/` and enable with `sudo systemctl start vvm_app`
+__misc/vvmd.service__ systemd configuration for auto-starting the mqtt daemon. Copy to `/lib/systemd/system/` and enable with `sudo systemctl start vvmd`
 
-All the other stuff are applications which are supposed to run on the zedboard.
+__lib__ various helper classes to access CSRs from python without litex_server
+
+__misc/csr_from_c__ helper library to access CSRs form C on the Zedboard. Superfast!!! (2 MHz gpio toggle)
+
+__misc/litex_server_light__ a stripped down version of litex_server which can run on the Zedboard. No dependencies.
+
+__misc/oled_experiments__ various experiments on how to utilize pygame to implement the OLED user interface
+
