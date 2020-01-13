@@ -8,7 +8,7 @@ Even though litex_server is much slower than running software on the zedboard
 directly, it is still very useful for debugging and development purposes.
 
 To install litex_server on the zedboard,
-copy the [`litex_server_light`](../linux_apps/misc/litex_server_light) onto it.
+copy the [`litex_server_light`](../linux_apps/misc/litex_server_light) directory onto it.
 
 Then start it up like that:
 ```bash
