@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 '''
-display phase / magnitude on the OLED screen
-TODO modify to connect over MQTT
+Display phase / magnitude on the OLED screen
+Connects directly to the FPGA trough csr_lib
 '''
 import sys
 import signal

@@ -170,12 +170,6 @@ def getSamples(c, CH, N=None):
     return twos_comps(samples, 14) / 2**13
 
 
-def set_led(isOn=True):
-    ''' set the front-panel status LED '''
-    with open('/sys/class/leds/led_status/brightness', 'w') as f:
-        f.write('1' if isOn else '0')
-
-
 def getNyquist(f, fs):
     """
     where does an under-sampled tone end up?

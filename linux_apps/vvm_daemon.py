@@ -5,7 +5,7 @@ MQTT client to expose VVM measurements and controls
 import logging
 import sys
 import signal
-from time import sleep
+import time
 from numpy import log10, zeros
 from socket import gethostname
 from datetime import datetime
@@ -38,8 +38,11 @@ class VvmApp:
         }, c)
         self.mq = self.pvs.mq
 
-        # Trigger auto tuner
-        self.mq.message_callback_add(prefix + 'tune', self.tune)
+        # Trigger auto / manually tuning when publishing to settings/f_tune_set
+        # the current tuning value can be read from results/f_tune
+        self.mq.message_callback_add(
+            prefix + 'f_tune_set', lambda c, d, m: self.tune(m.payload)
+        )
 
         # Reset DDS phase accumulators of down-converter
         pr = lambda *args: c.write_reg('vvm_ddc_dds_ctrl', 0x01)
@@ -61,10 +64,9 @@ class VvmApp:
         self.cal = CalHelper(args.cal_file, args.vvm_ddc_shift, c, args.fs)
 
     def loop_forever(self):
-        sleep(1)
-        frm = 0
+        # Just came out of reset, give freq. counter some time to accumulate
+        time.sleep(1)
         while True:
-            self.f_ref_bb = 1
             self.f_ref_bb = meas_f_ref(self.c, self.args.fs)
             f_ref = getRealFreq(
                 self.pvs.nyquist_band, self.f_ref_bb, self.args.fs
@@ -87,31 +89,48 @@ class VvmApp:
             temp = ','.join([str(v) for v in phases])
             self.mq.publish('vvm/results/phases', temp)
 
+            # Aliased frequency of REF input measured by frequency counter
+            self.mq.publish('vvm/results/f_ref_bb', self.f_ref_bb)
+
+            # Absolute frequency of REF input, needs user selected f-band
             self.mq.publish('vvm/results/f_ref', f_ref)
 
-            sleep(1 / self.pvs.fps)
-            frm += 1
+            # Delay locked to the wall clock for more accurate cycle time
+            dt = 1 / self.pvs.fps
+            time.sleep(dt - time.time() % dt)
 
-    def tune(self, *args):
+    def tune(self, f_tune=None):
         '''
-        set down-converter center frequency to value measured by the
-        frequency counter on the REF channel
+        set down-converter center frequency to f_tune
+        if f_tune is None, use the frequency counter on the REF channel
         '''
-        fs = self.args.fs
-        ftw = int((self.f_ref_bb / fs) * 2**32)
-        c = self.c
+        # Fall back to last measured frequency
+        if f_tune is None or f_tune == b'auto':
+            f_tune = self.f_ref_bb
+        else:
+            try:
+                f_tune = float(f_tune)
+            except (TypeError, ValueError):
+                log.warning('cannot tune to %s, try `auto`', f_tune)
+                return
+
+        ftw = int((f_tune / self.args.fs) * 2**32)
+
         for i, mult in enumerate((1, ) + self.M):
             ftw_ = int(ftw * mult)
-            c.write_reg('vvm_ddc_dds_ftw' + str(i), ftw_)
+            self.c.write_reg('vvm_ddc_dds_ftw' + str(i), ftw_)
             if i > 0:
-                c.write_reg('vvm_pp_mult' + str(i), mult)
-        log.info('tuned f_ref to {:6f} MHz'.format(self.f_ref_bb / 1e6))
-        c.write_reg('vvm_ddc_dds_ctrl', 0x02)  # FTW update
+                self.c.write_reg('vvm_pp_mult' + str(i), mult)
+
+        self.c.write_reg('vvm_ddc_dds_ctrl', 0x02)  # FTW update
+
+        self.mq.publish('vvm/results/f_tune', f_tune, 0, True)
+        log.info('tuned f_ref to {:6f} MHz'.format(f_tune / 1e6))
 
 
 def main():
     # systemd sends a SIGHUP at startup :p ignore it
-    signal.signal(signal.SIGHUP, lambda x, y: print('SIGHUP'))
+    signal.signal(signal.SIGHUP, lambda x, y: log.warning('SIGHUP ignored'))
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(

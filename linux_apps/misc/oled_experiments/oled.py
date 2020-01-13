@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+'''
+Moving geometric shapes screensaver
+Also displays time and hostname
+'''
 from os import putenv
 from socket import gethostname
 from datetime import datetime

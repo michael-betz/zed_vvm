@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+'''
+an experiment in self-positioning widgets.
+This didn't get very far.
+'''
 from os import putenv
 from socket import gethostname
 from datetime import datetime
