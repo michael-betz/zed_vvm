@@ -100,7 +100,7 @@ $ make server
 # Keep this terminal open and start a new one
 ```
 
-### Demonstration apps
+# Demo apps
 [litex_server_apps](litex_server_apps/README.md)
 
 # Setting up linux
