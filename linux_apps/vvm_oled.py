@@ -204,7 +204,7 @@ class VvmOled:
                 break
             btn |= evt.value
 
-        n = p['nyquist_band'] + rot
+        n = self.pvs['nyquist_band'] + rot
         n = 0 if n < 0 else 13 if n > 13 else n
         self.mq.publish('vvm/settings/nyquist_band', n, 0, True)
 
