@@ -27,13 +27,14 @@ def set_led(isOn=True):
 
 class VvmOled:
     def __init__(self, args):
-        self.mags = [-99] * 4
-        self.phases = [0] * 3
-        self.f_ref = 0
-        self.f_tune = 0
-        self.f_ref_bb = 0
-        self.nyquist_band = 0
-
+        self.pvs = {
+            'mags': [-99] * 4,
+            'phases': [0] * 3,
+            'f_ref': 0,
+            'f_ref_bb': 0,
+            'f_tune': 0,
+            'nyquist_band': 0
+        }
         self.args = args
 
         self.mq = mqtt.Client('vvm_oled', True)
@@ -42,9 +43,10 @@ class VvmOled:
         self.mq.connect_async(args.mqtt_server, args.mqtt_port, 60)
         self.mq.loop_start()
 
-        for k in ('mags', 'phases', 'f_ref', 'f_ref_bb', 'f_tune'):
-            self.mq.message_callback_add('vvm/results/' + k, self.on_result)
-        self.mq.message_callback_add('vvm/settings/#', self.on_result)
+        self.mq.message_callback_add('vvm/results/#', self.on_result)
+        self.mq.message_callback_add(
+            'vvm/settings/nyquist_band', self.on_result
+        )
 
         if not args.test:
             putenv('SDL_NOMOUSE', '')
@@ -75,15 +77,29 @@ class VvmOled:
         client.subscribe('vvm/#')
 
     def on_result(self, client, user, m):
-        ''' convert received mqtt payload to float and shove it into self '''
-        k = m.topic.split('/')[-1]
-        if b',' in m.payload:
-            setattr(self, k, [float(v) for v in m.payload.split(b',')])
-        else:
-            setattr(self, k, float(m.payload))
+        ''' convert mqtt payload to float and shove it into self.pvs '''
+        try:
+            k = m.topic.split('/')[-1]
+            old_val = self.pvs[k]
+            t = type(old_val)
+            if t is list:
+                for i, val in enumerate(m.payload.split(b',')):
+                    old_val[i] = float(val)
+            else:
+                self.pvs[k] = t(m.payload)
+        except Exception as e:
+            log.exception(e)
 
     def write(self, x, y, s, f='s', bold=False, white=False):
-        ''' write slightly formated text to oled surface'''
+        '''
+        write text to OLED surface with a bit of formating
+
+        x, y is the upper left corner,
+        s is a string to write
+        f is the font key
+
+        returns the lower right corner
+        '''
         c = (0x99, 0x99, 0x99)
         if bold:
             f += 'bold'
@@ -95,9 +111,10 @@ class VvmOled:
         return x + sur.get_width(), y + sur.get_height()
 
     def loop_forever(self):
+        p = self.pvs
         while True:
-            is_untune = abs(self.f_tune - self.f_ref_bb) > 3e3
-            is_low_power = self.mags[0] < -30
+            is_untune = abs(p['f_tune'] - p['f_ref_bb']) > 3e3
+            is_low_power = p['mags'][0] < -30
 
             # ----------------------
             #  Draw on OLED
@@ -109,14 +126,14 @@ class VvmOled:
             x, _ = self.write(x, y, 'REF: ')
             x, _ = self.write(
                 x, y,
-                '{:8.4f} MHz  '.format(self.f_ref / 1e6),
+                '{:8.4f} MHz  '.format(p['f_ref'] / 1e6),
                 bold=is_untune, white=is_untune
             )
 
             # Reference power
             x, _ = self.write(
                 x, y,
-                '{:5.1f} dBm'.format(self.mags[0]),
+                '{:5.1f} dBm'.format(p['mags'][0]),
                 bold=is_low_power, white=is_low_power
             )
 
@@ -126,16 +143,16 @@ class VvmOled:
 
             # 3 x phase
             x, y = 0, 19
-            for i, p in enumerate(self.phases):
-                if self.mags[i + 1] > -60:
-                    s = '{:>6.1f}°'.format(p)
+            for i, val in enumerate(p['phases']):
+                if p['mags'][i + 1] > -60:
+                    s = '{:>6.1f}°'.format(val)
                 else:
                     s = '{:>6s}'.format(' .... ')
                 x, _ = self.write(x, y, s, 'l', True, True)
 
             # 3 x power
             x, y = 4, 46
-            for m in self.mags[1:]:
+            for m in p['mags'][1:]:
                 x, _ = self.write(x, y, '{:>5.1f} dBm  '.format(m))
 
             # horizontal lines
@@ -152,11 +169,11 @@ class VvmOled:
                 set_led((not is_untune) and (not is_low_power))
             else:
                 # In test mode, put some fake values in the variables instead
-                self.mags = [randint(-600, 150) / 10 for i in range(4)]
-                self.phases = [randint(-1800, 1800) / 10 for i in range(3)]
-                self.f_ref_bb = randint(0, 117.6e6 / 2)
-                self.f_tune = self.f_ref_bb + randint(-4000, 4000)
-                self.f_ref = self.f_ref_bb + 117.6e6 * 4
+                p['mags'] = [randint(-600, 150) / 10 for i in range(4)]
+                p['phases'] = [randint(-1800, 1800) / 10 for i in range(3)]
+                p['f_ref_bb'] = randint(0, 117.6e6 / 2)
+                p['f_tune'] = p['f_ref_bb'] + randint(-4000, 4000)
+                p['f_ref'] = p['f_ref_bb'] + 117.6e6 * 4
 
             for event in pg.event.get():
                 log.debug(str(event))
@@ -187,7 +204,7 @@ class VvmOled:
                 break
             btn |= evt.value
 
-        n = self.nyquist_band + rot
+        n = p['nyquist_band'] + rot
         n = 0 if n < 0 else 13 if n > 13 else n
         self.mq.publish('vvm/settings/nyquist_band', n, 0, True)
 
