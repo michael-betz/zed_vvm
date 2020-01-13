@@ -18,9 +18,6 @@ Once installed, litex_server startup can be done remotely with `make server` fro
 
 Then run one of the below apps ...
 
-```bash
-# try -h to list supported command line arguments
-```
 __scope_app.py__ displays live ADC samples in time and frequency domain
 
 __vvm_app.py__ displays live phase and magnitude measurement results over time
@@ -31,6 +28,9 @@ __client_dev_sheet.ipynb__ jupyter notebook sheet which was used for development
 
 __cal__ worksheet and data which was used to carry out the phase / magnitude calibration
 
+```bash
+# try -h to list supported command line arguments
+```
 
 # remote litex_server
 `linux_apps/misc/litex_server_light` contains a minimal version of which can run on the zedboard.
