@@ -142,7 +142,7 @@ def main():
         help='Port of the mqtt broker'
     )
     parser.add_argument(
-        '--fps', default=10.0, type=float,
+        '--fps', default=30.0, type=float,
         help='Default measurements per second'
     )
     parser.add_argument(

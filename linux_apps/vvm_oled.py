@@ -166,7 +166,7 @@ class VvmOled:
             # -----------------------
             if not self.args.test:
                 self.handle_input()
-                set_led(is_untune or is_low_power)
+                set_led(not(is_untune or is_low_power))
             else:
                 # In test mode, put some fake values in the variables instead
                 p['mags'] = [randint(-600, 150) / 10 for i in range(4)]
