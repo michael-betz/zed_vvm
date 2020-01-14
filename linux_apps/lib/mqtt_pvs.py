@@ -36,6 +36,7 @@ class MqttPvs:
             }
     '''
     def __init__(self, args, prefix, pvs, c=None):
+        self.isInit = False
         self.c = c
         self.prefix = prefix
         self.pvs = pvs
@@ -58,8 +59,10 @@ class MqttPvs:
     def on_connect(self, client, userdata, flags, rc):
         log.info('MQTT connected %s %s', flags, rc)
         # Publish all current PV values (which are defaults at startup)
-        for k in self.pvs:
-            client.publish(self.prefix + k, getattr(self, k))
+        if self.isInit is False:
+            for k in self.pvs:
+                client.publish(self.prefix + k, getattr(self, k), 0, True)
+            self.isInit = True
         client.subscribe(self.prefix + '#')
 
     def on_pv_msg(self, client, user, m):
@@ -71,7 +74,7 @@ class MqttPvs:
         t = type(pv[0])
         if t in (float, int):
             try:
-                val = t(m.payload)
+                val = t(float(m.payload))
                 if not pv[1] <= val <= pv[2]:
                     raise ValueError("out of range")
             except ValueError:

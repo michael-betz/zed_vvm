@@ -6,8 +6,8 @@ from numpy import int32, load, argmin, zeros, log10
 from time import sleep
 from struct import pack, unpack
 
-from bitbang import SPI, I2C
-from Si570 import calcFreq, writeSi570
+from .bitbang import SPI, I2C
+from .Si570 import calcFreq, writeSi570
 
 log = logging.getLogger('vvm_helper')
 

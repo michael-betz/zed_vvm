@@ -10,8 +10,8 @@ from numpy import log10, zeros
 from socket import gethostname
 from datetime import datetime
 import argparse
-from mqtt_pvs import MqttPvs
 
+from lib.mqtt_pvs import MqttPvs
 from lib.csr_lib import hd, CsrLib
 from lib.bitbang import I2C
 from lib.vvm_helpers import initLTC, initSi570, twos_comps, meas_f_ref, \

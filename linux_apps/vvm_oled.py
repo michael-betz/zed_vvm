@@ -22,7 +22,7 @@ log = logging.getLogger('vvm_oled')
 def set_led(isOn=True):
     ''' set the front-panel status LED '''
     with open('/sys/class/leds/led_status/brightness', 'w') as f:
-        f.write('1' if isOn else '0')
+        f.write('255' if isOn else '0')
 
 
 class VvmOled:
@@ -86,7 +86,7 @@ class VvmOled:
                 for i, val in enumerate(m.payload.split(b',')):
                     old_val[i] = float(val)
             else:
-                self.pvs[k] = t(m.payload)
+                self.pvs[k] = float(m.payload)
         except Exception as e:
             log.exception(e)
 
@@ -100,11 +100,11 @@ class VvmOled:
 
         returns the lower right corner
         '''
-        c = (0x99, 0x99, 0x99)
+        c = (0xA0, ) * 3
         if bold:
             f += 'bold'
         if white:
-            c = (0xFF, 0xFF, 0xFF)
+            c = (0xFF, ) * 3
         fo = self.fnts[f]
         sur = fo.render(s, True, c, (0, 0, 0))
         self.d.blit(sur, (x, y))
@@ -113,7 +113,7 @@ class VvmOled:
     def loop_forever(self):
         p = self.pvs
         while True:
-            is_untune = abs(p['f_tune'] - p['f_ref_bb']) > 3e3
+            is_untune = abs(p['f_tune'] - p['f_ref_bb']) > 30e3
             is_low_power = p['mags'][0] < -30
 
             # ----------------------
@@ -156,8 +156,8 @@ class VvmOled:
                 x, _ = self.write(x, y, '{:>5.1f} dBm  '.format(m))
 
             # horizontal lines
-            line(self.d, (0x44,) * 3, (0, 16), (255, 16), 2)
-            line(self.d, (0x44,) * 3, (0, 44), (255, 44), 2)
+            line(self.d, (0x10,) * 3, (0, 16), (255, 16), 2)
+            line(self.d, (0x10,) * 3, (0, 44), (255, 44), 2)
 
             pg.display.update()
 
@@ -166,7 +166,7 @@ class VvmOled:
             # -----------------------
             if not self.args.test:
                 self.handle_input()
-                set_led((not is_untune) and (not is_low_power))
+                set_led(is_untune or is_low_power)
             else:
                 # In test mode, put some fake values in the variables instead
                 p['mags'] = [randint(-600, 150) / 10 for i in range(4)]
@@ -206,7 +206,8 @@ class VvmOled:
 
         n = self.pvs['nyquist_band'] + rot
         n = 0 if n < 0 else 13 if n > 13 else n
-        self.mq.publish('vvm/settings/nyquist_band', n, 0, True)
+        if n != self.pvs['nyquist_band']:
+            self.mq.publish('vvm/settings/nyquist_band', n, 0, True)
 
         if btn:
             # Triggers a single auto-tune
