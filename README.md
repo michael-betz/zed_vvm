@@ -131,4 +131,4 @@ copy the resulting `<bitfile>.bit.bin` on the zedboard, then
 [ 1667.020520] fpga_manager fpga0: writing <bitfile>.bit.bin to Xilinx Zynq FPGA Manager
 ```
 
-`make upload` tries to automate all these steps.
+`cd gateware; make upload` tries to automate all these steps.

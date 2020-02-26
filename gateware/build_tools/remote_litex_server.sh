@@ -4,4 +4,4 @@
 # needs the files from `util/litex_server` installed on zedboard
 # HOSTNAME=spaetzle.dhcp.lbl.gov
 HOSTNAME=128.3.131.28
-ssh -L 1234:localhost:1234 $HOSTNAME "sudo litex_server --devmem --devmem-offset 0x40000000"
+ssh -L 1234:localhost:1234 $HOSTNAME "sudo systemctl stop vvmd; cd litex_server_light; sudo python3 litex_server.py --devmem --devmem-offset 0x40000000"
