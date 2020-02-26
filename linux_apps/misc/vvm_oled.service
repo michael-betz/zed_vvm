@@ -1,12 +1,12 @@
 [Unit]
-Description=Vector Voltmeter application
+Description=Vector Voltmeter OLED application
 After=multi-user.target
 
 [Service]
-WorkingDirectory=/home/michael
-ExecStart=/usr/bin/python3 vvm_app_oled.py
-# Restart=always
-# RestartSec=10
+WorkingDirectory=/home/michael/zed_vvm/linux_apps
+ExecStart=/usr/bin/python3 vvm_oled.py
+Restart=always
+RestartSec=15
 
 [Install]
 WantedBy=multi-user.target
