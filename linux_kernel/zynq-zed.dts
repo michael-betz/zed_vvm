@@ -59,6 +59,7 @@
 		led_status {
 			gpios = <&gpio0 14 0>;
 			color = <0>;  // White
+			label = "led_status";
 		};
 	};
 };
