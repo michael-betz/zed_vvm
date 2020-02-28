@@ -12,9 +12,9 @@ import argparse
 from common import conLitexServer
 
 import sys
-sys.path.append("linux/csr_access/py/")
-from csr_lib import CsrLibLegacyAdapter
-from vvm_helpers import initLTC, initSi570, getSamples
+sys.path.append("../linux_apps/")
+from lib.csr_lib import CsrLibLegacyAdapter
+from lib.vvm_helpers import initLTC, getSamples, initSi570
 
 
 class ScopeController:

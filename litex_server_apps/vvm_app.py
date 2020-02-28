@@ -17,8 +17,9 @@ from common import conLitexServer, unique_filename
 
 import sys
 sys.path.append("linux/csr_access/py/")
-from csr_lib import CsrLibLegacyAdapter
-from vvm_helpers import initLTC, initSi570, meas_f_ref, twos_comps, \
+sys.path.append("../linux_apps/")
+from lib.csr_lib import CsrLibLegacyAdapter
+from lib.vvm_helpers import initLTC, initSi570, meas_f_ref, twos_comps, \
     CalHelper, getNyquist
 
 
@@ -56,16 +57,17 @@ def main():
     )
     args = parser.parse_args()
 
-    # ----------------------------------------------
-    #  Load calibration
-    # ----------------------------------------------
-    cal = CalHelper('cal/cal2_att.npz')
 
     # ----------------------------------------------
     #  Init hardware
     # ----------------------------------------------
     r = conLitexServer('../build/csr.csv')
     c = CsrLibLegacyAdapter(r)
+
+    # ----------------------------------------------
+    #  Load calibration
+    # ----------------------------------------------
+    cal = CalHelper('cal/cal2_att.npz', c=c, fs=args.fs)
 
     if not args.noinit:
         initLTC(c, False)
@@ -124,12 +126,12 @@ def main():
         datms[:] = roll(datms, -1, 0)
         datps[:] = roll(datps, -1, 0)
 
-        mags = cal.get_mags(r, args.ddcshift, args.f_meas)
+        mags = cal.get_mags(args.f_meas, args.ddcshift)
         datms[-1, :] = mags
         for i in range(4):
             lms[i].set_data(arange(datms.shape[0]), datms[:, i])
 
-        datps[-1, :] = cal.get_phases(r, args.f_meas)
+        datps[-1, :] = cal.get_phases(args.f_meas)
         if isInverted:
             datps[-1, :] *= -1
         for i, p in enumerate(datps[-1, :]):
