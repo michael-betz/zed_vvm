@@ -1,0 +1,29 @@
+record(ai, "$(P)phaseA") {
+    field(EGU, "deg")
+    field(DESC, "Phase of A vs REF")
+}
+
+record(ai, "$(P)phaseB") {
+    field(EGU, "deg")
+}
+
+record(ai, "$(P)phaseC") {
+    field(EGU, "deg")
+}
+
+record(ai, "$(P)magRef") {
+    field(EGU, "dBm")
+}
+
+record(ai, "$(P)magA") {
+    field(EGU, "dBm")
+}
+
+record(ai, "$(P)magB") {
+    field(EGU, "dBm")
+}
+
+record(ai, "$(P)magC") {
+    field(EGU, "dBm")
+}
+

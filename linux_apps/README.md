@@ -16,3 +16,4 @@ __misc/litex_server_light__ a stripped down version of litex_server which can ru
 
 __misc/oled_experiments__ various experiments on how to utilize pygame to implement the OLED user interface
 
+__vvm_ioc__ a very simple epics IOC, using Paho and epics channel access from python to bridge mqtt to epics
