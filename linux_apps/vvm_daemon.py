@@ -20,7 +20,6 @@ class VvmApp:
     def __init__(self, args, c):
         self.args = args
         self.c = c
-        # self.M = (1, 1, 1)  # Measurement harmonic
 
         prefix = 'vvm/settings/'
         self.pvs = MqttPvs(args, prefix, {
@@ -32,9 +31,9 @@ class VvmApp:
             'vvm_ddc_shift':[None, 1, 64, True],
             'vvm_ddc_deci': [None, 10, 500, True],
             # Measurement harmonic (measure at M time f_ref)
-            'M_A':          [1, 1, 15, False],
-            'M_B':          [1, 1, 15, False],
-            'M_C':          [1, 1, 15, False]
+            'M_A':          [None, 1, 15, False],
+            'M_B':          [None, 1, 15, False],
+            'M_C':          [None, 1, 15, False]
         }, c)
         self.mq = self.pvs.mq
 
@@ -73,7 +72,7 @@ class VvmApp:
                 self.pvs.nyquist_band, self.f_ref_bb, self.args.fs
             )
 
-            Ms = array([1, self.pvs['M_A'], self.pvs['M_B'], self.pvs['M_C']])
+            Ms = array([1, self.pvs.M_A, self.pvs.M_B, self.pvs.M_C])
 
             mags = self.cal.get_mags(f_ref * Ms, self.pvs.vvm_ddc_shift)
             phases = self.cal.get_phases(f_ref * Ms[1:])
@@ -119,13 +118,13 @@ class VvmApp:
 
         ftw = int((f_tune / self.args.fs) * 2**32)
 
-        Ms = array([1, self.pvs['M_A'], self.pvs['M_B'], self.pvs['M_C']])
+        Ms = array([1, self.pvs.M_A, self.pvs.M_B, self.pvs.M_C])
 
         for i, m in enumerate(Ms):
             ftw_ = int(ftw * m)
             self.c.write_reg('vvm_ddc_dds_ftw' + str(i), ftw_)
             if i > 0:
-                self.c.write_reg('vvm_pp_mult' + str(i), m)
+                self.c.write_reg('vvm_pp_mult' + str(i), int(m))
 
         self.c.write_reg('vvm_ddc_dds_ctrl', 0x02)  # FTW update
 
@@ -173,6 +172,18 @@ def main():
     parser.add_argument(
         '--nyquist_band', default=8, type=int,
         help='Initial nyquist band (N * fs / 2)'
+    )
+    parser.add_argument(
+        '--M_A', default=1, type=int,
+        help='Measurement harmonic'
+    )
+    parser.add_argument(
+        '--M_B', default=1, type=int,
+        help='Measurement harmonic'
+    )
+    parser.add_argument(
+        '--M_C', default=1, type=int,
+        help='Measurement harmonic'
     )
     parser.add_argument(
         '-v', '--verbose', action='store_true',
