@@ -3,19 +3,15 @@
 MQTT client to expose VVM measurements and controls
 '''
 import logging
-import sys
 import signal
 import time
-from numpy import log10, zeros
-from socket import gethostname
-from datetime import datetime
+from numpy import array
 import argparse
 
 from lib.mqtt_pvs import MqttPvs
-from lib.csr_lib import hd, CsrLib
-from lib.bitbang import I2C
-from lib.vvm_helpers import initLTC, initSi570, twos_comps, meas_f_ref, \
-    CalHelper, getNyquist, getRealFreq
+from lib.csr_lib import CsrLib
+from lib.vvm_helpers import initLTC, initSi570, meas_f_ref, \
+    CalHelper, getRealFreq
 
 log = logging.getLogger('vvm_daemon')
 
@@ -24,7 +20,7 @@ class VvmApp:
     def __init__(self, args, c):
         self.args = args
         self.c = c
-        self.M = (1, 1, 1)  # Measurement harmonic
+        # self.M = (1, 1, 1)  # Measurement harmonic
 
         prefix = 'vvm/settings/'
         self.pvs = MqttPvs(args, prefix, {
@@ -34,7 +30,11 @@ class VvmApp:
             'nyquist_band': [None, 0, 13],
             'vvm_iir':      [None, 0, 13, True],
             'vvm_ddc_shift':[None, 1, 64, True],
-            'vvm_ddc_deci': [None, 10, 500, True]
+            'vvm_ddc_deci': [None, 10, 500, True],
+            # Measurement harmonic (measure at M time f_ref)
+            'M_A':          [1, 1, 15, False],
+            'M_B':          [1, 1, 15, False],
+            'M_C':          [1, 1, 15, False]
         }, c)
         self.mq = self.pvs.mq
 
@@ -45,7 +45,8 @@ class VvmApp:
         )
 
         # Reset DDS phase accumulators of down-converter
-        pr = lambda *args: c.write_reg('vvm_ddc_dds_ctrl', 0x01)
+        def pr(*args):
+            c.write_reg('vvm_ddc_dds_ctrl', 0x01)
         self.mq.message_callback_add(prefix + 'phase_reset', pr)
         pr()
 
@@ -72,8 +73,10 @@ class VvmApp:
                 self.pvs.nyquist_band, self.f_ref_bb, self.args.fs
             )
 
-            mags = self.cal.get_mags(f_ref, self.pvs.vvm_ddc_shift)
-            phases = self.cal.get_phases(f_ref)
+            Ms = array([1, self.pvs['M_A'], self.pvs['M_B'], self.pvs['M_C']])
+
+            mags = self.cal.get_mags(f_ref * Ms, self.pvs.vvm_ddc_shift)
+            phases = self.cal.get_phases(f_ref * Ms[1:])
 
             # Publish as one topic for each value
             # for i in range(4):
@@ -116,11 +119,13 @@ class VvmApp:
 
         ftw = int((f_tune / self.args.fs) * 2**32)
 
-        for i, mult in enumerate((1, ) + self.M):
-            ftw_ = int(ftw * mult)
+        Ms = array([1, self.pvs['M_A'], self.pvs['M_B'], self.pvs['M_C']])
+
+        for i, m in enumerate(Ms):
+            ftw_ = int(ftw * m)
             self.c.write_reg('vvm_ddc_dds_ftw' + str(i), ftw_)
             if i > 0:
-                self.c.write_reg('vvm_pp_mult' + str(i), mult)
+                self.c.write_reg('vvm_pp_mult' + str(i), m)
 
         self.c.write_reg('vvm_ddc_dds_ctrl', 0x02)  # FTW update
 

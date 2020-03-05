@@ -252,14 +252,33 @@ class CalHelper:
         return self.power_cal_db[ind], self.phase_cal_deg[ind]
 
     def get_mags(self, f, vvm_ddc_shift=None):
+        '''
+        f is the measurement frequency [Hz]
+        either a float (all channels the same) of an array of 4 floats
+        '''
         if vvm_ddc_shift is None:
             vvm_ddc_shift = self.vvm_ddc_shift
         raw = get_mags(self.c, vvm_ddc_shift)
-        return raw + self.get_cals(f)[0]
+        if type(f) is float:
+            return raw + self.get_cals(f)[0]
+        for i, f_ in enumerate(f):
+            raw[i] += self.get_cals(f_)[0][i]
+        return raw
 
-    def get_phases(self, f):
-        f_bb, isInverted = getNyquist(f, self.fs)
+    def get_phases(self, f, Ms=None):
+        '''
+        f is the measurement frequency [Hz]
+        either a float (all channels the same) of an array of 3 floats
+        '''
         raw = get_phases(self.c)
-        if isInverted:
-            raw *= -1
-        return raw + self.get_cals(f)[1]
+        if type(f) is float:
+            f_bb, isInverted = getNyquist(f, self.fs)
+            if isInverted:
+                raw *= -1
+            return raw + self.get_cals(f)[1]
+        for i, f_ in enumerate(f):
+            f_bb, isInverted = getNyquist(f_, self.fs)
+            if isInverted:
+                raw[i] *= -1
+            raw[i] += self.get_cals(f_)[0][i]
+        return raw
