@@ -1,12 +1,41 @@
 #!/usr/bin/python3
 '''
 MQTT client to expose VVM measurements and controls
+
+-------------
+ MQTT topics
+-------------
+vvm/settings/<arg_name>
+    Most of the command line arguments can be set over mqtt
+
+vvm/settings/phase_reset
+    Any pub resets the DDS phase-accumulators in the digital down-converter
+
+vvm/settings/f_tune_set
+    Set the digital down-converter center frequency to message value in [Hz]
+    Write `auto` to tune on the frequency counter value (f_ref_bb)
+
+vvm/results/mags 9.3,-8.7,-7.6,-74.3
+    Magnitude values of the REF, A, B, C channels [dBm]
+
+vvm/results/phases 92.1,-53.5,-24.5
+    Phase values of the A, B, C channels against REF [deg]
+
+vvm/results/f_ref_bb 7310921.52
+    Raw frequency counter value (base-band) [Hz]
+
+vvm/results/f_ref 124910921.52
+    Frequency counter value taking selected Nyquist-band into account [Hz]
+
+vvm/results/f_tune 7310928.576
+    Center frequency of the digital down-converter (base-band) [Hz]
+
 '''
 import logging
 import signal
 import time
 from numpy import array
-import argparse
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from lib.mqtt_pvs import MqttPvs
 from lib.csr_lib import CsrLib
@@ -145,7 +174,9 @@ def main():
     # systemd sends a SIGHUP at startup :p ignore it
     signal.signal(signal.SIGHUP, lambda x, y: log.warning('SIGHUP ignored'))
 
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = ArgumentParser(
+        description=__doc__, formatter_class=RawDescriptionHelpFormatter
+    )
     parser.add_argument(
         '--mqtt_server', default='localhost',
         help='Hostname / IP of the mqtt broker to connect to'
@@ -184,15 +215,15 @@ def main():
     )
     parser.add_argument(
         '--M_A', default=1, type=int,
-        help='Measurement harmonic'
+        help='f_ref multiplier for channel A'
     )
     parser.add_argument(
         '--M_B', default=1, type=int,
-        help='Measurement harmonic'
+        help='f_ref multiplier for channel B'
     )
     parser.add_argument(
         '--M_C', default=1, type=int,
-        help='Measurement harmonic'
+        help='f_ref multiplier for channel C'
     )
     parser.add_argument(
         '-v', '--verbose', action='store_true',
