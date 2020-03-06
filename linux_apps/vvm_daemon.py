@@ -43,11 +43,7 @@ class VvmApp:
             prefix + 'f_tune_set', lambda c, d, m: self.tune(m.payload)
         )
 
-        # Reset DDS phase accumulators of down-converter
-        def pr(*args):
-            c.write_reg('vvm_ddc_dds_ctrl', 0x01)
-        self.mq.message_callback_add(prefix + 'phase_reset', pr)
-        pr()
+        self.mq.message_callback_add(prefix + 'phase_reset', self.pr)
 
         # Print some CSRs for debugging
         log.info('ddc_ftw %s', hex(c.read_reg('vvm_ddc_dds_ftw0')))
@@ -63,11 +59,23 @@ class VvmApp:
         # ----------------------------------------------
         self.cal = CalHelper(args.cal_file, args.vvm_ddc_shift, c, args.fs)
 
+    def pr(self, *args):
+            ''' Reset DDS phase accumulators of down-converter '''
+            self.c.write_reg('vvm_ddc_dds_ctrl', 0x01)
+
     def loop_forever(self):
         # Just came out of reset, give freq. counter some time to accumulate
-        time.sleep(1)
+        time.sleep(2.5)
+
+        cycle = 0
         while True:
             self.f_ref_bb = meas_f_ref(self.c, self.args.fs)
+
+            if cycle == 0:
+                self.tune()
+                # Reset DDS phase accumulators once at startup after setting Ms
+                self.pr()
+
             f_ref = getRealFreq(
                 self.pvs.nyquist_band, self.f_ref_bb, self.args.fs
             )
@@ -100,6 +108,7 @@ class VvmApp:
             # Delay locked to the wall clock for more accurate cycle time
             dt = 1 / self.pvs.fps
             time.sleep(dt - time.time() % dt)
+            cycle += 1
 
     def tune(self, f_tune=None):
         '''
