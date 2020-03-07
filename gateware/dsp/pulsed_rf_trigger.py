@@ -36,7 +36,7 @@ class PulsedRfTrigger(Module, AutoCSR):
         self.strobe_out = Signal()
 
         # 0 - 3: trigger on this channel, > 3: trigger continuously (CW mode)
-        self.channel = Signal(3, reset=1)
+        self.channel = Signal(3, reset=4)
 
         # Power level must raise above this threshold
         self.threshold = Signal.like(mags_in[0], reset=0x10110C)

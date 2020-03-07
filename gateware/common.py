@@ -21,16 +21,25 @@ def csr_helper(obj, name, regs, cdc=False, pulsed=False, **kwargs):
     pulsed: instead of latching csr.storage in the sample clock domain,
             make its value valid only for one cycle and zero otherwise
     '''
+    if type(regs) not in (list, tuple):
+        regs = [regs]
     for i, reg in enumerate(regs):
         name_ = name
-        if type(regs) in (list, tuple) and len(regs) > 1:
+        if len(regs) > 1:
             name_ += str(i)
         if 'reset' not in kwargs:
             try:
                 kwargs['reset'] = reg.reset
             except AttributeError:
-                pass
+                print(
+                    'csr_helper(): could not extract reset value from',
+                    name_,
+                    reg
+                )
         csr = CSRStorage(len(reg), name=name_, **kwargs)
+        print('CSR: {} len({}) reset({})'.format(
+            csr.name, len(csr.storage), csr.storage.reset.value
+        ))
         setattr(obj, name_, csr)
         if cdc:
             # csr.storage is fully latched and stable when csr.re is pulsed

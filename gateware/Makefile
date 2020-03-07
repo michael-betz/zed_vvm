@@ -42,6 +42,8 @@ clean:
 	rm -rf __pycache__
 	rm -f mem.init
 	rm -f mem_?.init
+
+clean_ip:
 	# delete EVERYTHING except gen_ip.tcl (a bit harsh, I know ...)
 	mv ip/gen_ip.tcl .
 	rm -rf ip/* ip/.Xil

@@ -61,7 +61,7 @@ def main():
     # ----------------------------------------------
     #  Init hardware
     # ----------------------------------------------
-    r = conLitexServer('../build/csr.csv')
+    r = conLitexServer('../gateware/build/csr.csv')
     c = CsrLibLegacyAdapter(r)
 
     # ----------------------------------------------
@@ -69,13 +69,13 @@ def main():
     # ----------------------------------------------
     cal = CalHelper('cal/cal2_att.npz', c=c, fs=args.fs)
 
-    if not args.noinit:
-        initLTC(c, False)
-
     # Frequency / bandwidth setting
     print("fs = {:6f} MHz, should be {:6f} MHz".format(
         r.regs.lvds_f_sample_value.read() / 1e6, args.fs / 1e6
     ))
+
+    if not args.noinit:
+        initLTC(c, False)
 
     r.regs.vvm_ddc_deci.write(args.deci)
 
@@ -147,9 +147,14 @@ def main():
             ftw = int((f_tune / args.fs) * 2**32)
             for i, mult in enumerate((1, 1, 1, 1)):
                 ftw_ = int(ftw * mult)
-                getattr(r.regs, 'vvm_ddc_dds_ftw{}'.format(i)).write(ftw_)
+                reg = 'vvm_ddc_dds_ftw{}'.format(i)
+                c.write_reg(reg, ftw_)
+                # print(reg, ftw_, c.read_reg(reg))
                 if i > 0:
-                    getattr(r.regs, 'vvm_pp_mult{}'.format(i)).write(mult)
+                    reg = 'vvm_pp_mult{}'.format(i)
+                    c.write_reg(reg, mult)
+                    # print(reg, mult, c.read_reg(reg))
+
             print("f_ref at {:6f} MHz".format(
                 ftw_ / 2**32 * meas_f_ref(c, args.fs) / 1e6
             ))

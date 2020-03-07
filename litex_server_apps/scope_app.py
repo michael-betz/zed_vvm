@@ -166,7 +166,7 @@ def main():
     # ----------------------------------------------
     #  Init hardware
     # ----------------------------------------------
-    r = conLitexServer('../build/csr.csv')
+    r = conLitexServer('../gateware/build/csr.csv')
     c = CsrLibLegacyAdapter(r)
     print("fs = {:6f} MHz, should be {:6f} MHz".format(
         r.regs.lvds_f_sample_value.read() / 1e6, args.fs / 1e6
