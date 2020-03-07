@@ -54,15 +54,24 @@ class VvmApp:
         self.pvs = MqttPvs(args, prefix, {
             # DEFAULT, MIN, MAX, WRITE_TO_HW
             # DEFAULT = None: take it from args
+
             'fps':          [None, 0.01, 120],
             'nyquist_band': [None, 0, 13],
             'vvm_iir':      [None, 0, 13, True],
             'vvm_ddc_shift':[None, 1, 64, True],
             'vvm_ddc_deci': [None, 10, 500, True],
-            # Measurement harmonic (measure at M time f_ref)
+
+            # Measurement harmonics (measure at M time f_ref)
             'M_A':          [None, 1, 15, False],
             'M_B':          [None, 1, 15, False],
-            'M_C':          [None, 1, 15, False]
+            'M_C':          [None, 1, 15, False],
+
+            # Pulse trigger
+            'vvm_pulse_channel':   [None, 0, 4, True],
+            'vvm_pulse_threshold': [None, 0, 999999, True],
+            'vvm_pulse_wait_pre':  [None, 0, 10.0, lambda x: int(x * args.fs)],
+            'vvm_pulse_wait_acq':  [None, 0, 10.0, lambda x: int(x * args.fs)],
+            'vvm_pulse_wait_post': [None, 0, 10.0, lambda x: int(x * args.fs)]
         }, c)
         self.mq = self.pvs.mq
 
@@ -224,6 +233,26 @@ def main():
     parser.add_argument(
         '--M_C', default=1, type=int,
         help='f_ref multiplier for channel C'
+    )
+    parser.add_argument(
+        '--vvm_pulse_channel', default=4, type=int,
+        help='Channel to trigger on for pulsed measurements, CW mode for > 3'
+    )
+    parser.add_argument(
+        '--vvm_pulse_threshold', default=1024, type=int,
+        help='Power threshold for trigger [raw]'
+    )
+    parser.add_argument(
+        '--vvm_pulse_wait_pre', default=2e-6, type=float,
+        help='Delay after trigger before acquisition [s]'
+    )
+    parser.add_argument(
+        '--vvm_pulse_wait_acq', default=20e-6, type=float,
+        help='Width of the acquisition window [s]'
+    )
+    parser.add_argument(
+        '--vvm_pulse_wait_post', default=1.0, type=float,
+        help='Post acquisition hold-off time [s]'
     )
     parser.add_argument(
         '-v', '--verbose', action='store_true',

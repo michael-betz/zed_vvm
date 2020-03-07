@@ -1,10 +1,47 @@
 from sys import argv, exit
 from litex.soc.integration.builder import Builder
 from os import system
+from litex.soc.interconnect.csr import CSRStorage
+from migen.genlib.cdc import PulseSynchronizer
 # from numpy import *
 # from matplotlib.pyplot import *
 # from scipy.signal import *
 from migen import *
+
+
+def csr_helper(obj, name, regs, cdc=False, pulsed=False, **kwargs):
+    '''
+    handle csr + optional clock domain crossing (cdc) from sys to sample
+
+    obj: the object where the csr will be pushed into
+
+    cdc:    add a pulse synchronizer to move the csr write strobe to the
+            sample domain, then use the strobe to latch csr.storage
+
+    pulsed: instead of latching csr.storage in the sample clock domain,
+            make its value valid only for one cycle and zero otherwise
+    '''
+    for i, reg in enumerate(regs):
+        if type(regs) in (list, tuple) and len(regs) > 1:
+            name += str(i)
+        csr = CSRStorage(len(reg), name=name, **kwargs)
+        setattr(obj, name, csr)
+        if cdc:
+            # csr.storage is fully latched and stable when csr.re is pulsed
+            # hence we only need to cross the csr.re pulse into the sample
+            # clock domain and then latch csr.storage there once more
+            ps = PulseSynchronizer('sys', 'sample')
+            setattr(obj.submodules, name + '_sync', ps)
+            obj.comb += ps.i.eq(csr.re)
+            if pulsed:
+                obj.sync.sample += reg.eq(Mux(ps.o, csr.storage, 0))
+            else:
+                obj.sync.sample += If(ps.o, reg.eq(csr.storage))
+        else:
+            if pulsed:
+                obj.comb += reg.eq(Mux(csr.re, csr.storage, 0))
+            else:
+                obj.comb += reg.eq(csr.storage)
 
 
 class LedBlinker(Module):

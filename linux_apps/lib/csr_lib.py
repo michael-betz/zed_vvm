@@ -2,6 +2,7 @@
 import mmap
 from numpy import frombuffer, uint32, array
 import json
+from difflib import get_close_matches
 
 
 class CsrLib:
@@ -78,7 +79,12 @@ class CsrLib:
         reg = self.j['csr_registers'][name]
         return self.read(reg['addr'], reg['size'])
 
-    def write_reg(self, name, value):
+    def write_reg(self, name, value, fuzzy_name=False):
+        if fuzzy_name:
+            # Get the closest CSR name
+            name = get_close_matches(
+                name, self.j['csr_registers'].keys(), 1, 0.85
+            )[0]
         reg = self.j['csr_registers'][name]
         self.write(reg['addr'], value)
 

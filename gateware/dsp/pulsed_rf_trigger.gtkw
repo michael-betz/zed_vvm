@@ -1,0 +1,40 @@
+[dumpfile] "pulsed_rf_trigger.vcd"
+[savefile] "pulsed_rf_trigger.gtkw"
+[timestart] 0
+[size] 1916 508
+[pos] -1 -1
+*-6.000000 595 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 210
+[signals_width] 246
+[sst_expanded] 1
+[sst_vpaned_height] 121
+@28
+sample_clk
+@200
+-
+@22
+[color] 6
+trig_channel[2:0]
+@200
+-
+@28
+[color] 3
+strobe_in
+[color] 2
+strobe_out
+@200
+-
+@820
+state[79:0]
+@25
+timer[31:0]
+@200
+-
+@24
+trig_threshold[5:0]
+mag[5:0]
+@28
+[color] 1
+mag_edge
+[pattern_trace] 1
+[pattern_trace] 0

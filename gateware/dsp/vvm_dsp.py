@@ -18,6 +18,7 @@ from .dds import DDS
 from .ddc import VVM_DDC
 from .phase_processor import PhaseProcessor
 from .tiny_iir import TinyIIR
+from .pulsed_rf_trigger import PulsedRfTrigger
 
 
 class VVM_DSP(Module, AutoCSR):
@@ -124,6 +125,13 @@ class VVM_DSP(Module, AutoCSR):
         ))
 
         # -----------------------------------------------
+        #  pulsed_rf_trigger.py
+        # -----------------------------------------------
+        # may gate the strobe from phase_processor
+        self.submodules.pulse = PulsedRfTrigger(self.pp.mags)
+        self.comb += [self.pulse.strobe_in.eq(self.pp.strobe_out)]
+
+        # -----------------------------------------------
         #  IIR lowpass filter for result averaging
         # -----------------------------------------------
         for i, (m, mi) in enumerate(zip(
@@ -144,7 +152,7 @@ class VVM_DSP(Module, AutoCSR):
                 iir.x.eq(m),
                 mi.eq(iir.y),
                 iir.shifts.eq(self.iir_shift),
-                iir.strobe.eq(self.pp.strobe_out),
+                iir.strobe.eq(self.pulse.strobe_out),
             ]
             self.submodules += iir
         self.comb += self.strobe_out.eq(iir.strobe_out)
@@ -153,6 +161,7 @@ class VVM_DSP(Module, AutoCSR):
         ''' Wire up the config-registers to litex CSRs '''
         self.ddc.add_csr()
         self.pp.add_csr()
+        self.pulse.add_csr()
 
         # sys clock domain
         n_ch = len(self.adcs)
@@ -268,7 +277,7 @@ def main():
                 *d.mags_iir,
                 *d.phases_iir
             },
-            display_run=True
+            display_run=False
         ).write(tName + '.v')
 
 

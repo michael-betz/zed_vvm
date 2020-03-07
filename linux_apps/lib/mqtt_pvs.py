@@ -27,12 +27,13 @@ class MqttPvs:
 
         if DEFAULT_VALUE is None, it is taken from `args.NAME`
 
-        if WRITE_TO_HW is True, write the FPGA CSR register of same NAME
+        if WRITE_TO_HW is True, write the FPGA CSR register of closest NAME
 
         example:
             {
                 'fps':          [20.0, 1e-6, 120],
                 'vvm_iir':      [None, 0, 13, True],
+                'vvm_bla':      [None, 0, 13, lambda x: int(x / 123.4)]
             }
     '''
     def __init__(self, args, prefix, pvs, c=None):
@@ -48,42 +49,64 @@ class MqttPvs:
         self.mq.loop_start()
 
         for k, v in self.pvs.items():
-            if v[0] is None:
-                v[0] = getattr(args, k)
-            setattr(self, k, v[0])
-            # Write initial settings to FPGA register
-            if c is not None and len(v) >= 4 and v[3]:
-                c.write_reg(k, v[0])
+            val = v[0]
+            if val is None:
+                val = getattr(args, k)
+
+            # Write initial value to local parameter and FPGA register
+            self.set_par(k, val)
+
+            # Subscribe to the mqtt topic of <prefix>/<parameter name>
             self.mq.message_callback_add(self.prefix + k, self.on_pv_msg)
 
     def on_connect(self, client, userdata, flags, rc):
         log.info('MQTT connected %s %s', flags, rc)
-        # Publish all current PV values (which are defaults at startup)
+        # Publish all current PV values (the startup defaults)
         if self.isInit is False:
             for k in self.pvs:
                 client.publish(self.prefix + k, getattr(self, k), 0, True)
             self.isInit = True
-        client.subscribe(self.prefix + '#')
+        # Subscribe to relevant topics only
+        for k in self.pvs:
+            client.subscribe(self.prefix + k)
 
     def on_pv_msg(self, client, user, m):
         ''' make some members of this class PV settable '''
         k = m.topic.split('/')[-1]
-        if k not in self.pvs:
+        try:
+            val = float(m.payload)
+        except ValueError:
+            log.warning("%s cannot be set to %s", k, m.payload)
             return
-        pv = self.pvs[k]
-        t = type(pv[0])
-        if t in (float, int):
-            try:
-                val = t(float(m.payload))
-                if not pv[1] <= val <= pv[2]:
-                    raise ValueError("out of range")
-            except ValueError:
-                log.warning("%s cannot be set to %s", k, m.payload)
-                return
-            setattr(self, k, val)
-            # Write value to FPGA register
-            reg_write = False
-            if self.c is not None and len(pv) >= 4 and pv[3] and t is int:
-                self.c.write_reg(k, val)
-                reg_write = True
-            log.info("%s = %s (FPGA: %s)", k, val, reg_write)
+        self.set_par(k, val)
+
+    def set_par(self, par_name, val):
+        # Find name in pv dict
+        if par_name not in self.pvs:
+            log.warning("%s is not a known parameter", par_name)
+            return
+        pv = self.pvs[par_name]
+
+        # Range check
+        if not pv[1] <= val <= pv[2]:
+            log.warning("%s cannot be set to %s: out of range", par_name, val)
+            return
+
+        # Write value to local member
+        setattr(self, par_name, val)
+
+        # Write value to FPGA register
+        if self.c is not None and len(pv) >= 4 and pv[3]:
+
+            # convert to raw value if needed
+            if callable(pv[3]):
+                rawval = pv[3](val)
+            else:
+                rawval = int(val)
+
+            # Write to hardware
+            self.c.write_reg(par_name, rawval)  # , True)
+
+            log.info("%s = %s (FPGA: %s)", par_name, val, rawval)
+            return
+        log.info("%s = %s", par_name, val)
