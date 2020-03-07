@@ -42,6 +42,9 @@ class MqttPvs:
         self.prefix = prefix
         self.pvs = pvs
 
+        self.mq = mqtt.Client('vvm_daemon', True)
+        self.mq.enable_logger(log)
+
         for k, v in self.pvs.items():
             val = v[0]
             if val is None:
@@ -53,8 +56,6 @@ class MqttPvs:
             # Subscribe to the mqtt topic of <prefix>/<parameter name>
             self.mq.message_callback_add(self.prefix + k, self.on_pv_msg)
 
-        self.mq = mqtt.Client('vvm_daemon', True)
-        self.mq.enable_logger(log)
         self.mq.on_connect = self.on_connect
         self.mq.connect_async(args.mqtt_server, args.mqtt_port, 60)
         self.mq.loop_start()
