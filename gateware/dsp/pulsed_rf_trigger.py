@@ -61,17 +61,17 @@ class PulsedRfTrigger(Module, AutoCSR):
             # Bypass trigger function if channel > 3
             self.strobe_out.eq(
                 self.strobe_in &
-                (self.fsm.ongoing('ACQUIRE') | (self.channel > 3))
+                (self.fsm.ongoing('ACQUIRE') | (self.channel > Constant(3, 3)))
             ),
 
             # select one of the channels to trigger on,
             Case(
                 self.channel,
                 {
-                    0: mag.eq(mags_in[0]),
-                    1: mag.eq(mags_in[1]),
-                    2: mag.eq(mags_in[2]),
-                    3: mag.eq(mags_in[3]),
+                    Constant(0, 3): mag.eq(mags_in[0]),
+                    Constant(1, 3): mag.eq(mags_in[1]),
+                    Constant(2, 3): mag.eq(mags_in[2]),
+                    Constant(3, 3): mag.eq(mags_in[3]),
                     'default': mag.eq(0)
                 }
             )

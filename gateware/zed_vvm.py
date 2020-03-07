@@ -105,7 +105,6 @@ class ZedVvm(SoCZynq):
         "spi",
         "lvds",
         "acq",
-        "analyzer",
         "f_clk100",
         "vvm",
         "si570"

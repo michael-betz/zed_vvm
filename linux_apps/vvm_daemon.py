@@ -67,7 +67,7 @@ class VvmApp:
             'M_C':          [None, 1, 15, False],
 
             # Pulse trigger
-            'vvm_pulse_channel':   [None, 0, 15, True],
+            'vvm_pulse_channel':   [None, 0, 7, True],
             'vvm_pulse_threshold': [None, 0, 999999, True],
             'vvm_pulse_wait_pre':  [None, 0, 10.0, lambda x: int(x * args.fs)],
             'vvm_pulse_wait_acq':  [None, 0, 10.0, lambda x: int(x * args.fs)],
@@ -235,7 +235,7 @@ def main():
         help='f_ref multiplier for channel C'
     )
     parser.add_argument(
-        '--vvm_pulse_channel', default=15, type=int,
+        '--vvm_pulse_channel', default=4, type=int,
         help='Channel to trigger on for pulsed measurements, CW mode for > 3'
     )
     parser.add_argument(
