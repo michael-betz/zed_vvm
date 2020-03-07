@@ -1,26 +1,25 @@
 [*]
-[*] GTKWave Analyzer v3.3.94 (w)1999-2018 BSI
-[*] Sat Jan  4 04:34:40 2020
+[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
+[*] Sat Mar  7 05:27:00 2020
 [*]
-[dumpfile] "/home/michael/fpga_wsp/zed_vvm/dsp/vvm_dsp.vcd"
-[dumpfile_mtime] "Sat Jan  4 04:33:59 2020"
-[dumpfile_size] 634412809
+[dumpfile] "/home/michael/fpga_wsp/zed_vvm/gateware/dsp/vvm_dsp.vcd"
+[dumpfile_mtime] "Sat Mar  7 05:21:54 2020"
+[dumpfile_size] 635295558
 [optimize_vcd]
-[savefile] "/home/michael/fpga_wsp/zed_vvm/dsp/vvm_dsp.gtkw"
-[timestart] 1540
-[size] 1916 508
-[pos] -1 -1
-*-7.000000 1648 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[savefile] "/home/michael/fpga_wsp/zed_vvm/gateware/dsp/vvm_dsp.gtkw"
+[timestart] 121069
+[size] 2044 1105
+[pos] -1025 -1
+*-9.000000 122167 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] vvm_dsp_tb.
 [treeopen] vvm_dsp_tb.dsp_inst.
-[treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.
 [treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.
 [treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.
 [treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.diff.s1.
 [sst_width] 318
 [signals_width] 535
 [sst_expanded] 1
-[sst_vpaned_height] 167
+[sst_vpaned_height] 427
 @28
 vvm_dsp_tb.clk_adc
 @c00200
@@ -97,7 +96,6 @@ vvm_dsp_tb.adc_ref_dc_q[20:0]
 @28
 [color] 2
 vvm_dsp_tb.dsp_inst.vvm_ddc_result_strobe
-@29
 [color] 2
 vvm_dsp_tb.dsp_inst.vvm_ddc_result_first
 @420
@@ -126,6 +124,24 @@ vvm_dsp_tb.dsp_inst.phaseprocessor_phases0[21:0]
 vvm_dsp_tb.dsp_inst.phaseprocessor_phases1[21:0]
 vvm_dsp_tb.dsp_inst.phaseprocessor_phases2[21:0]
 vvm_dsp_tb.dsp_inst.phaseprocessor_phases3[21:0]
+@28
+[color] 1
+vvm_dsp_tb.dsp_inst.phaseprocessor_strobe_out
+@200
+-
+@28
+vvm_dsp_tb.dsp_inst.pulse_channel[2:0]
+@23
+vvm_dsp_tb.dsp_inst.pulse_mag[20:0]
+@22
+vvm_dsp_tb.dsp_inst.pulse_threshold[20:0]
+vvm_dsp_tb.dsp_inst.pulse_wait_acq[31:0]
+vvm_dsp_tb.dsp_inst.pulse_wait_post[31:0]
+vvm_dsp_tb.dsp_inst.pulse_wait_pre[31:0]
+vvm_dsp_tb.dsp_inst.pulse_timer[31:0]
+@28
+[color] 1
+vvm_dsp_tb.dsp_inst.pulse_strobe_out
 @200
 -
 @22

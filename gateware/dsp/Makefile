@@ -26,6 +26,7 @@ $(TARGET)_tb: $(TARGET).v
 plot: $(TARGET).vcd
 	python3 quickPlot.py output.txt --skip 100 --fs 117.6e6
 
-CLEAN += cordicg_b22.v output.txt dds.v vvm_dsp.v $(TARGET)_tb $(TARGET).vcd
+CLEAN += cordicg_b22.v output.txt dds.v vvm_dsp.v $(TARGET)_tb $(TARGET).vcd \
+		 $(TARGET).vcd.fst
 
 include $(BUILD_DIR)/bottom_rules.mk

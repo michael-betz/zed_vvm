@@ -36,19 +36,19 @@ class PulsedRfTrigger(Module, AutoCSR):
         self.strobe_out = Signal()
 
         # 0 - 3: trigger on this channel, > 3: trigger continuously (CW mode)
-        self.channel = Signal(3, reset=7)
+        self.channel = Signal(3, reset=1)
 
         # Power level must raise above this threshold
-        self.threshold = Signal.like(mags_in[0])
+        self.threshold = Signal.like(mags_in[0], reset=0x10110C)
 
         # Delay between trigger rising edge and acquisition window [fs cycles]
-        self.wait_pre = Signal(32)
+        self.wait_pre = Signal(32, reset=7)
 
         # Width of acquisition window [fs cycles]
-        self.wait_acq = Signal(32)
+        self.wait_acq = Signal(32, reset=1024)
 
         # Hold-off time after the acquisition [fs cycles]
-        self.wait_post = Signal(32)
+        self.wait_post = Signal(32, reset=8)
 
         ###
 
@@ -57,38 +57,38 @@ class PulsedRfTrigger(Module, AutoCSR):
         mag_edge = Signal()
         self.submodules.fsm = ClockDomainsRenamer("sample")(FSM())
 
-        self.comb += [
+        timer = Signal(32)
+
+        self.sync.sample += [
             # Bypass trigger function if channel > 3
             self.strobe_out.eq(
                 self.strobe_in &
-                (self.fsm.ongoing('ACQUIRE') | (self.channel > Constant(3, 3)))
+                (self.fsm.ongoing('ACQUIRE') | (self.channel > 3))
             ),
 
             # select one of the channels to trigger on,
             Case(
                 self.channel,
                 {
-                    Constant(0, 3): mag.eq(mags_in[0]),
-                    Constant(1, 3): mag.eq(mags_in[1]),
-                    Constant(2, 3): mag.eq(mags_in[2]),
-                    Constant(3, 3): mag.eq(mags_in[3]),
+                    0: mag.eq(mags_in[0]),
+                    1: mag.eq(mags_in[1]),
+                    2: mag.eq(mags_in[2]),
+                    3: mag.eq(mags_in[3]),
                     'default': mag.eq(0)
                 }
-            )
-        ]
+            ),
 
-        timer = Signal(32)
-
-        self.sync.sample += [
             # Delay timer for the state machine
             timer.eq(timer + 1),
 
             # Detect mag rising above the trigger threshold
-            mag_d.eq(mag),
-            mag_edge.eq(
-                self.strobe_in &
-                (mag_d < self.threshold) &
-                (mag >= self.threshold)
+            mag_edge.eq(0),
+            If(self.strobe_in,
+                mag_d.eq(mag),
+                mag_edge.eq(
+                    (mag_d < self.threshold) &
+                    (mag >= self.threshold)
+                )
             )
         ]
 
@@ -118,7 +118,7 @@ class PulsedRfTrigger(Module, AutoCSR):
         )
 
     def add_csr(self):
-        csr_helper(self, 'channel', self.channel, reset=7)
+        csr_helper(self, 'channel', self.channel)
         csr_helper(self, 'threshold', self.threshold)
         csr_helper(self, 'wait_pre', self.wait_pre)  # , cdc=True)
         csr_helper(self, 'wait_acq', self.wait_acq)

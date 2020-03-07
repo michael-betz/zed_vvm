@@ -25,6 +25,11 @@ def csr_helper(obj, name, regs, cdc=False, pulsed=False, **kwargs):
         name_ = name
         if type(regs) in (list, tuple) and len(regs) > 1:
             name_ += str(i)
+        if 'reset' not in kwargs:
+            try:
+                kwargs['reset'] = reg.reset
+            except AttributeError:
+                pass
         csr = CSRStorage(len(reg), name=name_, **kwargs)
         setattr(obj, name_, csr)
         if cdc:
