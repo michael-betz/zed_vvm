@@ -120,7 +120,7 @@ class VvmApp:
 
             Ms = array([1, self.pvs.M_A, self.pvs.M_B, self.pvs.M_C])
 
-            mags = self.cal.get_mags(f_ref * Ms, self.pvs.vvm_ddc_shift)
+            mags = self.cal.get_mags(f_ref * Ms, int(self.pvs.vvm_ddc_shift))
             phases = self.cal.get_phases(f_ref * Ms[1:])
 
             # Publish as one topic for each value

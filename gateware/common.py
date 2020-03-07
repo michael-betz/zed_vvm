@@ -22,16 +22,17 @@ def csr_helper(obj, name, regs, cdc=False, pulsed=False, **kwargs):
             make its value valid only for one cycle and zero otherwise
     '''
     for i, reg in enumerate(regs):
+        name_ = name
         if type(regs) in (list, tuple) and len(regs) > 1:
-            name += str(i)
-        csr = CSRStorage(len(reg), name=name, **kwargs)
-        setattr(obj, name, csr)
+            name_ += str(i)
+        csr = CSRStorage(len(reg), name=name_, **kwargs)
+        setattr(obj, name_, csr)
         if cdc:
             # csr.storage is fully latched and stable when csr.re is pulsed
             # hence we only need to cross the csr.re pulse into the sample
             # clock domain and then latch csr.storage there once more
             ps = PulseSynchronizer('sys', 'sample')
-            setattr(obj.submodules, name + '_sync', ps)
+            setattr(obj.submodules, name_ + '_sync', ps)
             obj.comb += ps.i.eq(csr.re)
             if pulsed:
                 obj.sync.sample += reg.eq(Mux(ps.o, csr.storage, 0))
