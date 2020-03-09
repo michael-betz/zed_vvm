@@ -14,7 +14,7 @@
    viewBox="0 0 297 210"
    version="1.1"
    id="svg5693"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:version="0.92.1 r15371"
    sodipodi:docname="dsp.svg"
    inkscape:export-filename="dsp.png"
    inkscape:export-xdpi="153.08"
@@ -26,18 +26,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="764.83269"
-     inkscape:cy="380.96206"
+     inkscape:zoom="0.9899495"
+     inkscape:cx="560.01252"
+     inkscape:cy="241.65859"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
      showguides="false"
      inkscape:guide-bbox="true"
-     inkscape:window-width="2044"
-     inkscape:window-height="1105"
-     inkscape:window-x="1920"
-     inkscape:window-y="22"
+     inkscape:window-width="1916"
+     inkscape:window-height="1037"
+     inkscape:window-x="0"
+     inkscape:window-y="20"
      inkscape:window-maximized="0">
     <inkscape:grid
        id="grid5178"
@@ -46,13 +46,235 @@
   <defs
      id="defs5687">
     <marker
+       style="overflow:visible"
+       inkscape:stockid="InfiniteLineEnd"
+       id="InfiniteLineEnd"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:isstock="true">
+      <g
+         id="g16174"
+         style="fill:#000000;stroke:#000000;stroke-opacity:1;fill-opacity:1">
+        <circle
+           id="circle16168"
+           r="0.8"
+           cy="0"
+           cx="3"
+           style="stroke:#000000;stroke-opacity:1;fill:#000000;fill-opacity:1" />
+        <circle
+           id="circle16170"
+           r="0.8"
+           cy="0"
+           cx="6.5"
+           style="stroke:#000000;stroke-opacity:1;fill:#000000;fill-opacity:1" />
+        <circle
+           id="circle16172"
+           r="0.8"
+           cy="0"
+           cx="10"
+           style="stroke:#000000;stroke-opacity:1;fill:#000000;fill-opacity:1" />
+      </g>
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker14899"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path14897"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker14523"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#555753;stroke-width:1pt;stroke-opacity:1;fill:#555753;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path14521" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible;"
+       id="marker13263"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) rotate(180) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#555753;stroke-width:1pt;stroke-opacity:1;fill:#555753;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path13261" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker12899"
+       style="overflow:visible"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path12897"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#555753;stroke-width:1pt;stroke-opacity:1;fill:#555753;fill-opacity:1"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker12155"
+       style="overflow:visible;"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path12153"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#555753;stroke-width:1pt;stroke-opacity:1;fill:#555753;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker11785"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#555753;stroke-width:1pt;stroke-opacity:1;fill:#555753;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path11783" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible;"
+       id="marker10791"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) rotate(180) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path10789" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker10437"
+       style="overflow:visible;"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path10435"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible;"
+       id="marker8422"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send">
+      <path
+         transform="scale(0.2) rotate(180) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#669900;stroke-width:1pt;stroke-opacity:1;fill:#669900;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path8420" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7672"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path7670"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#669900;stroke-width:1pt;stroke-opacity:1;fill:#669900;fill-opacity:1"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker6922"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#669900;stroke-width:1pt;stroke-opacity:1;fill:#669900;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path6920" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible;"
+       id="marker6330"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send">
+      <path
+         transform="scale(0.2) rotate(180) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#669900;stroke-width:1pt;stroke-opacity:1;fill:#669900;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path6328" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible;"
+       id="marker5343"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) rotate(180) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path5341" />
+    </marker>
+    <marker
        inkscape:stockid="Arrow1Send"
        orient="auto"
        refY="0.0"
        refX="0.0"
        id="marker5383"
        style="overflow:visible;"
-       inkscape:isstock="true">
+       inkscape:isstock="true"
+       inkscape:collect="always">
       <path
          id="path5135"
          d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
@@ -196,11 +418,12 @@
        refX="0.0"
        id="marker9339"
        style="overflow:visible"
-       inkscape:isstock="true">
+       inkscape:isstock="true"
+       inkscape:collect="always">
       <path
          id="path9337"
          d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         style="fill-rule:evenodd;stroke:#669900;stroke-width:1pt;stroke-opacity:1;fill:#669900;fill-opacity:1"
          transform="scale(0.2) translate(6,0)" />
     </marker>
     <marker
@@ -210,7 +433,8 @@
        refX="0.0"
        id="marker9335"
        style="overflow:visible"
-       inkscape:isstock="true">
+       inkscape:isstock="true"
+       inkscape:collect="always">
       <path
          id="path9333"
          d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
@@ -780,7 +1004,7 @@
        ry="11.1503" />
     <path
        style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#669900;stroke-width:0.71600002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker5383)"
-       d="m 129.64583,222.3875 h 82.02083 v -13.22917"
+       d="m 129.64583,222.3875 71.4375,0 v -13.22917"
        id="path5118"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccc" />
@@ -1696,23 +1920,23 @@
          id="tspan10666" /></text>
     <text
        id="text10739"
-       y="205.84839"
+       y="193.15309"
        x="182.33063"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#a40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"><tspan
          id="tspan10735"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#a40000;stroke-width:0.26458332"
-         y="205.84839"
+         y="193.15309"
          x="182.33063"
          sodipodi:role="line">mag.</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#a40000;stroke-width:0.26458332"
-         y="210.25812"
+         y="197.56282"
          x="182.33063"
          sodipodi:role="line"
          id="tspan5650">stream</tspan><tspan
          id="tspan10737"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#a40000;stroke-width:0.26458332"
-         y="214.66783"
+         y="201.97253"
          x="182.33063"
          sodipodi:role="line" /></text>
     <text
@@ -1781,6 +2005,12 @@
            sodipodi:role="line"
            id="tspan11172">conversion</tspan></text>
     </g>
+    <path
+       sodipodi:nodetypes="ccc"
+       inkscape:connector-curvature="0"
+       id="path8418"
+       d="m 247.38542,222.3875 h 18.52083 v -14.02292"
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#669900;stroke-width:0.71600002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker8422)" />
     <rect
        ry="2.6458333"
        rx="2.6458333"
@@ -1858,7 +2088,7 @@
     <path
        inkscape:connector-curvature="0"
        id="path10871"
-       d="m 239.26895,184.55208 -2.64583,2.64583"
+       d="m 232.83333,184.55208 -2.64583,2.64583"
        style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
     <text
        xml:space="preserve"
@@ -1981,38 +2211,38 @@
          id="tspan11039">ddc_shift: out scaling factor</tspan></text>
     <text
        id="text11127"
-       y="221.31268"
+       y="144.5526"
        x="242.86775"
        style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#5c3566;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"><tspan
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Bold';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         y="221.31268"
+         y="144.5526"
          x="242.86775"
          sodipodi:role="line"
          id="tspan11113">CSRs</tspan><tspan
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         y="225.72241"
+         y="148.96233"
          x="242.86775"
          sodipodi:role="line"
          id="tspan11125"><tspan
    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:start;text-anchor:start"
    id="tspan11166">mag&lt;x&gt;:</tspan>   4x Magnitude values</tspan><tspan
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         y="230.13213"
+         y="153.37204"
          x="242.86775"
          sodipodi:role="line"
          id="tspan1414"><tspan
    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:start;text-anchor:start"
    id="tspan5398">phase&lt;x&gt;:</tspan> 3x Phase values</tspan><tspan
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         y="234.54185"
+         y="157.78177"
          x="242.86775"
          sodipodi:role="line"
          id="tspan1420"><tspan
    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono'"
    id="tspan1422">vvm_iir:</tspan>  common averaging </tspan><tspan
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
-         y="238.95157"
+         y="162.19148"
          x="242.86775"
          sodipodi:role="line"
          id="tspan1418">          factor (0 - 15)</tspan></text>
@@ -2110,7 +2340,7 @@
       <path
          inkscape:connector-curvature="0"
          id="path5619"
-         d="m 239.26895,184.55208 -2.64583,2.64583"
+         d="m 232.83333,184.55208 -2.64583,2.64583"
          style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
       <path
          style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.66145831;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker5617)"
@@ -2118,64 +2348,332 @@
          id="path5621"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cc" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path5339"
+         d="m 240.77083,185.87499 v 11.90625"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.66100001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker64865);marker-end:url(#marker5343)" />
     </g>
     <text
        id="text10723"
-       y="169.40463"
+       y="173.18439"
        x="237.95486"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#a40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"><tspan
          id="tspan10719"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#a40000;stroke-width:0.26458332"
-         y="169.40463"
+         y="173.18439"
          x="237.95486"
          sodipodi:role="line">3 x phase-</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#a40000;stroke-width:0.26458332"
-         y="173.81436"
+         y="177.59412"
          x="237.95486"
          sodipodi:role="line"
-         id="tspan10729">difference</tspan><tspan
+         id="tspan5652">difference</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#a40000;stroke-width:0.26458332"
-         y="178.22408"
-         x="237.95486"
-         sodipodi:role="line"
-         id="tspan5652">values</tspan><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#a40000;stroke-width:0.26458332"
-         y="182.6338"
+         y="182.00383"
          x="237.95486"
          sodipodi:role="line"
          id="tspan10741">(vs REF)</tspan><tspan
          id="tspan10721"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#a40000;stroke-width:0.26458332"
-         y="187.04352"
+         y="186.41356"
          x="237.95486"
          sodipodi:role="line" /></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#a40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        x="238.19299"
-       y="206.10239"
+       y="197.21927"
        id="text5635"><tspan
          sodipodi:role="line"
          x="238.19299"
-         y="206.10239"
+         y="197.21927"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#a40000;stroke-width:0.26458332"
-         id="tspan5633">4 x mag.</tspan><tspan
-         sodipodi:role="line"
-         x="238.19299"
-         y="210.51212"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#a40000;stroke-width:0.26458332"
-         id="tspan5646">values</tspan></text>
+         id="tspan5646">4 x mag.</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#669900;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#669900;fill-opacity:1;stroke:none;stroke-width:0.26458332;"
        x="182.33063"
-       y="226.68768"
+       y="220.27321"
        id="text5391"><tspan
          sodipodi:role="line"
          x="182.33063"
-         y="226.68768"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:center;text-anchor:middle;fill:#669900;stroke-width:0.26458332"
+         y="220.27321"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Bold';text-align:center;text-anchor:middle;fill:#669900;stroke-width:0.26458332;"
          id="tspan5389">strobe</tspan></text>
+    <path
+       sodipodi:nodetypes="ccc"
+       inkscape:connector-curvature="0"
+       id="path6326"
+       d="m 214.3125,222.3875 -6.61458,0 v -13.22917"
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#669900;stroke-width:0.71600002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker6922)" />
+    <g
+       id="g6301"
+       transform="translate(48.628245,65.677765)">
+      <rect
+         ry="2.6458333"
+         rx="2.6458333"
+         y="147.81798"
+         x="166.68752"
+         height="31.910505"
+         width="32.069649"
+         id="rect6287"
+         style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.60000002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <text
+         id="text6299"
+         y="154.80492"
+         x="182.64578"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333311px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';text-align:center;text-anchor:middle;fill:#204a87;stroke-width:0.26458332"
+           y="154.80492"
+           x="182.64578"
+           id="tspan6289"
+           sodipodi:role="line">pulsed_rf_</tspan><tspan
+           id="tspan6291"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333311px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';text-align:center;text-anchor:middle;fill:#204a87;stroke-width:0.26458332"
+           y="160.09659"
+           x="182.64578"
+           sodipodi:role="line">trigger.py</tspan><tspan
+           style="font-size:4.23333311px;text-align:center;text-anchor:middle;fill:#000000;stroke-width:0.26458332"
+           y="165.38824"
+           x="183.13361"
+           sodipodi:role="line"
+           id="tspan6308">gate strobe </tspan><tspan
+           style="font-size:4.23333311px;text-align:center;text-anchor:middle;fill:#000000;stroke-width:0.26458332"
+           y="170.67992"
+           x="183.13361"
+           sodipodi:role="line"
+           id="tspan6310">signal to meas. </tspan><tspan
+           style="font-size:4.23333311px;text-align:center;text-anchor:middle;fill:#000000;stroke-width:0.26458332"
+           y="175.97159"
+           x="182.64578"
+           sodipodi:role="line"
+           id="tspan6318">window</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#5c3566;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="218.4834"
+       y="260.69644"
+       id="text10413"><tspan
+         id="tspan10396"
+         sodipodi:role="line"
+         x="218.4834"
+         y="260.69644"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Bold';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332">CSRs</tspan><tspan
+         id="tspan10400"
+         sodipodi:role="line"
+         x="218.4834"
+         y="265.10617"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"><tspan
+   id="tspan10398"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:start;text-anchor:start">channel:</tspan>   channel to trigger on</tspan><tspan
+         id="tspan10404"
+         sodipodi:role="line"
+         x="218.4834"
+         y="269.5159"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"><tspan
+   id="tspan10402"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';text-align:start;text-anchor:start">threshold:</tspan> magnitude trigger threshold</tspan><tspan
+         id="tspan10411"
+         sodipodi:role="line"
+         x="218.4834"
+         y="273.9256"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"><tspan
+   id="tspan10406"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono'">wait_pre:</tspan>  delay before acquisition</tspan><tspan
+         sodipodi:role="line"
+         x="218.4834"
+         y="278.33533"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
+         id="tspan10419"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono'"
+   id="tspan10425">wait_acq:</tspan>  acquisition duration</tspan><tspan
+         sodipodi:role="line"
+         x="218.4834"
+         y="282.74506"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
+         id="tspan10421"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono'"
+   id="tspan10423">wait_post:</tspan> hold-off time after acquisition</tspan><tspan
+         sodipodi:role="line"
+         x="218.4834"
+         y="287.15479"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono Italic';text-align:start;text-anchor:start;fill:#5c3566;stroke-width:0.26458332"
+         id="tspan18331">           all delays in cycles of f_s</tspan></text>
+    <g
+       id="g18329"
+       transform="matrix(1.5563288,0,0,1.5563288,-66.76683,-139.04178)">
+      <rect
+         y="255.98958"
+         x="156.77505"
+         height="13.229156"
+         width="7.9374895"
+         id="rect11171"
+         style="opacity:1;vector-effect:none;fill:#babdb6;fill-opacity:0.99692311;stroke:none;stroke-width:0.39999998;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path11173"
+         d="m 149.48958,266.57292 v 3.96875"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path10427"
+         d="M 141.55208,269.21875 H 174.625"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.40000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10437)" />
+      <path
+         sodipodi:nodetypes="cc"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         d="m 156.80341,266.57292 v 3.96875"
+         id="path11175"
+         inkscape:connector-curvature="0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path11177"
+         d="m 164.69371,266.57292 v 3.96875"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path11145"
+         d="m 141.55208,266.57292 h 30.42709"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#a40000;stroke-width:0.40000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.40000001;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path10781"
+         d="M 142.875,270.54167 V 255.98958"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.40000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker10791)" />
+      <path
+         sodipodi:nodetypes="cscccccccscccsssc"
+         inkscape:connector-curvature="0"
+         id="path11143"
+         d="m 172.87691,267.89583 c 0.0157,-0.11024 0.0472,-0.21937 0.0472,-0.33073 0,-0.0667 -1.55883,0.14164 -1.70089,0.18899 -1.17189,0.39063 -2.81366,0.46264 -3.16555,-0.94494 -1.30188,-5.69236 -0.47243,-17.43415 -4.016,-6.37835 -0.33911,0.16956 -0.62117,-0.52204 -0.89769,-0.61421 -0.37261,-0.1242 -0.47934,0.43868 -0.8032,0.33073 -0.24753,-0.0825 -1.12888,-0.0282 -1.37013,-0.18899 -0.30258,-0.20172 -1.16692,-0.104 -1.32291,0 -0.30676,0.2045 -0.95428,-0.37798 -1.32296,-0.37798 -0.69045,0 -1.74122,0.45021 -2.22061,-0.18898 -2.39026,-10.42018 -1.09025,-0.1524 -3.40178,5.19717 -0.54323,1.08645 -3.87847,2.32797 -4.96094,2.59859 -1.60439,0.40109 -3.47033,0.56696 -5.14993,0.56696 -0.72472,0 -1.47869,0.0472 -2.17336,0.0472 -0.33222,0 -1.32441,0.0945 -0.99219,0.0945 h 0.37798"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#204a87;stroke-width:0.40000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <text
+         id="text11747"
+         y="270.44717"
+         x="176.70387"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         xml:space="preserve"><tspan
+           style="font-size:3.52777767px;stroke-width:0.26458332"
+           y="270.44717"
+           x="176.70387"
+           id="tspan11745"
+           sodipodi:role="line">t</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.41111112px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="152.2424"
+         y="272.49976"
+         id="text11751"><tspan
+           sodipodi:role="line"
+           id="tspan11749"
+           x="152.2424"
+           y="272.49976"
+           style="font-size:1.41111112px;stroke-width:0.26458332">wait_pre</tspan></text>
+      <text
+         id="text11755"
+         y="272.49976"
+         x="160.77872"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.41111112px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         xml:space="preserve"><tspan
+           style="font-size:1.41111112px;stroke-width:0.26458332"
+           y="272.49976"
+           x="160.77872"
+           id="tspan11753"
+           sodipodi:role="line">wait_acq</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.41111112px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="169.82452"
+         y="272.49976"
+         id="text11759"><tspan
+           sodipodi:role="line"
+           id="tspan11757"
+           x="169.82452"
+           y="272.49976"
+           style="font-size:1.41111112px;stroke-width:0.26458332">wait_post</tspan></text>
+      <text
+         id="text11763"
+         y="253.75612"
+         x="144.42554"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.41111112px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#204a87;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         xml:space="preserve"><tspan
+           id="tspan11765"
+           style="font-size:1.41111112px;text-align:start;text-anchor:start;fill:#204a87;stroke-width:0.26458332"
+           y="253.75612"
+           x="144.42554"
+           sodipodi:role="line"><tspan
+             style="font-size:1.41111112px;text-align:start;text-anchor:start;fill:#204a87;stroke-width:0.26458332"
+             id="tspan11767">magnitude signal </tspan></tspan><tspan
+           id="tspan18293"
+           style="font-size:1.41111112px;text-align:start;text-anchor:start;fill:#204a87;stroke-width:0.26458332"
+           y="255.52"
+           x="144.42554"
+           sodipodi:role="line"><tspan
+   id="tspan18295"
+   style="font-size:1.41111112px;text-align:start;text-anchor:start;fill:#204a87;stroke-width:0.26458332">of `</tspan>channel`</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.41111112px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#a40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="150.70859"
+         y="265.2131"
+         id="text11773"><tspan
+           sodipodi:role="line"
+           x="150.70859"
+           y="265.2131"
+           style="font-size:1.41111112px;text-align:end;text-anchor:end;fill:#a40000;stroke-width:0.26458332"
+           id="tspan11771">`threshold`</tspan></text>
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path11775"
+         d="m 150.01875,270.03023 h 6.16066"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#555753;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker11785);marker-end:url(#marker12155)" />
+      <path
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#555753;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker12899);marker-end:url(#marker13263)"
+         d="m 157.42708,270.03023 h 6.61459"
+         id="path12895"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path14519"
+         d="m 165.36458,270.03023 h 6.61459"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#555753;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker14523)" />
+      <text
+         id="text18341"
+         y="263.06647"
+         x="160.76582"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.41111112px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         xml:space="preserve"><tspan
+           id="tspan18339"
+           style="font-size:1.41111112px;text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.26458332"
+           y="263.06647"
+           x="160.76582"
+           sodipodi:role="line">acquisition</tspan><tspan
+           style="font-size:1.41111112px;text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.26458332"
+           y="264.83035"
+           x="160.76582"
+           sodipodi:role="line"
+           id="tspan18343">window</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#204a87;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="179.5643"
+       y="250.13095"
+       id="text18337"><tspan
+         sodipodi:role="line"
+         id="tspan18335"
+         x="179.5643"
+         y="250.13095"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777767px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#204a87;stroke-width:0.26458332">Triggering on pulsed RF signals</tspan></text>
   </g>
 </svg>
