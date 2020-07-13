@@ -27,7 +27,10 @@ class MqttPvs:
 
         if DEFAULT_VALUE is None, it is taken from `args.NAME`
 
-        if WRITE_TO_HW is True, write the FPGA CSR register of closest NAME
+        if WRITE_TO_HW is True, write the FPGA CSR register of NAME
+
+        WRITE_TO_HW can also be a conversion function, taking the value as its
+        single argument and returning the converted value
 
         example:
             {
@@ -67,9 +70,8 @@ class MqttPvs:
             for k in self.pvs:
                 client.publish(self.prefix + k, getattr(self, k), 0, True)
             self.isInit = True
-        # Subscribe to relevant topics only
-        # for k in self.pvs:
-        #     client.subscribe(self.prefix + k)
+        # We need the wildcard subscribe to be able to
+        # use message_callback_add() more freely
         client.subscribe(self.prefix + '#')
 
     def on_pv_msg(self, client, user, m):
@@ -107,7 +109,7 @@ class MqttPvs:
                 rawval = int(val)
 
             # Write to hardware
-            self.c.write_reg(par_name, rawval)  # , True)
+            self.c.write_reg(par_name, rawval)
 
             log.info("%s = %s (FPGA: %s)", par_name, val, rawval)
             return
