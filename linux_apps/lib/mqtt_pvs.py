@@ -68,8 +68,9 @@ class MqttPvs:
                 client.publish(self.prefix + k, getattr(self, k), 0, True)
             self.isInit = True
         # Subscribe to relevant topics only
-        for k in self.pvs:
-            client.subscribe(self.prefix + k)
+        # for k in self.pvs:
+        #     client.subscribe(self.prefix + k)
+        client.subscribe(self.prefix + '#')
 
     def on_pv_msg(self, client, user, m):
         ''' make some members of this class PV settable '''

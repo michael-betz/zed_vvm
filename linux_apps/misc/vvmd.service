@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 WorkingDirectory=/home/michael/zed_vvm/linux_apps
-ExecStart=/usr/bin/python3 vvm_daemon.py --fps 30 --cal_file /home/michael/zed_vvm/litex_server_apps/cal/cal2_att.npz
+ExecStart=/usr/bin/python3 vvm_daemon.py --fps 10 --vvm_iir 7 --vvm_pulse_channel 1 --vvm_pulse_wait_post 0.5 --nyquist_band 2 --M_B 4 --cal_file /home/michael/zed_vvm/litex_server_apps/cal/cal2_att.npz
 Restart=always
 RestartSec=15
 

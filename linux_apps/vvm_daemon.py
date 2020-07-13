@@ -68,7 +68,7 @@ class VvmApp:
 
             # Pulse trigger
             'vvm_pulse_channel':   [None, 0, 7, True],
-            'vvm_pulse_threshold': [None, 0, 999999, True],
+            'vvm_pulse_threshold': [None, 0, (2**21 - 1), True],
             'vvm_pulse_wait_pre':  [None, 0, 10.0, lambda x: int(x * args.fs)],
             'vvm_pulse_wait_acq':  [None, 0, 10.0, lambda x: int(x * args.fs)],
             'vvm_pulse_wait_post': [None, 0, 10.0, lambda x: int(x * args.fs)]
@@ -235,7 +235,7 @@ def main():
         help='f_ref multiplier for channel C'
     )
     parser.add_argument(
-        '--vvm_pulse_channel', default=4, type=int,
+        '--vvm_pulse_channel', default=7, type=int,
         help='Channel to trigger on for pulsed measurements, CW mode for > 3'
     )
     parser.add_argument(
@@ -269,7 +269,8 @@ def main():
         initSi570(c, args.fs)
         initLTC(c, check_align=True)
 
-        # Frequency / bandwidth setting
+        # Sampling Frequency
+        time.sleep(2)
         log.info('fs = {:6f} MHz, should be {:6f} MHz'.format(
             c.read_reg('lvds_f_sample_value') / 1e6, args.fs / 1e6
         ))
