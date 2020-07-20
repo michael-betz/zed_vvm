@@ -137,10 +137,11 @@ def initLTC(c, check_align=False):
         for i in range(14):
             tp = 1 << i
             ltc_spi.setTp(tp)
-            tp_read = c.read_reg('lvds_data_peek0')
+            for ch in range(4):
+                tp_read = c.read_reg('lvds_data_peek' + str(ch))
+                if tp != tp_read:
+                    raise RuntimeError("LVDS alignment error")
             log.info("{:014b} {:014b}".format(tp, tp_read))
-            if tp != tp_read:
-                raise RuntimeError("LVDS alignment error")
 
     ltc_spi.set_ltc_reg(3, 0)  # Test pattern off
     ltc_spi.set_ltc_reg(1, (1 << 5))  # Randomizer off, twos complement output

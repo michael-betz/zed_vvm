@@ -134,6 +134,11 @@ class VvmApp:
             # Publish multiple values per topic (separated by ,)
             temp = ','.join([str(v) for v in mags])
             self.mq.publish('vvm/results/mags', temp)
+
+            vals = [self.c.read_reg("vvm_mag" + str(i)) for i in range(4)]
+            temp = ','.join([str(v) for v in vals])
+            self.mq.publish('vvm/results/raw_mags', temp)
+
             temp = ','.join([str(v) for v in phases])
             self.mq.publish('vvm/results/phases', temp)
 
