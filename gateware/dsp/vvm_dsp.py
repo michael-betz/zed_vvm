@@ -138,7 +138,7 @@ class VVM_DSP(Module, AutoCSR):
             self.pp.mags + self.pp.phases,
             self.mags_iir + self.phases_iir
         )):
-            # No filter for the reference phase output
+            # No filter for the reference phase output (pp.phases[0])
             if i == n_ch:
                 self.comb += mi.eq(m)
                 continue
