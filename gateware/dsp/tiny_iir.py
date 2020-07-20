@@ -26,21 +26,19 @@ class TinyIIR(Module):
         acc = Signal((IO_W + ACC_GUARD, True))
         acc_ = Signal.like(acc)
         x_hr = Signal.like(acc)
-        delta = Signal((IO_W + ACC_GUARD + 1, True))
+        delta = Signal.like(acc)
         strobe_ = Signal()
-        strobe__ = Signal()
 
         self.comb += [
             # Pad input to match accumulator width
             x_hr.eq(self.x << ACC_GUARD),
             # Remove LSBs from accumulator to match output width
-            self.y.eq(acc_ >> ACC_GUARD),
+            self.y.eq(acc >> ACC_GUARD),
         ]
 
         self.sync += [
             strobe_.eq(self.strobe),
-            strobe__.eq(strobe_),
-            self.strobe_out.eq(strobe__),
+            self.strobe_out.eq(strobe_),
             acc_.eq(acc),
             If(self.strobe,
                 # First cycle, compute error signal and latch
@@ -53,20 +51,14 @@ class TinyIIR(Module):
         ]
 
 
-from random import random
-
-
 def fir_tb(dut):
     maxValue = (1 << (len(dut.x) - 1))
     yield dut.x.eq(maxValue - 1)
-    yield dut.shifts.eq(0)
-    for i in range(30000):
-        if i == 4000:
+    yield dut.shifts.eq(4)
+    for i in range(10000):
+        if i == 5000:
             yield dut.x.eq(-maxValue)
-        if i == 8000:
-            yield dut.x.eq(maxValue - 1)
-        # yield dut.x.eq(int((2 * random() - 1) * maxValue))
-        yield dut.strobe.eq(i % 3 == 0)
+        yield dut.strobe.eq(1)
         yield
         yield dut.strobe.eq(0)
         yield
@@ -75,6 +67,6 @@ def fir_tb(dut):
 
 if __name__ == "__main__":
     tName = argv[0].replace('.py', '')
-    dut = TinyIIR(21)
+    dut = TinyIIR(8, 8 + 5)
     tb = fir_tb(dut)
     run_simulation(dut, tb, vcd_name=tName + '.vcd')
