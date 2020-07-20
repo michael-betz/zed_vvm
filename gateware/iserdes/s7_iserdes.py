@@ -12,8 +12,7 @@ from sys import argv
 from migen import *
 from migen.build.xilinx.common import xilinx_special_overrides
 from migen.genlib.resetsync import AsyncResetSynchronizer
-from migen.genlib.io import DifferentialInput
-from migen.genlib.cdc import MultiReg
+from litex.build.io import DifferentialInput
 from migen.genlib.misc import timeline
 
 
