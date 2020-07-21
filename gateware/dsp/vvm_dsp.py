@@ -10,7 +10,7 @@ from os.path import join, dirname, abspath, basename
 
 from migen import *
 from migen.genlib.misc import timeline
-from migen.genlib.cdc import BlindTransfer
+from migen.genlib.cdc import BlindTransfer, MultiReg
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage, CSRStatus
 from litex.soc.cores.freqmeter import FreqMeter
 
@@ -197,7 +197,10 @@ class VVM_DSP(Module, AutoCSR):
                 n = 'phase{:d}'.format(i - 4)
             csr = CSRStatus(32, name=n)
             setattr(self, n, csr)
-            self.comb += csr.status.eq(sig)
+            self.specials += MultiReg(
+                sig,
+                csr.status
+            )
 
         # Frequency counters for the ADC inputs
         for i, adc in enumerate(self.adcs):
@@ -251,7 +254,10 @@ class ZeroCrosser(Module, AutoCSR):
 
     def add_csr(self):
         self.f_ref_csr = CSRStatus(32, name='f_meas')
-        self.comb += self.f_ref_csr.status.eq(self.n_zc)
+        self.specials += MultiReg(
+            self.n_zc,
+            self.f_ref_csr.status
+        )
 
 
 def main():

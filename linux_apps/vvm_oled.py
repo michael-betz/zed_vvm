@@ -15,6 +15,7 @@ from pygame.draw import line
 from evdev import InputDevice
 import argparse
 import paho.mqtt.client as mqtt
+from datetime import datetime
 
 log = logging.getLogger('vvm_oled')
 
@@ -33,8 +34,13 @@ class VvmOled:
             'f_ref': 0,
             'f_ref_bb': 0,
             'f_tune': 0,
-            'nyquist_band': 0
+            'nyquist_band': 0,
+            'vvm_pulse_wait_pre': 0,
+            'vvm_pulse_wait_acq': 0,
+            'vvm_pulse_wait_post': 1,
+            'vvm_pulse_channel': 0
         }
+        self.trig_ts = datetime.now()
         self.args = args
 
         self.mq = mqtt.Client('vvm_oled', True)
@@ -44,9 +50,7 @@ class VvmOled:
         self.mq.loop_start()
 
         self.mq.message_callback_add('vvm/results/#', self.on_result)
-        self.mq.message_callback_add(
-            'vvm/settings/nyquist_band', self.on_result
-        )
+        self.mq.message_callback_add('vvm/settings/#', self.on_result)
 
         if not args.test:
             putenv('SDL_NOMOUSE', '')
@@ -79,6 +83,9 @@ class VvmOled:
     def on_result(self, client, user, m):
         ''' convert mqtt payload to float and shove it into self.pvs '''
         try:
+            if m.topic == 'vvm/results/trig_count':
+                self.trig_ts = datetime.now()
+
             k = m.topic.split('/')[-1]
             old_val = self.pvs[k]
             t = type(old_val)
@@ -137,23 +144,35 @@ class VvmOled:
                 bold=is_low_power, white=is_low_power
             )
 
+            # Check if trigger is timed out
+            trig_dt = (datetime.now() - self.trig_ts).total_seconds()
+            max_dt = p['vvm_pulse_wait_pre'] + p['vvm_pulse_wait_acq']
+            max_dt = (max_dt + p['vvm_pulse_wait_post']) * 3
+            is_timed_out = trig_dt > max_dt and p['vvm_pulse_channel'] <= 3
+
             # Warning symbol
-            if is_untune or is_low_power:
+            if is_untune or is_low_power or is_timed_out:
                 self.write(233, -6, '⚠', 'e', False, True)
 
             # 3 x phase
             x, y = 0, 19
-            for i, val in enumerate(p['phases']):
-                if p['mags'][i + 1] > -60:
-                    s = '{:>6.1f}°'.format(val)
-                else:
-                    s = '{:>6s}'.format(' .... ')
-                x, _ = self.write(x, y, s, 'l', True, True)
+            if is_timed_out:
+                x, _ = self.write(70, y, 'No trigger', 'l', True, True)
+            else:
+                for i, val in enumerate(p['phases']):
+                    if p['mags'][i + 1] <= -60:
+                        s = '{:>6s}'.format(' .... ')
+                    else:
+                        s = '{:>6.1f}°'.format(val)
+                    x, _ = self.write(x, y, s, 'l', True, True)
 
             # 3 x power
             x, y = 4, 46
             for m in p['mags'][1:]:
-                x, _ = self.write(x, y, '{:>5.1f} dBm  '.format(m))
+                if is_timed_out:
+                    x, _ = self.write(x, y, '  ... dBm  ')
+                else:
+                    x, _ = self.write(x, y, '{:>5.1f} dBm  '.format(m))
 
             # horizontal lines
             line(self.d, (0x10,) * 3, (0, 16), (255, 16), 2)

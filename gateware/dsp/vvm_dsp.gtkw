@@ -1,16 +1,16 @@
 [*]
-[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Sat Mar  7 05:27:00 2020
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Tue Jul 21 03:28:31 2020
 [*]
 [dumpfile] "/home/michael/fpga_wsp/zed_vvm/gateware/dsp/vvm_dsp.vcd"
-[dumpfile_mtime] "Sat Mar  7 05:21:54 2020"
-[dumpfile_size] 635295558
+[dumpfile_mtime] "Tue Jul 21 03:26:41 2020"
+[dumpfile_size] 635166440
 [optimize_vcd]
 [savefile] "/home/michael/fpga_wsp/zed_vvm/gateware/dsp/vvm_dsp.gtkw"
-[timestart] 121069
-[size] 2044 1105
-[pos] -1025 -1
-*-9.000000 122167 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 0
+[size] 1916 1036
+[pos] -1 -1
+*-14.000000 113769 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] vvm_dsp_tb.
 [treeopen] vvm_dsp_tb.dsp_inst.
 [treeopen] vvm_dsp_tb.dsp_inst.cic_multichannel.i_ccfilt.
@@ -131,9 +131,8 @@ vvm_dsp_tb.dsp_inst.phaseprocessor_strobe_out
 -
 @28
 vvm_dsp_tb.dsp_inst.pulse_channel[2:0]
-@23
-vvm_dsp_tb.dsp_inst.pulse_mag[20:0]
 @22
+vvm_dsp_tb.dsp_inst.pulse_mag[20:0]
 vvm_dsp_tb.dsp_inst.pulse_threshold[20:0]
 vvm_dsp_tb.dsp_inst.pulse_wait_acq[31:0]
 vvm_dsp_tb.dsp_inst.pulse_wait_post[31:0]
@@ -142,6 +141,8 @@ vvm_dsp_tb.dsp_inst.pulse_timer[31:0]
 @28
 [color] 1
 vvm_dsp_tb.dsp_inst.pulse_strobe_out
+@25
+vvm_dsp_tb.dsp_inst.pulse_trig_count[31:0]
 @200
 -
 @22

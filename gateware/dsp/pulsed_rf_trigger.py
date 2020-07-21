@@ -17,7 +17,7 @@ import sys
 from sys import argv
 
 from migen import *
-from litex.soc.interconnect.csr import AutoCSR, CSR, CSRStorage
+from litex.soc.interconnect.csr import AutoCSR, CSR, CSRStorage, CSRStatus
 from migen.genlib.cdc import PulseSynchronizer
 from migen.genlib.cdc import MultiReg
 
@@ -49,6 +49,9 @@ class PulsedRfTrigger(Module, AutoCSR):
 
         # Hold-off time after the acquisition [fs cycles]
         self.wait_post = Signal(32, reset=8)
+
+        # Counts trigger events
+        self.trig_count = Signal(32, reset=0)
 
         ###
 
@@ -95,6 +98,7 @@ class PulsedRfTrigger(Module, AutoCSR):
         self.fsm.act("WAIT_LEVEL",
             If(mag_edge,
                 NextValue(timer, 0),
+                NextValue(self.trig_count, self.trig_count + 1),
                 NextState("WAIT_PRE"),
             )
         )
@@ -123,6 +127,12 @@ class PulsedRfTrigger(Module, AutoCSR):
         csr_helper(self, 'wait_pre', self.wait_pre)  # , cdc=True)
         csr_helper(self, 'wait_acq', self.wait_acq)
         csr_helper(self, 'wait_post', self.wait_post)
+
+        self.trig_count_csr = CSRStatus(32, name='trig_count')
+        self.specials += MultiReg(
+            self.trig_count,
+            self.trig_count_csr.status
+        )
 
 
 def sample_generator(dut):
