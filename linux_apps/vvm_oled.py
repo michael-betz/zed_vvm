@@ -30,6 +30,7 @@ class VvmOled:
     def __init__(self, args):
         self.pvs = {
             'mags': [-99] * 4,
+            'raw_mags': [1234] * 4,
             'phases': [0] * 3,
             'f_ref': 0,
             'f_ref_bb': 0,
@@ -87,8 +88,13 @@ class VvmOled:
                 self.trig_ts = datetime.now()
 
             k = m.topic.split('/')[-1]
-            old_val = self.pvs[k]
-            t = type(old_val)
+
+            if k in self.pvs:
+                old_val = self.pvs[k]
+                t = type(old_val)
+            else:
+                t = float
+
             if t is list:
                 for i, val in enumerate(m.payload.split(b',')):
                     old_val[i] = float(val)
