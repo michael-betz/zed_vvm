@@ -114,6 +114,20 @@ def autoIdelay(c):
     ))
 
 
+def checkClockRegions(c):
+    '''
+    the test-pattern must be the same on all channels,
+    else the clock regions are not in sync
+    '''
+    setIdelay(c, 16)
+    tp0 = c.read_reg('lvds_data_peek0')
+    for ch in range(1, 4):
+        tpx = c.read_reg('lvds_data_peek' + str(ch))
+        if tpx != tp0:
+            return False
+    return True
+
+
 def initLTC(c, check_align=False):
     log.info("Resetting LTC")
     ltc_spi = LTC_SPI(c, "spi_r", "spi_w")
@@ -128,6 +142,10 @@ def initLTC(c, check_align=False):
 
     # Make ADC output 0x00000001 value samples and align ISERDES
     ltc_spi.setTp(1)
+
+    # if not checkClockRegions(c):
+    #     raise RuntimeError("Clock region alignment error")
+
     autoBitslip(c)
     print_frm(c)
     autoIdelay(c)
