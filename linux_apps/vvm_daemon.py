@@ -107,32 +107,38 @@ class VvmApp:
 
         cycle = 0
         trig_count_ = 0
+        last_ts = 0
         while True:
-            self.f_ref_bb = meas_f_ref(self.c, self.args.fs)
+            ts = time.time()
+
+            # do some housekeeping things every second
+            if ts - last_ts > 1.0:
+                last_ts = ts
+
+                # Measure and publish f_ref frequency
+                self.f_ref_bb = meas_f_ref(self.c, self.args.fs)
+                f_ref = getRealFreq(
+                    self.pvs.nyquist_band, self.f_ref_bb, self.args.fs
+                )
+
+                # Aliased frequency of REF input measured by frequency counter
+                self.mq.publish('vvm/results/f_ref_bb', self.f_ref_bb)
+
+                # Absolute frequency of REF input, needs user selected f-band
+                self.mq.publish('vvm/results/f_ref', f_ref)
 
             if cycle == 0:
-                self.tune()
+                self.tune(self.f_ref_bb)
+
                 # Reset DDS phase accumulators once at startup after setting Ms
                 self.pr()
-
-            f_ref = getRealFreq(
-                self.pvs.nyquist_band, self.f_ref_bb, self.args.fs
-            )
-
-            Ms = array([1, self.pvs.M_A, self.pvs.M_B, self.pvs.M_C])
-
-            # Aliased frequency of REF input measured by frequency counter
-            self.mq.publish('vvm/results/f_ref_bb', self.f_ref_bb)
-
-            # Absolute frequency of REF input, needs user selected f-band
-            self.mq.publish('vvm/results/f_ref', f_ref)
 
             update_meas = False
             if self.pvs.vvm_pulse_channel > 3:
                 # CW mode
                 update_meas = True
             else:
-                # pulsed trigger mode
+                # pulsed trigger mode, wait for incremented trig_count
                 trig_count = self.c.read_reg('vvm_pulse_trig_count')
                 if trig_count > trig_count_:
                     update_meas = True
@@ -140,6 +146,8 @@ class VvmApp:
                     self.mq.publish('vvm/results/trig_count', str(trig_count))
 
             if update_meas:
+                Ms = array([1, self.pvs.M_A, self.pvs.M_B, self.pvs.M_C])
+
                 mags = self.cal.get_mags(
                     f_ref * Ms, int(self.pvs.vvm_ddc_shift)
                 )

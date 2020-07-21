@@ -3,19 +3,15 @@
 display phase / magnitude on the OLED screen
 '''
 import logging
-import sys
 import signal
 import time
-from numpy import log10
-from os import putenv, environ
-from socket import gethostname
-from random import randint, choice, random
+from os import putenv
+from random import randint
 import pygame as pg
 from pygame.draw import line
 from evdev import InputDevice
 import argparse
 import paho.mqtt.client as mqtt
-from datetime import datetime
 
 log = logging.getLogger('vvm_oled')
 
@@ -41,7 +37,7 @@ class VvmOled:
             'vvm_pulse_wait_post': 1,
             'vvm_pulse_channel': 0
         }
-        self.trig_ts = datetime.now()
+        self.trig_ts = time.time()
         self.args = args
 
         self.mq = mqtt.Client('vvm_oled', True)
@@ -85,7 +81,7 @@ class VvmOled:
         ''' convert mqtt payload to float and shove it into self.pvs '''
         try:
             if m.topic == 'vvm/results/trig_count':
-                self.trig_ts = datetime.now()
+                self.trig_ts = time.time()
 
             k = m.topic.split('/')[-1]
 
@@ -151,9 +147,12 @@ class VvmOled:
             )
 
             # Check if trigger is timed out
-            trig_dt = (datetime.now() - self.trig_ts).total_seconds()
-            max_dt = p['vvm_pulse_wait_pre'] + p['vvm_pulse_wait_acq']
-            max_dt = (max_dt + p['vvm_pulse_wait_post']) * 3
+            trig_dt = time.time() - self.trig_ts
+            max_dt = 3 * sum([p[k] for k in [
+                'vvm_pulse_wait_pre',
+                'vvm_pulse_wait_acq',
+                'vvm_pulse_wait_post'
+            ]])
             is_timed_out = trig_dt > max_dt and p['vvm_pulse_channel'] <= 3
 
             # Warning symbol
