@@ -129,7 +129,7 @@ def checkClockRegions(c):
 
 
 def initLTC(c, check_align=False):
-    log.info("Resetting LTC")
+    log.info("Resetting LTC2175")
     ltc_spi = LTC_SPI(c, "spi_r", "spi_w")
 
     # Reset the ADC chip, this seems to glitch the DCO clock!
