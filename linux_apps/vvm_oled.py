@@ -60,10 +60,12 @@ class VvmOled:
         self.d = pg.display.set_mode((256, 64))  # returns the display surface
 
         fnts = {
-            's': ['UbuntuMono-Regular', 16],
+            't': ['UbuntuMono-Regular', 14],  # tiny
+            'tbold': ['UbuntuMono-Bold', 14],
+            's': ['UbuntuMono-Regular', 16],  # small
             'sbold': ['UbuntuMono-Bold', 16],
-            'lbold': ['UbuntuMono-Bold', 24],
-            'e': ['NotoEmoji-Regular', 16]
+            'lbold': ['UbuntuMono-Bold', 24],  # large
+            'e': ['NotoEmoji-Regular', 16]  # for emojis
         }
         self.fnts = {}
         for k, v in fnts.items():
@@ -119,90 +121,125 @@ class VvmOled:
         self.d.blit(sur, (x, y))
         return x + sur.get_width(), y + sur.get_height()
 
+    def update_status(self):
+        p = self.pvs
+
+        self.is_untune = abs(p['f_tune'] - p['f_ref_bb']) > 30e3
+        self.is_low_power = p['mags'][0] < -30
+
+        # Check if trigger is timed out
+        trig_dt = time.time() - self.trig_ts
+        max_dt = 3 * sum([p[k] for k in [
+            'vvm_pulse_wait_pre',
+            'vvm_pulse_wait_acq',
+            'vvm_pulse_wait_post'
+        ]])
+        self.is_timed_out = trig_dt > max_dt and p['vvm_pulse_channel'] <= 3
+
+        if not self.args.test:
+            set_led(not(
+                self.is_untune or self.is_low_power or self.is_timed_out
+            ))
+
+    def draw_main_screen(self):
+        p = self.pvs
+
+        # Reference frequency
+        x, y = 1, -2
+        x, _ = self.write(x, y, 'REF: ')
+        x, _ = self.write(
+            x, y,
+            '{:8.4f} MHz  '.format(p['f_ref'] / 1e6),
+            bold=self.is_untune, white=self.is_untune
+        )
+
+        # Reference power
+        x, _ = self.write(
+            x, y,
+            '{:5.1f} dBm'.format(p['mags'][0]),
+            bold=self.is_low_power, white=self.is_low_power
+        )
+
+        # Warning symbol
+        if self.is_untune or self.is_low_power or self.is_timed_out:
+            self.write(233, -6, '⚠', 'e', False, True)
+
+        # 3 x phase
+        x, y = 0, 19
+        if self.is_timed_out:
+            x, _ = self.write(70, y, 'No trigger', 'l', True, True)
+        else:
+            for i, val in enumerate(p['phases']):
+                if p['mags'][i + 1] <= -60:
+                    s = '{:>6s}'.format(' .... ')
+                else:
+                    s = '{:>6.1f}°'.format(val)
+                x, _ = self.write(x, y, s, 'l', True, True)
+
+        # 3 x power
+        x, y = 4, 46
+        for m in p['mags'][1:]:
+            if self.is_timed_out:
+                x, _ = self.write(x, y, '  ... dBm  ')
+            else:
+                x, _ = self.write(x, y, '{:>5.1f} dBm  '.format(m))
+
+        # horizontal lines
+        line(self.d, (0x10,) * 3, (0, 16), (255, 16), 2)
+        line(self.d, (0x10,) * 3, (0, 44), (255, 44), 2)
+
+    def draw_pv_screen(self, page=0, MAX_LINES=4):
+        ks = []
+        for k, v in self.pvs.items():
+            if type(v) not in (float, int):
+                continue
+            ks.append(k)
+        ks = sorted(ks)[page * MAX_LINES: (page + 1) * MAX_LINES]
+
+        x, y = 0, 0
+        for k in ks:
+            v = self.pvs[k]
+
+            x, _ = self.write(x, y, '{:>22s}: '.format(k[-22:]), 't')
+            _, y = self.write(x, y, str(self.pvs[k]), 't', white=True, bold=True)
+            x = 0
+
+        self.write(0, 0, '{:d}/2'.format(page + 1), 't')
+
     def loop_forever(self):
         p = self.pvs
+        page = 0
         while True:
-            is_untune = abs(p['f_tune'] - p['f_ref_bb']) > 30e3
-            is_low_power = p['mags'][0] < -30
-
-            # ----------------------
-            #  Draw on OLED
-            # ----------------------
-            self.d.fill((0x00, ) * 3)
-
-            # Reference frequency
-            x, y = 1, -2
-            x, _ = self.write(x, y, 'REF: ')
-            x, _ = self.write(
-                x, y,
-                '{:8.4f} MHz  '.format(p['f_ref'] / 1e6),
-                bold=is_untune, white=is_untune
-            )
-
-            # Reference power
-            x, _ = self.write(
-                x, y,
-                '{:5.1f} dBm'.format(p['mags'][0]),
-                bold=is_low_power, white=is_low_power
-            )
-
-            # Check if trigger is timed out
-            trig_dt = time.time() - self.trig_ts
-            max_dt = 3 * sum([p[k] for k in [
-                'vvm_pulse_wait_pre',
-                'vvm_pulse_wait_acq',
-                'vvm_pulse_wait_post'
-            ]])
-            is_timed_out = trig_dt > max_dt and p['vvm_pulse_channel'] <= 3
-
-            # Warning symbol
-            if is_untune or is_low_power or is_timed_out:
-                self.write(233, -6, '⚠', 'e', False, True)
-
-            # 3 x phase
-            x, y = 0, 19
-            if is_timed_out:
-                x, _ = self.write(70, y, 'No trigger', 'l', True, True)
-            else:
-                for i, val in enumerate(p['phases']):
-                    if p['mags'][i + 1] <= -60:
-                        s = '{:>6s}'.format(' .... ')
-                    else:
-                        s = '{:>6.1f}°'.format(val)
-                    x, _ = self.write(x, y, s, 'l', True, True)
-
-            # 3 x power
-            x, y = 4, 46
-            for m in p['mags'][1:]:
-                if is_timed_out:
-                    x, _ = self.write(x, y, '  ... dBm  ')
-                else:
-                    x, _ = self.write(x, y, '{:>5.1f} dBm  '.format(m))
-
-            # horizontal lines
-            line(self.d, (0x10,) * 3, (0, 16), (255, 16), 2)
-            line(self.d, (0x10,) * 3, (0, 44), (255, 44), 2)
-
-            pg.display.update()
-
             # -----------------------
             #  Handle user input
             # -----------------------
-            if not self.args.test:
-                self.handle_input()
-                set_led(not(is_untune or is_low_power))
-            else:
-                # In test mode, put some fake values in the variables instead
+            if self.args.test:
+                # In test mode, put some fake values in the variables
                 p['mags'] = [randint(-600, 150) / 10 for i in range(4)]
                 p['phases'] = [randint(-1800, 1800) / 10 for i in range(3)]
                 p['f_ref_bb'] = randint(0, 117.6e6 / 2)
                 p['f_tune'] = p['f_ref_bb'] + randint(-4000, 4000)
                 p['f_ref'] = p['f_ref_bb'] + 117.6e6 * 4
 
-            for event in pg.event.get():
-                log.debug(str(event))
-                if event.type == pg.QUIT:
-                    pg.quit()
+            rot, btn = self.handle_input()
+            page += rot
+            if page < 0 or btn:
+                page = 0
+            if page > 2:
+                page = 2
+
+            self.update_status()
+
+            # ----------------------
+            #  Draw on OLED
+            # ----------------------
+            self.d.fill((0x00, ) * 3)
+            if page == 0:
+                self.draw_main_screen()
+            else:
+                self.draw_pv_screen(page - 1)
+
+            pg.display.update()
 
             # Delay locked to the wall clock for more accurate cycle time
             dt = 1 / self.args.fps
@@ -212,6 +249,22 @@ class VvmOled:
         ''' returns encoder steps and button pushes '''
         rot = 0
         btn = False
+
+        # keyboard input to simulate encoder
+        for event in pg.event.get():
+            log.debug(str(event))
+            if event.type == pg.QUIT:
+                pg.quit()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_LEFT:
+                    rot -= 1
+                if event.key == pg.K_RIGHT:
+                    rot += 1
+                if event.key == pg.K_UP:
+                    btn = True
+
+        if self.args.test:
+            return rot, btn
 
         while True:
             # unfortunately using read() and try / except:
@@ -228,14 +281,14 @@ class VvmOled:
                 break
             btn |= evt.value
 
-        n = self.pvs['nyquist_band'] + rot
-        n = 0 if n < 0 else 13 if n > 13 else n
-        if n != self.pvs['nyquist_band']:
-            self.mq.publish('vvm/settings/nyquist_band', n, 0, True)
+        # n = self.pvs['nyquist_band'] + rot
+        # n = 0 if n < 0 else 13 if n > 13 else n
+        # if n != self.pvs['nyquist_band']:
+        #     self.mq.publish('vvm/settings/nyquist_band', n, 0, True)
 
-        if btn:
-            # Triggers a single auto-tune
-            self.mq.publish('vvm/settings/f_tune_set', 'auto')
+        # if btn:
+        #     # Triggers a single auto-tune
+        #     self.mq.publish('vvm/settings/f_tune_set', 'auto')
 
         return rot, btn
 
