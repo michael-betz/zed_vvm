@@ -126,7 +126,7 @@ module vvm_dsp_tb;
         .cic_shift      (4'd2),
 
         // Measurement smoothing factor
-        .iir_shift      (6'd4)
+        .iir_shift      (6'd2)
     );
 
 endmodule

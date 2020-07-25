@@ -106,42 +106,63 @@ class VvmApp:
         time.sleep(2.5)
 
         cycle = 0
+        trig_count_ = 0
+        last_ts = 0
         while True:
-            self.f_ref_bb = meas_f_ref(self.c, self.args.fs)
+            ts = time.time()
+
+            # do some housekeeping things every second
+            if ts - last_ts > 1.0:
+                last_ts = ts
+
+                # Measure and publish f_ref frequency
+                self.f_ref_bb = meas_f_ref(self.c, self.args.fs)
+                f_ref = getRealFreq(
+                    self.pvs.nyquist_band, self.f_ref_bb, self.args.fs
+                )
+
+                # Aliased frequency of REF input measured by frequency counter
+                self.mq.publish('vvm/results/f_ref_bb', self.f_ref_bb)
+
+                # Absolute frequency of REF input, needs user selected f-band
+                self.mq.publish('vvm/results/f_ref', f_ref)
 
             if cycle == 0:
-                self.tune()
+                self.tune(self.f_ref_bb)
+
                 # Reset DDS phase accumulators once at startup after setting Ms
                 self.pr()
 
-            f_ref = getRealFreq(
-                self.pvs.nyquist_band, self.f_ref_bb, self.args.fs
-            )
+            update_meas = False
+            if self.pvs.vvm_pulse_channel > 3:
+                # CW mode
+                update_meas = True
+            else:
+                # pulsed trigger mode, wait for incremented trig_count
+                trig_count = self.c.read_reg('vvm_pulse_trig_count')
+                if trig_count > trig_count_:
+                    update_meas = True
+                    trig_count_ = trig_count
+                    self.mq.publish('vvm/results/trig_count', str(trig_count))
 
-            Ms = array([1, self.pvs.M_A, self.pvs.M_B, self.pvs.M_C])
+            if update_meas:
+                Ms = array([1, self.pvs.M_A, self.pvs.M_B, self.pvs.M_C])
 
-            mags = self.cal.get_mags(f_ref * Ms, int(self.pvs.vvm_ddc_shift))
-            phases = self.cal.get_phases(f_ref * Ms[1:])
+                mags = self.cal.get_mags(
+                    f_ref * Ms, int(self.pvs.vvm_ddc_shift)
+                )
+                phases = self.cal.get_phases(f_ref * Ms[1:])
 
-            # Publish as one topic for each value
-            # for i in range(4):
-            #     self.mq.publish('vvm/results/mag' + str(i), mags[i])
-            #     if i > 0:
-            #         self.mq.publish(
-            #             'vvm/results/phase' + str(i), phases[i - 1]
-            #         )
+                # Publish multiple values per topic (separated by ,)
+                temp = ','.join([str(v) for v in mags])
+                self.mq.publish('vvm/results/mags', temp)
 
-            # Publish multiple values per topic (separated by ,)
-            temp = ','.join([str(v) for v in mags])
-            self.mq.publish('vvm/results/mags', temp)
-            temp = ','.join([str(v) for v in phases])
-            self.mq.publish('vvm/results/phases', temp)
+                vals = [self.c.read_reg("vvm_mag" + str(i)) for i in range(4)]
+                temp = ','.join([str(v) for v in vals])
+                self.mq.publish('vvm/results/raw_mags', temp)
 
-            # Aliased frequency of REF input measured by frequency counter
-            self.mq.publish('vvm/results/f_ref_bb', self.f_ref_bb)
-
-            # Absolute frequency of REF input, needs user selected f-band
-            self.mq.publish('vvm/results/f_ref', f_ref)
+                temp = ','.join([str(v) for v in phases])
+                self.mq.publish('vvm/results/phases', temp)
 
             # Delay locked to the wall clock for more accurate cycle time
             dt = 1 / self.pvs.fps
