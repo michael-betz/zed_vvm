@@ -1,29 +1,41 @@
 record(ai, "$(P)phaseA") {
     field(EGU, "deg")
-    field(DESC, "Phase of A vs REF")
+    field(DESC, "Phase of A input vs REF")
 }
 
 record(ai, "$(P)phaseB") {
     field(EGU, "deg")
+    field(DESC, "Phase of B input vs REF")
 }
 
 record(ai, "$(P)phaseC") {
     field(EGU, "deg")
+    field(DESC, "Phase of C input vs REF")
 }
 
 record(ai, "$(P)magRef") {
     field(EGU, "dBm")
+    field(DESC, "Magnitude of REF input at FP")
 }
 
 record(ai, "$(P)magA") {
     field(EGU, "dBm")
+    field(DESC, "Magnitude of A input at FP")
 }
 
 record(ai, "$(P)magB") {
     field(EGU, "dBm")
+    field(DESC, "Magnitude of B input at FP")
 }
 
 record(ai, "$(P)magC") {
     field(EGU, "dBm")
+    field(DESC, "Magnitude of C input at FP")
 }
 
+record(bi, "$(P)phaseLock") {
+    field(DTYP, "asynUInt32Digital")
+    field(ZNAM, "OFF")
+    field(ONAM, "ON")
+    field(DESC, "Enable PV loop for A drift comp.")
+}
