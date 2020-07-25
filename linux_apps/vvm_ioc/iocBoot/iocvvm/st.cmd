@@ -9,7 +9,7 @@ dbLoadDatabase("dbd/vvm.dbd", 0, 0)
 vvm_registerRecordDeviceDriver(pdbbase)
 
 ## Load record instances
-dbLoadRecords("db/vvm.db","P=$(IOC):")
+dbLoadRecords("db/vvm.db","P=GTL:VVM1:")
 
 ## Update IOC data
 # dbl >"/vxboot/PVnames/$(IOC)"

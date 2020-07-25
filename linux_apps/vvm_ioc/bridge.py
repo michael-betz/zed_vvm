@@ -18,13 +18,13 @@ def on_message(client, userdata, msg):
     if msg.topic == 'vvm/results/mags':
         vals = getVals(msg.payload)
         for val, s in zip(vals, ('Ref', 'A', 'B', 'C')):
-            caput('iocvvm:mag{:}'.format(s), val)
+            caput('GTL:VVM1:mag{:}'.format(s), val)
             # print('iocvvm:mag{:}'.format(s), val)
 
     if msg.topic == 'vvm/results/phases':
         vals = getVals(msg.payload)
         for val, s in zip(vals, ('A', 'B', 'C')):
-            caput('iocvvm:phase{:}'.format(s), val)
+            caput('GTL:VVM1:phase{:}'.format(s), val)
             # print('iocvvm:phase{:}'.format(s), val)
 
 
