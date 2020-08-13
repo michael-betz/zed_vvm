@@ -17,7 +17,7 @@ import sys
 from sys import argv
 
 from migen import *
-from litex.soc.interconnect.csr import AutoCSR, CSR, CSRStorage, CSRStatus
+from litex.soc.interconnect.csr import AutoCSR, CSRStatus
 from migen.genlib.cdc import PulseSynchronizer
 from migen.genlib.cdc import MultiReg
 

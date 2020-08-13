@@ -181,9 +181,8 @@ class VVM_DSP(Module, AutoCSR):
 
         # IIR controls
         self.iir = CSRStorage(len(self.iir_shift))
-
+        self.specials += MultiReg(self.iir.storage, self.iir_shift, 'sample')
         self.comb += [
-            self.iir_shift.eq(self.iir.storage),
             self.cdc.data_i.eq(Cat(self.mags_iir + self.phases_iir)),
             self.cdc.i.eq(self.strobe_out),
             Cat(self.mags_sys + self.phases_sys).eq(self.cdc.data_o)

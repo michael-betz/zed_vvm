@@ -152,6 +152,8 @@ class LTCPhy(S7_iserdes, AutoCSR):
 
         self.comb += [
             self.f_sample.clk.eq(ClockSignal("sample")),
+        ]
+        self.sync.sys += [
             self.id_inc.eq(self.idelay_inc.re),
             self.id_dec.eq(self.idelay_dec.re),
             self.idelay_value.w.eq(self.id_value)

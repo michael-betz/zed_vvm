@@ -21,6 +21,7 @@ from collections import defaultdict
 from migen import *
 from migen.genlib.misc import timeline
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage, CSRStatus
+from migen.genlib.cdc import MultiReg
 
 
 class Multiplier5(Module):
@@ -176,7 +177,7 @@ class PhaseProcessor(Module, AutoCSR):
             n = 'mult{}'.format(i + 1)
             csr = CSRStorage(len(multf), reset=1, name=n)
             setattr(self, n, csr)
-            self.comb += multf.eq(csr.storage)
+            self.specials += MultiReg(csr.storage, multf, 'sample')
 
 
 def main():

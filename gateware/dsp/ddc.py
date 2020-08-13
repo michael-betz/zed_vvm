@@ -9,7 +9,7 @@ from sys import argv
 
 from migen import *
 from litex.soc.interconnect.csr import AutoCSR, CSRStorage
-
+from migen.genlib.cdc import MultiReg
 from .dds import DDS
 
 
@@ -135,9 +135,9 @@ class VVM_DDC(Module, AutoCSR):
     def add_csr(self):
         self.ddc_deci = CSRStorage(len(self.cic_period), reset=48, name="deci")
         self.ddc_shift = CSRStorage(len(self.cic_shift), reset=0, name="shift")
-        self.comb += [
-            self.cic_period.eq(self.ddc_deci.storage),
-            self.cic_shift.eq(self.ddc_shift.storage)
+        self.specials += [
+            MultiReg(self.ddc_deci.storage, self.cic_period, 'sample'),
+            MultiReg(self.ddc_shift.storage, self.cic_shift, 'sample')
         ]
         self.dds.add_csr()
 
