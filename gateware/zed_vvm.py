@@ -22,13 +22,13 @@ from migen.genlib.resetsync import AsyncResetSynchronizer
 from migen.genlib.misc import WaitTimer
 from litex.build.generic_platform import *
 from litex.soc.interconnect.csr import *
-from litex.soc.integration.soc_zynq import *
+from litex.soc.integration.soc_core import SoCCore
 from litex.soc.integration.builder import *
 from litex.soc.cores import dna
 from litex.soc.cores.bitbang import I2CMaster, SPIMaster
 from litex.boards.platforms import zedboard
 from litex.soc.cores.clock import S7MMCM, S7IDELAYCTRL
-from litex.soc.interconnect import wishbone
+from litex.soc.interconnect import wishbone, axi
 
 from common import main, LedBlinker
 from iserdes.ltc_phy import LTCPhy, ltc_pads
@@ -49,7 +49,7 @@ class _CRG(Module):
 
         # # #
 
-        self.cd_sys.clk.attr.add('keep')
+        # self.cd_sys.clk.attr.add('keep')
 
         self.submodules.pll = pll = S7MMCM(speedgrade=-1)
         pll.register_clkin(ClockSignal('sys'), 100e6)
@@ -60,12 +60,17 @@ class _CRG(Module):
         pll.create_clkout(self.cd_clk200, 200e6)
         self.submodules.idelayctrl = S7IDELAYCTRL(self.cd_clk200)
 
+        # ------------------------------------------
+        #  OR together all RESET sources for cd_sys
+        # ------------------------------------------
+        # Zynq PS reset signal (bitfile load)
+        add_rst.append(ResetSignal("ps7"))
         rst_sum = Signal()
         self.comb += rst_sum.eq(reduce(or_, add_rst))
         self.specials += AsyncResetSynchronizer(self.cd_sys, rst_sum)
 
         # !!! sys_clk is provided by FCLK_CLK0 from PS7 !!!
-        # pll.create_clkout(self.cd_sys, f_sys)
+        self.comb += ClockSignal("sys").eq(ClockSignal("ps7"))
 
         # Flashy Led blinker for sample_clk
         bl = LedBlinker(
@@ -99,7 +104,7 @@ class Si570(Module, AutoCSR):
 
 
 # create our soc (no soft-cpu, wishbone <--> AXI <--> Zynq PS)
-class ZedVvm(SoCZynq):
+class ZedVvm(SoCCore):
     csr_peripherals = [
         "dna",
         "spi",
@@ -115,11 +120,10 @@ class ZedVvm(SoCZynq):
             f_sys: system clock frequency (wishbone)
             f_sample: ADC sampling clock frequency (provided by )
         '''
-        SoCZynq.__init__(
+        SoCCore.__init__(
             self,
             clk_freq=f_sys,
-            ps7_name="processing_system7_0",
-            # cpu_type=None,
+            cpu_type="zynq7000",
             csr_data_width=32,
             # csr_address_width=16,
             with_uart=False,
@@ -159,9 +163,17 @@ class ZedVvm(SoCZynq):
         # FPGA identification
         self.submodules.dna = dna.DNA()
 
-        # AXI interface to zynq PS
-        self.add_gp0()
-        self.add_axi_to_wishbone(self.axi_gp0, base_address=0x40000000)
+        # Add Zynq configuration IP
+        self.cpu.set_ps7_xci("ip/processing_system7_0.xci")
+
+        # Connect AXI GP0 to the SoC with base address of 0x43c00000 (default)
+        wb_gp0 = wishbone.Interface()
+        self.submodules += axi.AXI2Wishbone(
+            axi=self.cpu.add_axi_gp_master(),
+            wishbone=wb_gp0,
+            base_address=0x43c00000
+        )
+        self.add_wb_master(wb_gp0)
 
         # ----------------------------
         #  FPGA clock and reset generation
@@ -177,7 +189,6 @@ class ZedVvm(SoCZynq):
             f_sys,
             f_sample,
             [
-                ~self.fclk_reset0_n,  # Zynq PS reset signal (bitfile load)
                 p.request('user_btn_u'),  # UP button on zedboard
                 self.rst_delay.done  # ctrl_reset csr (delayed by 100 ms)
             ]
@@ -190,10 +201,16 @@ class ZedVvm(SoCZynq):
         # LTCPhy will recover ADC clock and drive `sample` clock domain
         self.submodules.lvds = LTCPhy(p, f_sys, f_sample)
         # tell vivado that sys_clk and sampl_clk are asynchronous
+
+        # p.add_platform_command('create_clock -name clk_fpga_0 -period "10" [get_pins "PS7_i/FCLKCLK[0]"]')
+        # p.add_platform_command('set_input_jitter clk_fpga_0 0.3')
+
         p.add_false_path_constraints(
-            self.crg.cd_sys.clk,
+            self.cpu.cd_ps7.clk,
             self.lvds.pads_dco
         )
+
+        # p.add_platform_command('set_clock_groups -asynchronous -group [get_clocks {{bufr_0_clk}}] -group [get_clocks {{clk_fpga_0}}]')
 
         # ----------------------------
         #  SPI bit-bang master
@@ -241,10 +258,10 @@ class ZedVvm(SoCZynq):
         # -------------------------------------------------------
         # Forward the internal PS EMIO to actual pads in the real world
         # SPI0, SS0 from PS through EMIO to PMODA
-        self.add_emio_spi(p.request("PMODA_SPI"), n=0)
+        self.cpu.add_emio_spi(p.request("PMODA_SPI"), n=0)
 
         # GPIOs to PMODA
-        self.add_emio_gpio(p.request("PMODA_GPIO").gpio)
+        self.cpu.add_emio_gpio(p.request("PMODA_GPIO").gpio)
 
         # On board tiny OLED display
         p.add_oled(self, SPI_N=0, SS_N=1, DC_GPIO=8, RST_GPIO=9)

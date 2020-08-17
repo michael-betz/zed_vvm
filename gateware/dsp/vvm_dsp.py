@@ -148,12 +148,16 @@ class VVM_DSP(Module, AutoCSR):
 
             # Watch out for DC errors for shifts > 31
             iir = ClockDomainsRenamer('sample')(TinyIIR(w))
-            self.comb += [
+            self.sync.sample += [
                 iir.x.eq(m),
                 mi.eq(iir.y),
                 iir.shifts.eq(self.iir_shift),
-                iir.strobe.eq(self.pulse.strobe_out),
+                # channel 0 = REF magnitude is always CW, never triggered!
+                iir.strobe.eq(
+                    self.pp.strobe_out if i == 0 else self.pulse.strobe_out
+                )
             ]
+
             self.submodules += iir
         self.comb += self.strobe_out.eq(iir.strobe_out)
 

@@ -163,7 +163,7 @@ class S7_iserdes(Module):
                 o_O=io_clk
             )
             # Create the regional clock domain
-            cd = ClockDomain('bufr_{:}'.format(i), True)
+            cd = ClockDomain(f'bufr_{i}', True)
             self.clock_domains += cd
             self.specials += Instance(
                 "BUFR",
@@ -196,7 +196,7 @@ class S7_iserdes(Module):
             rst_iserdes_ = Signal()
             bitslip_ = Signal()
             d_o_ = Signal(8)
-            sync_ = getattr(self.sync, 'bufr_{:}'.format(c_reg))
+            sync_ = getattr(self.sync, f'bufr_{c_reg}')  # get the local CD
             sync_ += [
                 rst_iserdes_.eq(ResetSignal('sample')),
                 bitslip_.eq(self.bitslip),
