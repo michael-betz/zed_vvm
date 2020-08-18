@@ -8,10 +8,12 @@
 """
 
 from sys import argv
+from collections import Counter, defaultdict
 
 from migen import *
 from migen.build.xilinx.common import xilinx_special_overrides
 from migen.genlib.resetsync import AsyncResetSynchronizer
+from migen.genlib.cdc import MultiReg, ElasticBuffer
 from litex.build.io import DifferentialInput
 from migen.genlib.misc import timeline
 
@@ -22,13 +24,14 @@ class S7_iserdes(Module):
         S = serialization factor (bits per frame)
         D = number of parallel lanes
         clock_regions:
-            must be list of D integers
-            indicates which clock region the input signal belongs to
-            each clock_region will have its own BUFR and BUFIOs, driving the ISERDES's
-            example for 3 signals, where the last one is in a separate clock region:
+            list of D integers specifying how to assign the lvds_data input
+            pins to specific clock regions.
+            Each clock_region will be treated as a separate clock domain,
+            having its own BUFR, BUFIO, FIFO and reset sync. logic
+            Example for 3 signals, where the last one is in a separate region:
             clock_regions = [0, 0, 1]
         """
-        self.N_CLK_REGIONS = max(clock_regions) + 1
+        self.CLOCK_REGIONS = Counter(clock_regions)  # = {0: 2, 1: 1}
 
         # LVDS DDR bit clock
         self.dco_p = Signal()
@@ -138,9 +141,10 @@ class S7_iserdes(Module):
                 # Shut down sample_clk at BUFMRCE, clear regional dividers ...
                 (0, [bufr_clr.eq(1), bufmr_ce.eq(0)]),
                 (4, [bufr_clr.eq(0)]),
-                # Re-enable sample_clk
+                # Re-enable regional clocks
                 (8, [bufmr_ce.eq(1)]),
-                # Sample clock is running and synced, release iserdes reset
+                # Regional clocks are running and synced,
+                # release `cd_sample` reset
                 (16, [self.init_running.eq(0)])
             ]
         )
@@ -151,76 +155,110 @@ class S7_iserdes(Module):
         )
 
         # -------------------------------------------------
-        #  generate a BUFR and BUFIO for each clock region
+        #  generate a separate CD for each clock region
         # -------------------------------------------------
-        io_clks = []  # Regional IO clocks driven by BUFIO
-        r_clks = []   # Regional fabric clocks driven by BUFR
-        for i in range(self.N_CLK_REGIONS):
-            io_clk = Signal()
+        # each one having its own BUFR, BUFIO and reset sync.
+        r_ioclks = {}  # Regional IO clocks driven by BUFIO
+        r_clks = {}   # Regional fabric clocks driven by BUFR
+        r_bitslips = {}  # Regional bitslip pulses
+        for cr_i, cr_n in self.CLOCK_REGIONS.items():
+            print(f"Clock region: {cr_i}, inputs: {cr_n}")
+
+            # regional buffer for the fast IO clock
+            ioclk = Signal()
             self.specials += Instance(
                 "BUFIO",
                 i_I=dco_delay_2,
-                o_O=io_clk
+                o_O=ioclk
             )
-            # Create the regional clock domain
-            cd = ClockDomain(f'bufr_{i}', True)
+
+            # regional clock domain for ISERDES output + interface fabric
+            cd_name = f'bufr_{cr_i}'
+            cd = ClockDomain(cd_name)
             self.clock_domains += cd
             self.specials += Instance(
                 "BUFR",
-                p_BUFR_DIVIDE=str(S // 2),  # half due to DDR
+                p_BUFR_DIVIDE=str(S // 2),  # div by 2 due to DDR
                 i_I=dco_delay_2,
                 i_CE=1,
                 i_CLR=bufr_clr,
                 o_O=cd.clk
             )
-            io_clks.append(io_clk)
-            r_clks.append(cd)
+
+            # Releasing global `sample` reset releases local `bufr_N` reset
+            AsyncResetSynchronizer(cd, ResetSignal('sample'))
+
+            # bitslip signal in regional CD
+            bs = Signal()
+            self.specials += MultiReg(self.bitslip, bs, cd_name)
+
+            r_ioclks[cr_i] = ioclk
+            r_clks[cr_i] = cd.clk
+            r_bitslips[cr_i] = bs
 
         # Make last regional clock available to rest of the design
-        self.comb += ClockSignal("sample").eq(cd.clk)
+        # Note that the output of the BUFG is not phase matched with the
+        # output of the BUFR. I'll use elastic buffers to move over the data
+        self.specials += Instance(
+            "BUFG",
+            i_I=cd.clk,
+            o_O=ClockSignal("sample")
+        )
 
         # -------------------------------------------------
         #  Generate an IDERDES for each data lane
         # -------------------------------------------------
-        for d_p, d_n, d_o, c_reg in zip(
+        r_dos = defaultdict(list)  # Regional data-outs, key = clock region
+        for d_p, d_n, c_reg in zip(
             self.lvds_data_p,
             self.lvds_data_n,
-            self.data_outs,
             clock_regions
         ):
             d_i = Signal()
             self.specials += DifferentialInput(d_p, d_n, d_i)
 
-            # Register in- and outputs once more in the regional clock domain
-            # maybe not really necessary but might help timing
-            rst_iserdes_ = Signal()
-            bitslip_ = Signal()
-            d_o_ = Signal(8)
-            sync_ = getattr(self.sync, f'bufr_{c_reg}')  # get the local CD
-            sync_ += [
-                rst_iserdes_.eq(ResetSignal('sample')),
-                bitslip_.eq(self.bitslip),
-                d_o.eq(d_o_),
-            ]
+            # Collect parallel output data
+            do = Signal(S)
 
             self.specials += Instance(
                 "ISERDESE2",
                 **self.iserdes_default,
-                i_CLK=io_clks[c_reg],
-                i_CLKB=~io_clks[c_reg],
-                i_CLKDIV=r_clks[c_reg].clk,
+                i_CLK=r_ioclks[c_reg],
+                i_CLKB=~r_ioclks[c_reg],
+                i_CLKDIV=r_clks[c_reg],
                 i_D=d_i,
-                i_BITSLIP=bitslip_,
-                i_RST=rst_iserdes_,
-                o_Q1=d_o_[0],
-                o_Q2=d_o_[1],
-                o_Q3=d_o_[2],
-                o_Q4=d_o_[3],
-                o_Q5=d_o_[4],
-                o_Q6=d_o_[5],
-                o_Q7=d_o_[6],
-                o_Q8=d_o_[7]
+                i_BITSLIP=r_bitslips[c_reg],
+                i_RST=ResetSignal(cd_name),
+                o_Q1=do[0],
+                o_Q2=do[1],
+                o_Q3=do[2],
+                o_Q4=do[3],
+                o_Q5=do[4],
+                o_Q6=do[5],
+                o_Q7=do[6],
+                o_Q8=do[7]
             )
+
+            r_dos[c_reg].append(do)
+
+        # -------------------------------------------------
+        #  Generate elastic-buffer for each clock region
+        # -------------------------------------------------
+        fifo_outs = []
+        for cr_i, r_dos in r_dos.items():
+            dos = Cat(r_dos)
+
+            cd_name = f'bufr_{cr_i}'
+            ebuf_name = f'ebuf_{cr_i}'
+
+            # Regional FIFO
+            ebuf = ElasticBuffer(len(dos), 2, cd_name, 'sample')
+            setattr(self.submodules, ebuf_name, ebuf)
+            self.comb += ebuf.din.eq(dos)
+            fifo_outs.append(ebuf.dout)
+
+        self.comb += Cat(self.data_outs).eq(Cat(fifo_outs))
+
 
     def getIOs(self):
         """ for easier interfacing to testbench """

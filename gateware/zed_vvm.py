@@ -205,9 +205,14 @@ class ZedVvm(SoCCore):
         # p.add_platform_command('create_clock -name clk_fpga_0 -period "10" [get_pins "PS7_i/FCLKCLK[0]"]')
         # p.add_platform_command('set_input_jitter clk_fpga_0 0.3')
 
+        clk_str = f'create_clock -period {1e9 / f_sample} -waveform {{{{0.000 {1e9 / 2 / f_sample}}}}} [get_nets sample_clk]'
+        print(clk_str)
+        p.add_platform_command(clk_str)
+
         p.add_false_path_constraints(
+            self.lvds.pads_dco,
             self.cpu.cd_ps7.clk,
-            self.lvds.pads_dco
+            self.lvds.cd_sample.clk
         )
 
         # p.add_platform_command('set_clock_groups -asynchronous -group [get_clocks {{bufr_0_clk}}] -group [get_clocks {{clk_fpga_0}}]')
