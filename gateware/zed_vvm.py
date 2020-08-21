@@ -66,7 +66,7 @@ class _CRG(Module):
         # Zynq PS reset signal (bitfile load)
         add_rst.append(ResetSignal("ps7"))
         rst_sum = Signal()
-        self.comb += rst_sum.eq(reduce(or_, add_rst))
+        self.sync += rst_sum.eq(reduce(or_, add_rst))
         self.specials += AsyncResetSynchronizer(self.cd_sys, rst_sum)
 
         # !!! sys_clk is provided by FCLK_CLK0 from PS7 !!!
@@ -248,7 +248,7 @@ class ZedVvm(SoCCore):
             N_BITS=14
         )
         self.specials += MultiReg(
-            p.request("user_btn_c"), self.acq.trigger
+            p.request('user_btn_c'), self.acq.trigger, 'sample'
         )
 
         # ----------------------------

@@ -51,14 +51,28 @@ class Acquisition(Module, AutoCSR):
             self.trig_sync.i.eq(self.trig_csr.re),
             trig.eq(self.trigger | self.trig_sync.o)
         ]
-        # select the trigger level
+
+        # select the trigger level (signed int)
         self.trig_level = CSRStorage(16)
-        # Force signedness
         self.trig_level.storage.signed = True
+        trig_level_ = Signal((16, True))
+        self.specials += MultiReg(
+            self.trig_level.storage, trig_level_, 'sample'
+        )
+
         # force trigger
         self.trig_force = CSRStorage(1)
+        trig_force_ = Signal()
+        self.specials += MultiReg(
+            self.trig_force.storage, trig_force_, 'sample'
+        )
+
         # select the channel to trigger on
         self.trig_channel = CSRStorage(8)
+        trig_channel_ = Signal()
+        self.specials += MultiReg(
+            self.trig_channel.storage, trig_channel_, 'sample'
+        )
 
         # data stream of the channel to trigger on
         data_trigger = Signal((N_BITS, True))
@@ -68,14 +82,14 @@ class Acquisition(Module, AutoCSR):
         self.comb += [
             # select one of the channels to trigger on,
             Case(
-                self.trig_channel.storage,
+                trig_channel_,
                 {k: data_trigger.eq(v) for k, v in enumerate(self.data_ins)}
             ),
             # Pulse `is_trigger` high when sample passes the trigger threshold
             is_trigger.eq(
-                (data_trigger_d < self.trig_level.storage) &
-                (data_trigger >= self.trig_level.storage) |
-                self.trig_force.storage
+                (data_trigger_d < trig_level_) &
+                (data_trigger >= trig_level_) |
+                trig_force_
             )
         ]
         self.sync.sample += data_trigger_d.eq(data_trigger)
@@ -101,7 +115,7 @@ class Acquisition(Module, AutoCSR):
                 NextValue(mem_addr, 0)
             )
         )
-        self.comb += self.busy.eq(~self.fsm.ongoing('WAIT_TRIGGER'))
+        self.sync.sample += self.busy.eq(~self.fsm.ongoing('WAIT_TRIGGER'))
         for mem, data_in in zip(mems, self.data_ins):
             self.specials += mem
             p1 = mem.get_port(write_capable=True, clock_domain="sample")

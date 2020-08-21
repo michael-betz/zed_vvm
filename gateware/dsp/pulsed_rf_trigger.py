@@ -122,11 +122,11 @@ class PulsedRfTrigger(Module, AutoCSR):
         )
 
     def add_csr(self):
-        csr_helper(self, 'channel', self.channel)
-        csr_helper(self, 'threshold', self.threshold)
-        csr_helper(self, 'wait_pre', self.wait_pre)  # , cdc=True)
-        csr_helper(self, 'wait_acq', self.wait_acq)
-        csr_helper(self, 'wait_post', self.wait_post)
+        csr_helper(self, 'channel', self.channel, cdc=True)
+        csr_helper(self, 'threshold', self.threshold, cdc=True)
+        csr_helper(self, 'wait_pre', self.wait_pre, cdc=True)
+        csr_helper(self, 'wait_acq', self.wait_acq, cdc=True)
+        csr_helper(self, 'wait_post', self.wait_post, cdc=True)
 
         self.trig_count_csr = CSRStatus(32, name='trig_count')
         self.specials += MultiReg(

@@ -13,7 +13,7 @@ from collections import Counter, defaultdict
 from migen import *
 from migen.build.xilinx.common import xilinx_special_overrides
 from migen.genlib.resetsync import AsyncResetSynchronizer
-from migen.genlib.cdc import MultiReg, ElasticBuffer
+from migen.genlib.cdc import MultiReg, ElasticBuffer, PulseSynchronizer
 from litex.build.io import DifferentialInput
 from migen.genlib.misc import timeline
 
@@ -41,9 +41,8 @@ class S7_iserdes(Module):
         self.lvds_data_p = Signal(D)
         self.lvds_data_n = Signal(D)
 
-        # Pulse to rotate bits (sample clock domain)
-        # Applies to all iserdes in both clock regions
-        # they should be phase aligned!
+        # Pulse to rotate bits (sys clock domain)
+        # Will be synchronized to all clock regions and applied to all ISERDES
         self.bitslip = Signal()
 
         # IDELAY control for DCO clock input
@@ -161,6 +160,7 @@ class S7_iserdes(Module):
         r_ioclks = {}  # Regional IO clocks driven by BUFIO
         r_clks = {}   # Regional fabric clocks driven by BUFR
         r_bitslips = {}  # Regional bitslip pulses
+
         for cr_i, cr_n in self.CLOCK_REGIONS.items():
             print(f"Clock region: {cr_i}, inputs: {cr_n}")
 
@@ -188,17 +188,21 @@ class S7_iserdes(Module):
             # Releasing global `sample` reset releases local `bufr_N` reset
             AsyncResetSynchronizer(cd, ResetSignal('sample'))
 
-            # bitslip signal in regional CD
-            bs = Signal()
-            self.specials += MultiReg(self.bitslip, bs, cd_name)
+            # Move bitslip pulse into regional CD
+            ps = PulseSynchronizer('sys', cd_name)
+            self.submodules += ps
+            self.comb += ps.i.eq(self.bitslip)
 
+            # Collect all region specific items in dicts
             r_ioclks[cr_i] = ioclk
             r_clks[cr_i] = cd.clk
-            r_bitslips[cr_i] = bs
+            r_bitslips[cr_i] = ps.o
 
         # Make last regional clock available to rest of the design
         # Note that the output of the BUFG is not phase matched with the
         # output of the BUFR. I'll use elastic buffers to move over the data
+        # TODO get sample clock from IBUFDS --> MMCM --> BUFG ???
+        # The BUFG cell BUFG_1 I pin is driven by a BUFR cell BUFR_1. For 7-Series devices, this is not a recommended clock topology. Please analyze your clock network and remove the BUFR to BUFG cascade.
         self.specials += Instance(
             "BUFG",
             i_I=cd.clk,

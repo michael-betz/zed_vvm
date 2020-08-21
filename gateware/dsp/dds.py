@@ -50,7 +50,7 @@ class DDS(Module, AutoCSR):
             phase = Signal(32)
             ftw_ = Signal.like(ftw)
 
-            self.sync += [
+            self.sync.sample += [
                 If(self.update_ftw, ftw_.eq(ftw)),
                 If(self.reset_phase,
                     phase.eq(0)
@@ -80,7 +80,8 @@ class DDS(Module, AutoCSR):
     def add_csr(self):
         csr_helper(self, 'amp', self.amps, cdc=True, reset=self.AMP_VAL)
         # Don't need CDC as the FTWs are only latched when update_ftw is pulsed
-        csr_helper(self, 'ftw', self.ftws)
+        # enable it anyway to stop Vivado from bitching
+        csr_helper(self, 'ftw', self.ftws, cdc=True)
         # DDS_ctrl, action takes place on register write
         # bits:    1 = update_ftw, 0 = reset_phase
         csr_helper(
