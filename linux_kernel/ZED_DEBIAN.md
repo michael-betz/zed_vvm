@@ -17,43 +17,65 @@ The stock version of U-Boot works perfectly fine for the Zynq7000 on the zedboar
 # compile U-Boot
     git clone https://github.com/u-boot/u-boot.git
     cd u-boot/
-    make zynq_zed_defconfig         # for zedboard
-    # make zynq_microzed_defconfig  # for microzed
-
+    git checkout 0f3e2942c9e01b5dfc01f3dabe0e2f2ab8fd8b84
+    export DEVICE_TREE=zynq-zed  # for zedboard
+    make xilinx_zynq_virt_defconfig
     make menuconfig
 
 # We want u-boot to read uEnv.txt from SD-card to setup its environment.
+# Tick `Enable a default value for bootcmd`
 # ... for `bootcmd value` enter the line below:
-# fatload mmc 0 0x10000 uEnv.txt;env import -t 0x10000 $filesize;boot
+fatload mmc 0 0x10000 uEnv.txt;env import -t 0x10000 $filesize;boot
 
 # Optional, apply a customized Zynq PS configuration on startup:
 # under ARM architecture --> Zynq/ZynqMP PS init file(s) location
-# enter: <path to zed_vvm>/ip/ps7_init_gpl.c
+# enter:
+<path to zed_vvm>/gateware/ip/ps7_init_gpl.c
 # see also: `PS_PERIPHERALS.md`
 
     make
+
+    # `mkimage` will be needed for building the kernel
     export PATH=$PATH:<..>/u-boot/tools/
 
-# Create a ~ 32 MB FAT16 partition on the SD card,
+# Create a ~ 64 MB FAT32 partition on the SD card,
 # follow the guide below or use gparted
 # in this example it's mounted as /media/sdcard
 
 # Copy first stage bootloader and u-boot image to SD card
-    cp u-boot/spl/boot.bin /media/sdcard
-    cp u-boot/u-boot.img /media/sdcard
+    cp spl/boot.bin /media/sdcard
+    cp u-boot.img /media/sdcard
 
 # Now try it on the Zedboard, you should see u-boot starting on the UART
 ```
+### Erasing the flash
+There's a caveat here. U-Boot can store its environment in the SPI flash, which will override the default $bootcmd we set up in menuconfig. To fix this, erase the flash from within the u-boot shell:
+
+```bash
+# This is a sign that uEnv.txt was not loaded correctly from MMC
+Zynq> echo $bootcmd
+run $modeboot
+
+# Flash needs to be erased ...
+Zynq> sf probe
+Zynq> sf erase 0 0x2000000
+Zynq> reset
+
+# Now it looks good:
+Zynq> echo $bootcmd
+run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:01:87; run kernel_boot
+```
 ## Linux kernel
-The [vanilla mainline kernel](https://github.com/torvalds/linux) works perfectly fine for this application (see note below).
-Here's some instructions on how to apply two tiny patches to the kernel and compile it. The same instructions apply for the Xilinx version of the kernel if you go with that.
+The [vanilla mainline kernel](https://github.com/torvalds/linux) works perfectly fine on the zedboard for this application (see note below).
+Here's instructions on how to apply two tiny patches to enable FPGA configuration from the command line and OLED support. If you go with the Xilinx version of the kernel, you don't need the two patches, but most of the instructions below still apply.
 
 ```bash
     git clone https://github.com/torvalds/linux.git
     cd linux/
+    git checkout 22fbc037cd32e4e6771d2271b565806cfb8c134c
 
 # Load my kernel config and device tree for zed_vvm
-    cp <..>/zed_vvm/linux_kernel/.config .
+    cp <..>/zed_vvm/linux_kernel/zedboard_defconfig arch/arm/configs/
     cp <..>/zed_vvm/linux_kernel/zynq-zed.dts arch/arm/boot/dts/
 
 # Patch to get /sys/class/fpga_mgr/fpga0/firmware
@@ -69,13 +91,17 @@ Here's some instructions on how to apply two tiny patches to the kernel and comp
 # Apply any kernel customization you might need
     cd ../..
     export CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm
+    make zedboard_defconfig
     make menuconfig
+    # make sure the display drivers are all enabled under
+    # Device Drivers --> Staging drivers --> Support for small TFT LCD display modules
 ```
 
 Then build the kernel and device-tree ...
 
 ```bash
     make -j4 uImage LOADADDR=0x00008000
+    # good time to get a cup of coffee
     make zynq-zed.dtb
 ```
 
@@ -91,6 +117,16 @@ copy kernel image and device-tree to SD card
 
 to configure u-boot, create a `uEnv.txt` as shown below and copy it to SD card.
 
+SD card contents should look like this now:
+```bash
+ls -hl /media/<..>
+total 5.6M
+-rw-r--r-- 1 michael michael 117K Oct  3 19:42 boot.bin
+-rw-r--r-- 1 michael michael 1.1M Oct  3 19:42 u-boot.img
+-rw-r--r-- 1 michael michael  735 Oct  3 19:42 uEnv.txt
+-rw-r--r-- 1 michael michael 4.4M Oct  3 19:43 uImage
+-rw-r--r-- 1 michael michael  12K Oct  3 19:43 zynq-zed.dtb
+```
 Now is a good time to give it a test-run on the Zedboard,
 the linux kernel should boot and panic because of the missing root filesystem
 
@@ -128,7 +164,7 @@ This assumes `/dev/mmcblk0p2` is the large ext4 partition on the SD card/.
     sudo mkfs.ext4 -v /dev/mmcblk0p2 -L rootfs
     # Mount the partition (easiest in gui file manger)
     cd /media/<..>/rootfs
-    sudo tar -xzvf ~/<..>/rootfs_buster_clean.tar.gz
+    sudo tar -xzvf <..>/rootfs_buster_clean.tar.gz
 ```
 
 Put the SD-card in the zedboard, connect to its UART and
@@ -285,9 +321,15 @@ dtr_load=load mmc 0 ${dtr_addr} zynq-zed.dtb
 
 kernel_boot=setenv bootargs console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait; bootm ${kernel_addr} - ${dtr_addr}
 
-# Boot without loading a bit-file, make sure to change ethaddr to a random value
-bootcmd=run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:01:87; run kernel_boot
+# Boot from MMC without loading a bit-file, make sure to change ethaddr to a random value
+bootcmd=run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:42:87; run kernel_boot
 
-# Load a bit-file and boot, make sure .bit.bin file from line 2 above exists
-bootcmd=run fpga_load; run fpga_boot; run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:01:87; run kernel_boot
+# Load a bit-file and boot from MMC, make sure .bit.bin file from line 2 exists
+# bootcmd=run fpga_load; run fpga_boot; run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:42:87; run kernel_boot
+
+# network boot: load uImage and zynq-zed.dtb over tftp and boot it
+# ipaddr=192.168.1.2
+# serverip=192.168.1.1
+# netmask=255.255.255.0
+# bootcmd=tftpboot $kernel_addr uImage; tftpboot $dtr_addr zynq-zed.dtb; run kernel_boot
 ```
