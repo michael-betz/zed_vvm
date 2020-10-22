@@ -65,6 +65,22 @@ Zynq> reset
 Zynq> echo $bootcmd
 run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:01:87; run kernel_boot
 ```
+
+### bootstrapping u-boot over JTAG
+... with openocd
+```tcl
+reset halt
+load_image u-boot/spl/u-boot-spl.bin 0
+resume 0
+sleep 1000
+halt
+load_image u-boot/u-boot.bin 0x4000000
+resume 0x4000000
+```
+
+### Installing u-boot to flash
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842574/U-Boot+Secondary+Program+Loader
+
 ## Linux kernel
 The [vanilla mainline kernel](https://github.com/torvalds/linux) works perfectly fine on the zedboard for this application (see note below).
 Here's instructions on how to apply two tiny patches to enable FPGA configuration from the command line and OLED support. If you go with the Xilinx version of the kernel, you don't need the two patches, but most of the instructions below still apply.
@@ -165,6 +181,7 @@ This assumes `/dev/mmcblk0p2` is the large ext4 partition on the SD card/.
     # Mount the partition (easiest in gui file manger)
     cd /media/<..>/rootfs
     sudo tar -xzvf <..>/rootfs_buster_clean.tar.gz
+    sync
 ```
 
 Put the SD-card in the zedboard, connect to its UART and
@@ -189,6 +206,14 @@ form the host machine onto the zedboard:
 
 Alternatively, just install my [litex-fork](https://github.com/yetifrisstlama/litex) on the zedboard, which includes
 litex_server with mmap access support.
+
+### Debian certificate troubles
+I forgot to include openssl in `rootfs_buster_clean.tar.gz`. So `sudo apt update` may refuse to work and complain about missing certificates. I fixed this by downloading on my host machine:
+
+  * [openssl-armhf](https://packages.debian.org/buster/openssl)
+  * [ca-certificates](https://packages.debian.org/buster/ca-certificates)
+
+copying them on the zeboard with `scp` and installing them with `sudo apt install ./<file_name>`.
 
 ### Taking the scenic route ...
 setup your initial bare-bones debian environment using chroot on a debian based linux host PC.
@@ -309,6 +334,9 @@ __make sure to replace `mmcblk0p1` and `mmcblk0p2` with the actual partition nam
 # uEnv.txt
 U-Boot startup script to boot and optionally load a bitfile. Make sure `ethaddr` is unique on network.
 ```bash
+# I get corrupt data from MMC if the caches are enabled :(
+init=icache off; dcache off
+
 fpga_addr=0x10000000
 fpga_load=load mmc 0 ${fpga_addr} zed_wrapper.bit.bin
 fpga_boot=fpga load 0 ${fpga_addr} $filesize
@@ -322,14 +350,14 @@ dtr_load=load mmc 0 ${dtr_addr} zynq-zed.dtb
 kernel_boot=setenv bootargs console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait; bootm ${kernel_addr} - ${dtr_addr}
 
 # Boot from MMC without loading a bit-file, make sure to change ethaddr to a random value
-bootcmd=run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:42:87; run kernel_boot
+bootcmd=run init; run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:42:87; run kernel_boot
 
 # Load a bit-file and boot from MMC, make sure .bit.bin file from line 2 exists
-# bootcmd=run fpga_load; run fpga_boot; run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:42:87; run kernel_boot
+# bootcmd=run init; run fpga_load; run fpga_boot; run kernel_load; run dtr_load; setenv ethaddr 00:0a:35:00:42:87; run kernel_boot
 
 # network boot: load uImage and zynq-zed.dtb over tftp and boot it
 # ipaddr=192.168.1.2
 # serverip=192.168.1.1
 # netmask=255.255.255.0
-# bootcmd=tftpboot $kernel_addr uImage; tftpboot $dtr_addr zynq-zed.dtb; run kernel_boot
+# bootcmd=run init; tftpboot $kernel_addr uImage; tftpboot $dtr_addr zynq-zed.dtb; run kernel_boot
 ```
