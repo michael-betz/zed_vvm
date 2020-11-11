@@ -10,5 +10,7 @@ __fpga-mgr.patch__ Patch for the linux mainline kernel to get the /sys/class/fpg
 
 __ZED_DEBIAN.md__ Instructions on how to get a useful version of linux running on the zedboard.
 
+__EPICS.md__ How to use `qemu` and `chroot` to cross-compile EPICS and an IOC and run it on the zedboard
+
 __PS_PERIPHERALS.md__ Notes on how zynq peripherals are integrated into linux.
 

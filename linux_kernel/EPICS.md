@@ -43,23 +43,18 @@ make runtests
 export EPICS_BASE=/home/zed/EPICS_R3_16/epics-base
 export PATH=${EPICS_BASE}/bin/linux-arm:${PATH}
 
-# Copy over the library files and binaries to the zedboard
+# Collect the needed libraries and binaries in one directory
 mkdir ~/zed_epics
 cd ~/zed_epics/
 cp -r $EPICS_BASE/bin .
 cp -r $EPICS_BASE/lib .
-cd ..
-tar -cpzvf zed_epics.tar.gz zed_epics/
 exit
 
-# Copy libraries to the zedboard
-scp rootfs/home/zed/zed_epics.tar.gz  zed@zedboard:~
+# from the host: copy it to zedboard
+scp -r rootfs/home/zed/zed_epics zed@zedboard:~
 
-# ... and install on zedboard
+# on the zedboard, add them to the environment (.bashrc maybe)
 ssh zed@zedboard
-tar -xvf zed_epics.tar.gz
-
-# add this to .bashrc or whatever
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/zed_epics/lib/linux-arm
 export PATH=$PATH:$HOME/zed_epics/bin/linux-arm
 
@@ -76,17 +71,13 @@ cd ~/test_ioc
 makeBaseApp.pl -t example test
 makeBaseApp.pl -t example -i -p test test
 make
-
-# tar the IOC, copy to zedboard and try to run it there
-tar -cpzvf test_ioc.tar.gz test_ioc/
 exit
 
-# back to the host-machine, copy the .tar file to the actual zedboard
-scp rootfs/home/zed/test_ioc.tar.gz zed@zedboard:~
+# back on the host-machine, copy the IOC files to the actual zedboard
+scp -r rootfs/home/zed/test_ioc zed@zedboard:~
 
-# on the zedboard: untar and run it!
+# on the zedboard: run it!
 ssh zed@zedboard
-tar -xvf test_ioc.tar.gz
 cd ~/test_ioc/iocBoot/ioctest
 ./st.cmd
     ...
